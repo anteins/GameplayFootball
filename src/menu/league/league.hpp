@@ -20,70 +20,70 @@ using namespace blunted;
 
 class LeaguePage : public Gui2Page {
 
-  public:
-    LeaguePage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeaguePage();
+	public:
+		LeaguePage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeaguePage();
 
-  protected:
-    void StepTime();
-    void SetTimeCaption();
+	protected:
+		void StepTime();
+		void SetTimeCaption();
 
-    Gui2Caption *captionTime;
+		Gui2Caption *captionTime;
 
 };
 
 class LeagueStartPage : public Gui2Page {
 
-  public:
-    LeagueStartPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueStartPage();
+	public:
+		LeagueStartPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueStartPage();
 
-  protected:
-    void GoLoad();
-    void GoNew();
+	protected:
+		void GoLoad();
+		void GoNew();
 
 };
 
 class LeagueStartLoadPage : public Gui2Page {
 
-  public:
-    LeagueStartLoadPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueStartLoadPage();
+	public:
+		LeagueStartLoadPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueStartLoadPage();
 
-  protected:
-    void GoLoadSave();
+	protected:
+		void GoLoadSave();
 
-    Gui2FileBrowser *browser;
+		Gui2FileBrowser *browser;
 
 };
 
 class LeagueStartNewPage : public Gui2Page {
 
-  public:
-    LeagueStartNewPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueStartNewPage();
+	public:
+		LeagueStartNewPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueStartNewPage();
 
-  protected:
-    void GoDatabaseSelectDialog();
-    void CloseDatabaseSelectDialog();
-    void GoProceed();
-    void CloseCreateSaveDialog();
+	protected:
+		void GoDatabaseSelectDialog();
+		void CloseDatabaseSelectDialog();
+		void GoProceed();
+		void CloseCreateSaveDialog();
 
-    Gui2Button *databaseSelectButton;
-    Gui2Pulldown *currencySelectPulldown;
-    Gui2Slider *difficultySlider;
-    Gui2EditLine *saveNameInput;
-    Gui2EditLine *managerNameInput;
+		Gui2Button *databaseSelectButton;
+		Gui2Pulldown *currencySelectPulldown;
+		Gui2Slider *difficultySlider;
+		Gui2EditLine *saveNameInput;
+		Gui2EditLine *managerNameInput;
 
-    Gui2Dialog *databaseSelectDialog;
-    Gui2FileBrowser *databaseSelectBrowser;
-    Gui2View *previousFocus;
+		Gui2Dialog *databaseSelectDialog;
+		Gui2FileBrowser *databaseSelectBrowser;
+		Gui2View *previousFocus;
 
-    std::string data_SelectedDatabase;
+		std::string data_SelectedDatabase;
 
-    Gui2Dialog *createSaveDialog;
+		Gui2Dialog *createSaveDialog;
 
-    bool success;
+		bool success;
 
 };
 

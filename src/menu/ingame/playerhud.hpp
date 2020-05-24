@@ -15,18 +15,18 @@ class Match;
 
 class Gui2PlayerHUD : public Gui2View {
 
-  public:
-    Gui2PlayerHUD(Gui2WindowManager *windowManager, const std::string &name, float x_percent, float y_percent, float width_percent, float height_percent, Match *match);
-    virtual ~Gui2PlayerHUD();
+	public:
+		Gui2PlayerHUD(Gui2WindowManager *windowManager, const std::string &name, float x_percent, float y_percent, float width_percent, float height_percent, Match *match);
+		virtual ~Gui2PlayerHUD();
 
-    void GetImages(std::vector < boost::intrusive_ptr<Image2D> > &target);
+		void GetImages(std::vector < boost::intrusive_ptr<Image2D> > &target);
 
-    virtual void Redraw();
+		virtual void Redraw();
 
-  protected:
-    boost::intrusive_ptr<Image2D> image;
+	protected:
+		boost::intrusive_ptr<Image2D> image;
 
-    Match *match;
+		Match *match;
 
 };
 

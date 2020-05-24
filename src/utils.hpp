@@ -23,31 +23,31 @@ int GetVelocityID(e_Velocity velo, bool treatDribbleAsWalk = false);
 
 // stats fiddling
 enum e_PositionName {
-  e_PositionName_GK,
-  e_PositionName_SW,
-  e_PositionName_D,
-  e_PositionName_WB,
-  e_PositionName_DM,
-  e_PositionName_M,
-  e_PositionName_AM,
-  e_PositionName_F,
-  e_PositionName_ST
+	e_PositionName_GK,
+	e_PositionName_SW,
+	e_PositionName_D,
+	e_PositionName_WB,
+	e_PositionName_DM,
+	e_PositionName_M,
+	e_PositionName_AM,
+	e_PositionName_F,
+	e_PositionName_ST
 };
 
 struct WeightedPosition {
-  e_PositionName positionName;
-  float weight;
+	e_PositionName positionName;
+	float weight;
 };
 
 struct Stat {
-  std::string name;
-  float value;
+	std::string name;
+	float value;
 };
 
 enum e_DevelopmentCurveType {
-  e_DevelopmentCurveType_Early,
-  e_DevelopmentCurveType_Normal,
-  e_DevelopmentCurveType_Late
+	e_DevelopmentCurveType_Early,
+	e_DevelopmentCurveType_Normal,
+	e_DevelopmentCurveType_Late
 };
 
 // converts FM positions string into weighted positions vector
@@ -68,34 +68,34 @@ float GetAverageStatFromBaseStat(int age, float baseStat, e_DevelopmentCurveType
 // /stats fiddling
 
 template <typename T> struct TemporalValue {
-  TemporalValue() {
-    data = 0;
-    time_ms = 0;
-  }
-  T data;
-  unsigned long time_ms;
+	TemporalValue() {
+		data = 0;
+		time_ms = 0;
+	}
+	T data;
+	unsigned long time_ms;
 };
 
 template <> TemporalValue<Quaternion>::TemporalValue();
 
 template <typename T> class TemporalSmoother {
 
-  public:
-    TemporalSmoother();
-    virtual ~TemporalSmoother() {}
+	public:
+		TemporalSmoother();
+		virtual ~TemporalSmoother() {}
 
-    void SetValue(const T &data, unsigned long valueTime_ms);
-    T GetValue(unsigned long currentTime_ms, unsigned long history_ms = temporalSmoother_history_ms) const; // get interpolated measurement, history_ms seconds ago from now
+		void SetValue(const T &data, unsigned long valueTime_ms);
+		T GetValue(unsigned long currentTime_ms, unsigned long history_ms = temporalSmoother_history_ms) const; // get interpolated measurement, history_ms seconds ago from now
 
-    void Clear() {
-      values.clear();
-    }
+		void Clear() {
+			values.clear();
+		}
 
-  protected:
-    T MixData(const T &data1, const T &data2, float bias = 0.0f) const;
+	protected:
+		T MixData(const T &data1, const T &data2, float bias = 0.0f) const;
 
-    boost::circular_buffer< TemporalValue<T> > values;
-    unsigned int snapshotSize;
+		boost::circular_buffer< TemporalValue<T> > values;
+		unsigned int snapshotSize;
 
 };
 
@@ -110,9 +110,9 @@ void DebugLog(Player& player, const std::string& message);
 //
 inline void RoundToInt64 (int &val, double dval)
 {
-  static double magic = 6755399441055744.0;
-  dval += magic;
-  val = *(int*)&dval;
+	static double magic = 6755399441055744.0;
+	dval += magic;
+	val = *(int*)&dval;
 }
 
 #endif

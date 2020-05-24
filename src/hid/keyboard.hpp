@@ -15,30 +15,30 @@ using namespace blunted;
 
 class HIDKeyboard : public IHIDevice {
 
-  public:
-    HIDKeyboard();
-    virtual ~HIDKeyboard();
+	public:
+		HIDKeyboard();
+		virtual ~HIDKeyboard();
 
-    virtual void LoadConfig();
-    virtual void SaveConfig();
+		virtual void LoadConfig();
+		virtual void SaveConfig();
 
-    virtual void Process();
+		virtual void Process();
 
-    virtual bool GetButton(e_ButtonFunction buttonFunction);
-    virtual float GetButtonValue(e_ButtonFunction buttonFunction); // for analog support
-    virtual void SetButton(e_ButtonFunction buttonFunction, bool state);
-    virtual bool GetPreviousButtonState(e_ButtonFunction buttonFunction);
-    virtual Vector3 GetDirection();
+		virtual bool GetButton(e_ButtonFunction buttonFunction);
+		virtual float GetButtonValue(e_ButtonFunction buttonFunction); // for analog support
+		virtual void SetButton(e_ButtonFunction buttonFunction, bool state);
+		virtual bool GetPreviousButtonState(e_ButtonFunction buttonFunction);
+		virtual Vector3 GetDirection();
 
-    void SetFunctionMapping(int index, SDLKey key) { boost::mutex::scoped_lock blah(mutex); functionMapping[index] = key; }
+		void SetFunctionMapping(int index, SDLKey key) { boost::mutex::scoped_lock blah(mutex); functionMapping[index] = key; }
 
-    SDLKey GetFunctionMapping(e_ButtonFunction buttonFunction) { boost::mutex::scoped_lock blah(mutex); return functionMapping[buttonFunction]; }
+		SDLKey GetFunctionMapping(e_ButtonFunction buttonFunction) { boost::mutex::scoped_lock blah(mutex); return functionMapping[buttonFunction]; }
 
-  protected:
-    bool functionButtonState[e_ButtonFunction_Size];
-    bool previousFunctionButtonState[e_ButtonFunction_Size];
+	protected:
+		bool functionButtonState[e_ButtonFunction_Size];
+		bool previousFunctionButtonState[e_ButtonFunction_Size];
 
-    SDLKey functionMapping[e_ButtonFunction_Size];
+		SDLKey functionMapping[e_ButtonFunction_Size];
 
 };
 

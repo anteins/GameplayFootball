@@ -20,38 +20,38 @@ const int numtexts = 24;
 const int numballs = 12;
 
 struct CreditsContents {
-  std::string text;
-  Vector3 color;
+	std::string text;
+	Vector3 color;
 };
 
 class CreditsPage : public Gui2Page {
 
-  public:
-    CreditsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~CreditsPage();
+	public:
+		CreditsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~CreditsPage();
 
-    void InitCreditsContents();
-    void AddHeader(const std::string &blah);
-    void AddSubHeader(const std::string &blah);
-    void AddCredit(const std::string &blah);
-    void AddWhitespace();
+		void InitCreditsContents();
+		void AddHeader(const std::string &blah);
+		void AddSubHeader(const std::string &blah);
+		void AddCredit(const std::string &blah);
+		void AddWhitespace();
 
-    virtual void Process();
-    virtual void ProcessJoystickEvent(JoystickEvent *event);
+		virtual void Process();
+		virtual void ProcessJoystickEvent(JoystickEvent *event);
 
-  protected:
-    Gui2Caption *text[numtexts];
-    Gui2Image *balls[numballs];
-    Vector3 ballPos[numballs];
-    Vector3 ballMov[numballs];
+	protected:
+		Gui2Caption *text[numtexts];
+		Gui2Image *balls[numballs];
+		Vector3 ballPos[numballs];
+		Vector3 ballMov[numballs];
 
-    float scrollOffset;
-    unsigned int creditOffset;
-    unsigned int previousStartIndex;
+		float scrollOffset;
+		unsigned int creditOffset;
+		unsigned int previousStartIndex;
 
-    std::vector<CreditsContents> credits;
+		std::vector<CreditsContents> credits;
 
-    Gui2Image *bg;
+		Gui2Image *bg;
 
 };
 

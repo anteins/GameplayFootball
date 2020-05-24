@@ -14,36 +14,36 @@ using namespace blunted;
 class Match;
 
 struct TacticsDebugEntry {
-  std::string caption;
-  float value[3][2]; // [type][teamid]
-  Vector3 color[3][2];
+	std::string caption;
+	float value[3][2]; // [type][teamid]
+	Vector3 color[3][2];
 };
 
 class Gui2TacticsDebug : public Gui2View {
 
-  public:
-    Gui2TacticsDebug(Gui2WindowManager *windowManager, const std::string &name, float x_percent, float y_percent, float width_percent, float height_percent, Match *match);
-    virtual ~Gui2TacticsDebug();
+	public:
+		Gui2TacticsDebug(Gui2WindowManager *windowManager, const std::string &name, float x_percent, float y_percent, float width_percent, float height_percent, Match *match);
+		virtual ~Gui2TacticsDebug();
 
-    void GetImages(std::vector < boost::intrusive_ptr<Image2D> > &target);
+		void GetImages(std::vector < boost::intrusive_ptr<Image2D> > &target);
 
-    virtual void Redraw();
+		virtual void Redraw();
 
-    virtual unsigned int AddEntry(const std::string &caption, const Vector3 &color1, const Vector3 &color2, const Vector3 &color3);
-    virtual void SetValue(unsigned int entryID, int typeID, int teamID, float value);
+		virtual unsigned int AddEntry(const std::string &caption, const Vector3 &color1, const Vector3 &color2, const Vector3 &color3);
+		virtual void SetValue(unsigned int entryID, int typeID, int teamID, float value);
 
-  protected:
-    boost::intrusive_ptr<Image2D> image;
+	protected:
+		boost::intrusive_ptr<Image2D> image;
 
-    int w, h;
+		int w, h;
 
-    SDL_Surface *bg;
+		SDL_Surface *bg;
 
-    Match *match;
+		Match *match;
 
-    std::vector<TacticsDebugEntry> entries;
+		std::vector<TacticsDebugEntry> entries;
 
-    mutable bool _dirtycache;
+		mutable bool _dirtycache;
 
 };
 

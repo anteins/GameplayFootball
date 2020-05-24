@@ -20,35 +20,35 @@ using namespace blunted;
 
 class IngamePage : public Gui2Page {
 
-  public:
-    IngamePage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~IngamePage();
+	public:
+		IngamePage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~IngamePage();
 
-    void GoGamePlan();
-    void GoControllerSelect();
-    void GoCameraSettings();
-    void GoVisualOptions();
-    void GoSystemSettings();
-    void GoReplay();
-    void GoPreQuit();
+		void GoGamePlan();
+		void GoControllerSelect();
+		void GoCameraSettings();
+		void GoVisualOptions();
+		void GoSystemSettings();
+		void GoReplay();
+		void GoPreQuit();
 
-    virtual void ProcessWindowingEvent(WindowingEvent *event);
+		virtual void ProcessWindowingEvent(WindowingEvent *event);
 
-  protected:
-    int teamID; // team that activated the ingame menu
+	protected:
+		int teamID; // team that activated the ingame menu
 
 };
 
 
 class PreQuitPage : public Gui2Page {
 
-  public:
-    PreQuitPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~PreQuitPage();
+	public:
+		PreQuitPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~PreQuitPage();
 
-    void GoMenu();
+		void GoMenu();
 
-  protected:
+	protected:
 
 };
 

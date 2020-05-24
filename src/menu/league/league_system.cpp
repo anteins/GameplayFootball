@@ -8,13 +8,13 @@
 
 LeagueSystemPage::LeagueSystemPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData) : Gui2Page(windowManager, pageData) {
 
-  Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_system", 20, 20, 60, 3, "System");
-  this->AddView(title);
-  title->Show();
+	Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_system", 20, 20, 60, 3, "System");
+	this->AddView(title);
+	title->Show();
 
-  this->SetFocus();
+	this->SetFocus();
 
-  this->Show();
+	this->Show();
 }
 
 LeagueSystemPage::~LeagueSystemPage() {
@@ -24,13 +24,13 @@ LeagueSystemPage::~LeagueSystemPage() {
 
 LeagueSystemSavePage::LeagueSystemSavePage(Gui2WindowManager *windowManager, const Gui2PageData &pageData) : Gui2Page(windowManager, pageData) {
 
-  Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_system_save", 20, 20, 60, 3, "Save");
-  this->AddView(title);
-  title->Show();
+	Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_system_save", 20, 20, 60, 3, "Save");
+	this->AddView(title);
+	title->Show();
 
-  this->SetFocus();
+	this->SetFocus();
 
-  this->Show();
+	this->Show();
 }
 
 LeagueSystemSavePage::~LeagueSystemSavePage() {
@@ -40,13 +40,13 @@ LeagueSystemSavePage::~LeagueSystemSavePage() {
 
 LeagueSystemSettingsPage::LeagueSystemSettingsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData) : Gui2Page(windowManager, pageData) {
 
-  Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_system_settings", 20, 20, 60, 3, "Settings");
-  this->AddView(title);
-  title->Show();
+	Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_system_settings", 20, 20, 60, 3, "Settings");
+	this->AddView(title);
+	title->Show();
 
-  this->SetFocus();
+	this->SetFocus();
 
-  this->Show();
+	this->Show();
 }
 
 LeagueSystemSettingsPage::~LeagueSystemSettingsPage() {

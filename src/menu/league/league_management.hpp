@@ -20,31 +20,31 @@ using namespace blunted;
 
 class LeagueManagementPage : public Gui2Page {
 
-  public:
-    LeagueManagementPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueManagementPage();
+	public:
+		LeagueManagementPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueManagementPage();
 
-  protected:
+	protected:
 
 };
 
 class LeagueManagementContractsPage : public Gui2Page {
 
-  public:
-    LeagueManagementContractsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueManagementContractsPage();
+	public:
+		LeagueManagementContractsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueManagementContractsPage();
 
-  protected:
+	protected:
 
 };
 
 class LeagueManagementTransfersPage : public Gui2Page {
 
-  public:
-    LeagueManagementTransfersPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueManagementTransfersPage();
+	public:
+		LeagueManagementTransfersPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueManagementTransfersPage();
 
-  protected:
+	protected:
 
 };
 

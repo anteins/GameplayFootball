@@ -17,19 +17,19 @@ using namespace blunted;
 
 class CameraPage : public Gui2Page {
 
-  public:
-    CameraPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~CameraPage();
+	public:
+		CameraPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~CameraPage();
 
-    void OnClose();
+		void OnClose();
 
-    void UpdateCamera();
+		void UpdateCamera();
 
-  protected:
-    Gui2Slider *sliderZoom;
-    Gui2Slider *sliderHeight;
-    Gui2Slider *sliderFOV;
-    Gui2Slider *sliderAngleFactor;
+	protected:
+		Gui2Slider *sliderZoom;
+		Gui2Slider *sliderHeight;
+		Gui2Slider *sliderFOV;
+		Gui2Slider *sliderAngleFactor;
 
 };
 

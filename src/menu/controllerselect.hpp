@@ -19,21 +19,21 @@ using namespace blunted;
 
 class ControllerSelectPage : public Gui2Page {
 
-  public:
-    ControllerSelectPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~ControllerSelectPage();
+	public:
+		ControllerSelectPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~ControllerSelectPage();
 
-    void SetImagePositions();
+		void SetImagePositions();
 
-    virtual void Process();
-    virtual void ProcessKeyboardEvent(KeyboardEvent *event);
-    virtual void ProcessJoystickEvent(JoystickEvent *event);
-    virtual void ProcessWindowingEvent(WindowingEvent *event);
+		virtual void Process();
+		virtual void ProcessKeyboardEvent(KeyboardEvent *event);
+		virtual void ProcessJoystickEvent(JoystickEvent *event);
+		virtual void ProcessWindowingEvent(WindowingEvent *event);
 
-  protected:
-    std::vector<SideSelection> sides;
-    std::vector<unsigned long> delay;
-    bool inGame;
+	protected:
+		std::vector<SideSelection> sides;
+		std::vector<unsigned long> delay;
+		bool inGame;
 
 };
 

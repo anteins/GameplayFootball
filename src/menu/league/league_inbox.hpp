@@ -20,11 +20,11 @@ using namespace blunted;
 
 class LeagueInboxPage : public Gui2Page {
 
-  public:
-    LeagueInboxPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueInboxPage();
+	public:
+		LeagueInboxPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueInboxPage();
 
-  protected:
+	protected:
 
 };
 

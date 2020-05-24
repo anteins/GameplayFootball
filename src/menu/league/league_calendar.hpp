@@ -20,11 +20,11 @@ using namespace blunted;
 
 class LeagueCalendarPage : public Gui2Page {
 
-  public:
-    LeagueCalendarPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueCalendarPage();
+	public:
+		LeagueCalendarPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueCalendarPage();
 
-  protected:
+	protected:
 
 };
 

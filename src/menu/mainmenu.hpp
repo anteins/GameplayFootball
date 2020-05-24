@@ -24,100 +24,100 @@ using namespace blunted;
 // import structs
 
 struct CountryCompetition {
-  std::string country;
-  std::string competition;
+	std::string country;
+	std::string competition;
 };
 
 struct PlayerImport;
 
 struct Club {
-  int id;
-  std::string name;
-  std::string country;
-  std::string competition;
-  int reputation;
-  signed int balance;
-  std::string status;
+	int id;
+	std::string name;
+	std::string country;
+	std::string competition;
+	int reputation;
+	signed int balance;
+	std::string status;
 
-  std::vector<PlayerImport> players;
+	std::vector<PlayerImport> players;
 };
 
 // non-importables
 struct ClubData {
-  std::string formation_xml;
-  std::string tactics_xml;
-  std::string shortName;
-  std::string color1;
-  std::string color2;
+	std::string formation_xml;
+	std::string tactics_xml;
+	std::string shortName;
+	std::string color1;
+	std::string color2;
 };
 
 struct PlayerImport {
-  int id;
-  std::string firstName;
-  std::string lastName;
-  std::string nationality;
-  std::string position;
-  int age;
-  int value;
-  int clubID;
-  std::vector<Stat> profileStats;
-  float averageStat; // for sorting who is in starting 11, not used otherwise
-  float averageStartStat; // calculated back to 15 year old
+	int id;
+	std::string firstName;
+	std::string lastName;
+	std::string nationality;
+	std::string position;
+	int age;
+	int value;
+	int clubID;
+	std::vector<Stat> profileStats;
+	float averageStat; // for sorting who is in starting 11, not used otherwise
+	float averageStartStat; // calculated back to 15 year old
 };
 
 
 class IntroPage : public Gui2Page {
 
-  public:
-    IntroPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~IntroPage();
+	public:
+		IntroPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~IntroPage();
 
-    virtual void ProcessWindowingEvent(WindowingEvent *event);
-    virtual void ProcessKeyboardEvent(KeyboardEvent *event);
+		virtual void ProcessWindowingEvent(WindowingEvent *event);
+		virtual void ProcessKeyboardEvent(KeyboardEvent *event);
 
-  protected:
-    Gui2Image *bg;
+	protected:
+		Gui2Image *bg;
 
 };
 
 class OutroPage : public Gui2Page {
 
-  public:
-    OutroPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~OutroPage();
+	public:
+		OutroPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~OutroPage();
 
-    virtual void ProcessWindowingEvent(WindowingEvent *event);
-    virtual void ProcessKeyboardEvent(KeyboardEvent *event);
+		virtual void ProcessWindowingEvent(WindowingEvent *event);
+		virtual void ProcessKeyboardEvent(KeyboardEvent *event);
 
-  protected:
-    Gui2Image *bg;
+	protected:
+		Gui2Image *bg;
 
 };
 
 class MainMenuPage : public Gui2Page {
 
-  public:
-    MainMenuPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~MainMenuPage();
+	public:
+		MainMenuPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~MainMenuPage();
 
-    void GoControllerSelect();
-    void GoLeague();
-    void GoSettings();
-    void GoCredits();
-    void GoOutro();
-    bool GoImportDB();
-    //XX void Import_AgeValueStatsAdd(int age, int value);
-    //XX void Import_ProcessAgeValueStats();
+		void GoControllerSelect();
+		void GoLeague();
+		void GoSettings();
+		void GoCredits();
+		void GoOutro();
+		bool GoImportDB();
+		//XX void Import_AgeValueStatsAdd(int age, int value);
+		//XX void Import_ProcessAgeValueStats();
 
-    virtual void ProcessWindowingEvent(WindowingEvent *event);
+		virtual void ProcessWindowingEvent(WindowingEvent *event);
 
-  protected:
-    Gui2Grid *grid;
+	protected:
+		Gui2Grid *grid;
 
-    std::vector<Gui2Button*> buttons;
+		std::vector<Gui2Button*> buttons;
 
-    std::map < int, std::vector<int> > ageValues;
-    std::map < int, float > averageStatPerAge;
+		std::map < int, std::vector<int> > ageValues;
+		std::map < int, float > averageStatPerAge;
 
 };
 

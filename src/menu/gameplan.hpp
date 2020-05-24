@@ -27,49 +27,49 @@
 using namespace blunted;
 
 struct TacticsSlider {
-  int id;
-  Gui2Slider* widget;
-  std::string tacticName;
+	int id;
+	Gui2Slider* widget;
+	std::string tacticName;
 };
 
 class GamePlanPage : public Gui2Page {
 
-  public:
-    GamePlanPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~GamePlanPage();
+	public:
+		GamePlanPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~GamePlanPage();
 
-    void OnClose();
+		void OnClose();
 
-    virtual void Deactivate();
-    virtual void Reactivate();
+		virtual void Deactivate();
+		virtual void Reactivate();
 
-    Vector3 GetButtonColor(int id);
+		Vector3 GetButtonColor(int id);
 
-    void GoLineupMenu();
-    void LineupMenuOnClick(Gui2Button *button);
-    void SaveLineup();
+		void GoLineupMenu();
+		void LineupMenuOnClick(Gui2Button *button);
+		void SaveLineup();
 
-    void GoTacticsMenu();
-    void TacticsMenuOnChange(Gui2Slider *slider, int id);
-    void SaveTactics();
+		void GoTacticsMenu();
+		void TacticsMenuOnChange(Gui2Slider *slider, int id);
+		void SaveTactics();
 
-  protected:
-    int teamID;
+	protected:
+		int teamID;
 
-    Gui2PlanMap *map;
-    Gui2Grid *grid;
-    Gui2Grid *gridNav;
-    Gui2Button *buttonLineup;
-    Gui2Button *buttonTactics;
+		Gui2PlanMap *map;
+		Gui2Grid *grid;
+		Gui2Grid *gridNav;
+		Gui2Button *buttonLineup;
+		Gui2Button *buttonTactics;
 
-    TeamData *teamData;
+		TeamData *teamData;
 
-    GamePlanSubMenu *lineupMenu;
-    GamePlanSubMenu *tacticsMenu;
+		GamePlanSubMenu *lineupMenu;
+		GamePlanSubMenu *tacticsMenu;
 
-    std::vector<TacticsSlider> tacticsSliders;
+		std::vector<TacticsSlider> tacticsSliders;
 
-    Database *namedb;
+		Database *namedb;
 
 };
 

@@ -8,13 +8,13 @@
 
 LeagueManagementPage::LeagueManagementPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData) : Gui2Page(windowManager, pageData) {
 
-  Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_management", 20, 20, 60, 3, "Management");
-  this->AddView(title);
-  title->Show();
+	Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_management", 20, 20, 60, 3, "Management");
+	this->AddView(title);
+	title->Show();
 
-  this->SetFocus();
+	this->SetFocus();
 
-  this->Show();
+	this->Show();
 }
 
 LeagueManagementPage::~LeagueManagementPage() {
@@ -24,12 +24,12 @@ LeagueManagementPage::~LeagueManagementPage() {
 
 LeagueManagementContractsPage::LeagueManagementContractsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData) : Gui2Page(windowManager, pageData) {
 
-  Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_management_contracts", 20, 20, 60, 3, "Contracts");
-  this->AddView(title);
+	Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_management_contracts", 20, 20, 60, 3, "Contracts");
+	this->AddView(title);
 
-  this->SetFocus();
+	this->SetFocus();
 
-  this->Show();
+	this->Show();
 }
 
 LeagueManagementContractsPage::~LeagueManagementContractsPage() {
@@ -39,12 +39,12 @@ LeagueManagementContractsPage::~LeagueManagementContractsPage() {
 
 LeagueManagementTransfersPage::LeagueManagementTransfersPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData) : Gui2Page(windowManager, pageData) {
 
-  Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_management_transfers", 20, 20, 60, 3, "Transfers");
-  this->AddView(title);
+	Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_management_transfers", 20, 20, 60, 3, "Transfers");
+	this->AddView(title);
 
-  this->SetFocus();
+	this->SetFocus();
 
-  this->Show();
+	this->Show();
 }
 
 LeagueManagementTransfersPage::~LeagueManagementTransfersPage() {

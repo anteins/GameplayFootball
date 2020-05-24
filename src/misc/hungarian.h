@@ -11,14 +11,14 @@
  **
  ** Parts of the used code was originally provided by the 
  ** "Stanford GraphGase", but I made changes to this code.
- ** As asked by  the copyright node of the "Stanford GraphGase", 
+ ** As asked by	the copyright node of the "Stanford GraphGase", 
  ** I hereby proclaim that this file are *NOT* part of the
  ** "Stanford GraphGase" distrubition!
  **
  ** This file is distributed in the hope that it will be useful,
  ** but WITHOUT ANY WARRANTY; without even the implied 
  ** warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- ** PURPOSE.  
+ ** PURPOSE.	
  **
  ********************************************************************
  ********************************************************************/
@@ -29,29 +29,29 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  
+	
 #define HUNGARIAN_NOT_ASSIGNED 0 
 #define HUNGARIAN_ASSIGNED 1
 
-#define HUNGARIAN_MODE_MINIMIZE_COST   0
+#define HUNGARIAN_MODE_MINIMIZE_COST	 0
 #define HUNGARIAN_MODE_MAXIMIZE_UTIL 1
 
 
 typedef struct {
-  int num_rows;
-  int num_cols;
-  int** cost;
-  int** assignment;  
+	int num_rows;
+	int num_cols;
+	int** cost;
+	int** assignment;	
 } hungarian_problem_t;
 
 /** This method initialize the hungarian_problem structure and init 
- *  the  cost matrices (missing lines or columns are filled with 0).
- *  It returns the size of the quadratic(!) assignment matrix. **/
+ *	the	cost matrices (missing lines or columns are filled with 0).
+ *	It returns the size of the quadratic(!) assignment matrix. **/
 int hungarian_init(hungarian_problem_t* p, 
-		   int** cost_matrix, 
-		   int rows, 
-		   int cols, 
-		   int mode);
+			 int** cost_matrix, 
+			 int rows, 
+			 int cols, 
+			 int mode);
 
 // utility
 int** array_to_matrix(int* m, int rows, int cols);

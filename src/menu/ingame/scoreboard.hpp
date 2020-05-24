@@ -17,36 +17,36 @@ class Match;
 
 class Gui2ScoreBoard : public Gui2View {
 
-  public:
-    Gui2ScoreBoard(Gui2WindowManager *windowManager, Match *match);
-    virtual ~Gui2ScoreBoard();
+	public:
+		Gui2ScoreBoard(Gui2WindowManager *windowManager, Match *match);
+		virtual ~Gui2ScoreBoard();
 
-    void GetImages(std::vector < boost::intrusive_ptr<Image2D> > &target);
+		void GetImages(std::vector < boost::intrusive_ptr<Image2D> > &target);
 
-    virtual void Redraw();
+		virtual void Redraw();
 
-    void SetTimeStr(const std::string &timeStr);
-    void SetGoalCount(int teamID, int goalCount);
+		void SetTimeStr(const std::string &timeStr);
+		void SetGoalCount(int teamID, int goalCount);
 
-  protected:
-    boost::intrusive_ptr<Image2D> image;
+	protected:
+		boost::intrusive_ptr<Image2D> image;
 
-    int w, h;
-    float content_yOffset;
+		int w, h;
+		float content_yOffset;
 
-    Match *match;
+		Match *match;
 
-    std::string timeStr;
-    int goalCount[2];
+		std::string timeStr;
+		int goalCount[2];
 
-    Gui2Caption *timeCaption;
-    Gui2Caption *teamNameCaption[2];
-    Gui2Caption *goalCountCaption[2];
+		Gui2Caption *timeCaption;
+		Gui2Caption *teamNameCaption[2];
+		Gui2Caption *goalCountCaption[2];
 
-    Gui2Image *leagueLogo;
-    Gui2Image *teamLogo[2];
+		Gui2Image *leagueLogo;
+		Gui2Image *teamLogo[2];
 
-    Gui2Image *tvLogo;
+		Gui2Image *tvLogo;
 };
 
 #endif

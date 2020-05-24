@@ -14,32 +14,32 @@ using namespace blunted;
 
 class ReplayPage : public Gui2Page {
 
-  public:
-    ReplayPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~ReplayPage();
+	public:
+		ReplayPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~ReplayPage();
 
-    void OnClose();
-    void Autorun(int replayHistoryOffset_ms, bool stayInReplay);
+		void OnClose();
+		void Autorun(int replayHistoryOffset_ms, bool stayInReplay);
 
-  protected:
+	protected:
 
-    Match *match;
+		Match *match;
 
-    virtual void Process();
-    virtual void ProcessKeyboardEvent(KeyboardEvent *event);
-    virtual void ProcessJoystickEvent(JoystickEvent *event);
-    void ProcessInput(const Vector3 &direction, bool button1, bool button2);
+		virtual void Process();
+		virtual void ProcessKeyboardEvent(KeyboardEvent *event);
+		virtual void ProcessJoystickEvent(JoystickEvent *event);
+		void ProcessInput(const Vector3 &direction, bool button1, bool button2);
 
-    signed long actualTime_ms;
-    unsigned long minTime_ms;
-    unsigned long maxTime_ms;
+		signed long actualTime_ms;
+		unsigned long minTime_ms;
+		unsigned long maxTime_ms;
 
-    int cam;
-    int replayCamCount;
-    float modifierValue;
+		int cam;
+		int replayCamCount;
+		float modifierValue;
 
-    bool autoRun;
-    bool stayInReplay;
+		bool autoRun;
+		bool stayInReplay;
 
 };
 

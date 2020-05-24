@@ -20,20 +20,20 @@ using namespace blunted;
 
 class MatchPhasePage : public Gui2Page {
 
-  public:
-    MatchPhasePage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~MatchPhasePage();
+	public:
+		MatchPhasePage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~MatchPhasePage();
 
-    void GoGamePlan();
+		void GoGamePlan();
 
-    Gui2Button *buttonNext;
+		Gui2Button *buttonNext;
 
-    void ContinueGame();
-    virtual void ProcessWindowingEvent(WindowingEvent *event);
+		void ContinueGame();
+		virtual void ProcessWindowingEvent(WindowingEvent *event);
 
-  protected:
-    Gui2Grid *grid;
-    e_MatchPhase nextPhase;
+	protected:
+		Gui2Grid *grid;
+		e_MatchPhase nextPhase;
 
 };
 

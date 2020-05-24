@@ -15,24 +15,24 @@ using namespace blunted;
 
 class GamePage : public Gui2Page {
 
-  public:
-    GamePage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~GamePage();
+	public:
+		GamePage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~GamePage();
 
-    virtual void Process();
+		virtual void Process();
 
-    virtual void ProcessWindowingEvent(WindowingEvent *event);
-    virtual void ProcessKeyboardEvent(KeyboardEvent *event);
-    virtual void ProcessJoystickEvent(JoystickEvent *event);
+		virtual void ProcessWindowingEvent(WindowingEvent *event);
+		virtual void ProcessKeyboardEvent(KeyboardEvent *event);
+		virtual void ProcessJoystickEvent(JoystickEvent *event);
 
-    void GoShortReplayPage();
-    void GoExtendedReplayPage();
-    void GoMatchPhasePage();
-    void GoGameOverPage();
-    void OnCreatedMatch();
+		void GoShortReplayPage();
+		void GoExtendedReplayPage();
+		void GoMatchPhasePage();
+		void GoGameOverPage();
+		void OnCreatedMatch();
 
-  protected:
-    Match *match;
+	protected:
+		Match *match;
 
 };
 

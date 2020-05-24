@@ -19,17 +19,17 @@ using namespace blunted;
 
 class GameOverPage : public Gui2Page {
 
-  public:
-    GameOverPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~GameOverPage();
+	public:
+		GameOverPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~GameOverPage();
 
-    void GoRematch();
-    void GoMainMenu();
+		void GoRematch();
+		void GoMainMenu();
 
-    Gui2Button *buttonOkay;
+		Gui2Button *buttonOkay;
 
-  protected:
-    Match *match;
+	protected:
+		Match *match;
 
 };
 

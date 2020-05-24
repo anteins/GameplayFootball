@@ -8,13 +8,13 @@
 
 LeagueInboxPage::LeagueInboxPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData) : Gui2Page(windowManager, pageData) {
 
-  Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_inbox", 20, 20, 60, 3, "Inbox");
-  this->AddView(title);
-  title->Show();
+	Gui2Caption *title = new Gui2Caption(windowManager, "caption_league_inbox", 20, 20, 60, 3, "Inbox");
+	this->AddView(title);
+	title->Show();
 
-  this->SetFocus();
+	this->SetFocus();
 
-  this->Show();
+	this->Show();
 }
 
 LeagueInboxPage::~LeagueInboxPage() {

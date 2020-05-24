@@ -20,11 +20,11 @@ using namespace blunted;
 
 class LeagueForwardPage : public Gui2Page {
 
-  public:
-    LeagueForwardPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueForwardPage();
+	public:
+		LeagueForwardPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueForwardPage();
 
-  protected:
+	protected:
 
 };
 

@@ -18,15 +18,15 @@ using namespace blunted;
 
 class VisualOptionsPage : public Gui2Page {
 
-  public:
-    VisualOptionsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~VisualOptionsPage();
+	public:
+		VisualOptionsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~VisualOptionsPage();
 
-  protected:
-    void OnRandomizeSun();
-    void OnChangeKit(Gui2Pulldown *pulldown);
+	protected:
+		void OnRandomizeSun();
+		void OnChangeKit(Gui2Pulldown *pulldown);
 
-    Gui2Pulldown *kitSelectionPulldown[2];
+		Gui2Pulldown *kitSelectionPulldown[2];
 
 };
 

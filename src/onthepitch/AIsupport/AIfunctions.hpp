@@ -18,12 +18,12 @@ class Player;
 #include "../../data/teamdata.hpp"
 
 struct TimeNeeded {
-  TimeNeeded() {
-    usual_ms = 0;
-    optimistic_ms = 0;
-  }
-  unsigned int usual_ms;
-  unsigned int optimistic_ms;
+	TimeNeeded() {
+		usual_ms = 0;
+		optimistic_ms = 0;
+	}
+	unsigned int usual_ms;
+	unsigned int optimistic_ms;
 };
 
 Vector3 AI_GetAdaptedInitialPos(Match *match, const Vector3 &initialPosition, Vector3 focusPoint = Vector3(0, 0, -100.0), float ballMagnetDistance = 50.0, float ballMagnetDistancePow = 1.5);

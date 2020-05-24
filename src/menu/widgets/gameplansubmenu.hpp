@@ -16,30 +16,30 @@ using namespace blunted;
 
 class GamePlanSubMenu : public Gui2View {
 
-  public:
-    GamePlanSubMenu(Gui2WindowManager *windowManager, Gui2View *parentFocus, Gui2Grid *mainGrid, const std::string &name);
-    virtual ~GamePlanSubMenu();
+	public:
+		GamePlanSubMenu(Gui2WindowManager *windowManager, Gui2View *parentFocus, Gui2Grid *mainGrid, const std::string &name);
+		virtual ~GamePlanSubMenu();
 
-    void OnClose();
+		void OnClose();
 
-    Gui2Button *AddButton(const std::string &buttonName, const std::string &buttonCaption, int row, int column, Vector3 color);
-    Gui2Slider *AddSlider(const std::string &sliderName, const std::string &sliderCaption, int row, int column);
+		Gui2Button *AddButton(const std::string &buttonName, const std::string &buttonCaption, int row, int column, Vector3 color);
+		Gui2Slider *AddSlider(const std::string &sliderName, const std::string &sliderCaption, int row, int column);
 
-    // returns first toggled button in grid
-    Gui2Button *GetToggledButton(Gui2Button *except);
+		// returns first toggled button in grid
+		Gui2Button *GetToggledButton(Gui2Button *except);
 
-    Gui2Grid *GetGrid() { return grid; }
+		Gui2Grid *GetGrid() { return grid; }
 
-    const std::vector<Gui2Button*> &GetAllButtons() { return allButtons; }
+		const std::vector<Gui2Button*> &GetAllButtons() { return allButtons; }
 
-    void ProcessWindowingEvent(WindowingEvent *event);
+		void ProcessWindowingEvent(WindowingEvent *event);
 
-  protected:
-    Gui2Grid *grid;
-    Gui2Grid *mainGrid; // root menu's grid
-    Gui2View *parentFocus;
+	protected:
+		Gui2Grid *grid;
+		Gui2Grid *mainGrid; // root menu's grid
+		Gui2View *parentFocus;
 
-    std::vector<Gui2Button*> allButtons; // cache for GetToggledbutton()
+		std::vector<Gui2Button*> allButtons; // cache for GetToggledbutton()
 
 };
 

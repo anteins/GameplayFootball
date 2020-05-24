@@ -18,16 +18,16 @@ using namespace blunted;
 
 class LoadingMatchPage : public Gui2Page {
 
-  public:
-    LoadingMatchPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LoadingMatchPage();
+	public:
+		LoadingMatchPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LoadingMatchPage();
 
-    virtual void Process();
+		virtual void Process();
 
-    void Close();
+		void Close();
 
-  protected:
-    bool sentStartGameSignal;
+	protected:
+		bool sentStartGameSignal;
 
 };
 

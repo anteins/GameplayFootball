@@ -14,28 +14,28 @@ class Match;
 
 namespace blunted {
 
-  class Gui2Radar : public Gui2View {
+	class Gui2Radar : public Gui2View {
 
-    public:
-      Gui2Radar(Gui2WindowManager *windowManager, const std::string &name, float x_percent, float y_percent, float width_percent, float height_percent, Match *match, const Vector3 &color1_1, const Vector3 &color1_2, const Vector3 &color2_1, const Vector3 &color2_2);
-      virtual ~Gui2Radar();
+		public:
+			Gui2Radar(Gui2WindowManager *windowManager, const std::string &name, float x_percent, float y_percent, float width_percent, float height_percent, Match *match, const Vector3 &color1_1, const Vector3 &color1_2, const Vector3 &color2_1, const Vector3 &color2_2);
+			virtual ~Gui2Radar();
 
-      void ReloadAvatars(int teamID, unsigned int playerCount);
+			void ReloadAvatars(int teamID, unsigned int playerCount);
 
-      virtual void Process();
-      virtual void Put();
+			virtual void Process();
+			virtual void Put();
 
-    protected:
-      Gui2Image *bg;
-      std::vector<Gui2Image*> team1avatars;
-      std::vector<Gui2Image*> team2avatars;
-      Gui2Image* ball;
+		protected:
+			Gui2Image *bg;
+			std::vector<Gui2Image*> team1avatars;
+			std::vector<Gui2Image*> team2avatars;
+			Gui2Image* ball;
 
-      Match *match;
+			Match *match;
 
-      Vector3 color1_1, color1_2, color2_1, color2_2;
+			Vector3 color1_1, color1_2, color2_1, color2_2;
 
-  };
+	};
 
 }
 

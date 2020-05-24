@@ -14,221 +14,221 @@
 
 void UploadFullbodyModel::Update() 
 {
-  for (unsigned int i = 0; i < geometryToUpload.size(); i++) 
-  {
-    geometryToUpload.at(i)->OnUpdateGeometryData(false);
-  }
+	for (unsigned int i = 0; i < geometryToUpload.size(); i++) 
+	{
+		geometryToUpload.at(i)->OnUpdateGeometryData(false);
+	}
 }
 
 GameTask::GameTask() 
 {
 
-  match = 0;
-  menuScene = 0;
+	match = 0;
+	menuScene = 0;
 
-  // prohibits deletion of the scene before this object is dead
-  scene3D = GetScene3D();
+	// prohibits deletion of the scene before this object is dead
+	scene3D = GetScene3D();
 }
 
 GameTask::~GameTask() 
 {
-  if (Verbose()) printf("exiting gametask.. ");
-  Exit();
-  if (Verbose()) printf("done\n");
+	if (Verbose()) printf("exiting gametask.. ");
+	Exit();
+	if (Verbose()) printf("done\n");
 }
 
 void GameTask::Exit() 
 {
 
-  Action(e_GameTaskMessage_StopMatch);
-  Action(e_GameTaskMessage_StopMenuScene);
+	Action(e_GameTaskMessage_StopMatch);
+	Action(e_GameTaskMessage_StopMenuScene);
 
-  ResourceManagerPool::GetInstance().CleanUp();
+	ResourceManagerPool::GetInstance().CleanUp();
 
-  scene3D.reset();
+	scene3D.reset();
 }
 
 void GameTask::Action(e_GameTaskMessage message) {
 
-  switch (message) {
+	switch (message) {
 
-    case e_GameTaskMessage_StartMatch:
-      {
-        if (Verbose()) printf("*gametaskmessage: starting match\n");
+		case e_GameTaskMessage_StartMatch:
+			{
+				if (Verbose()) printf("*gametaskmessage: starting match\n");
 
-        GetGraphicsSystem()->getPhaseMutex.lock();
-        MatchData *matchData = GetMenuTask()->GetMatchData();
-        assert(matchData);
-        Match *tmpMatch = new Match(matchData, GetControllers());
+				GetGraphicsSystem()->getPhaseMutex.lock();
+				MatchData *matchData = GetMenuTask()->GetMatchData();
+				assert(matchData);
+				Match *tmpMatch = new Match(matchData, GetControllers());
 
-        matchLifetimeMutex.lock();
-        matchPutBufferMutex.lock();
-        assert(!match);
-        match = tmpMatch;
-        GetScheduler()->ResetTaskSequenceTime("game");
-        matchPutBufferMutex.unlock();
-        matchLifetimeMutex.unlock();
-        GetGraphicsSystem()->getPhaseMutex.unlock();
-      }
-      break;
+				matchLifetimeMutex.lock();
+				matchPutBufferMutex.lock();
+				assert(!match);
+				match = tmpMatch;
+				GetScheduler()->ResetTaskSequenceTime("game");
+				matchPutBufferMutex.unlock();
+				matchLifetimeMutex.unlock();
+				GetGraphicsSystem()->getPhaseMutex.unlock();
+			}
+			break;
 
-    case e_GameTaskMessage_StopMatch:
-      if (Verbose()) printf("*gametaskmessage: stopping match\n");
+		case e_GameTaskMessage_StopMatch:
+			if (Verbose()) printf("*gametaskmessage: stopping match\n");
 
-      GetGraphicsSystem()->getPhaseMutex.lock();
-      matchLifetimeMutex.lock();
-      matchPutBufferMutex.lock();
-      //assert(match);
-      if (match) {
-        match->Exit();
-        delete match;
-        match = 0;
-      }
-      matchPutBufferMutex.unlock();
-      matchLifetimeMutex.unlock();
-      GetGraphicsSystem()->getPhaseMutex.unlock();
-      break;
+			GetGraphicsSystem()->getPhaseMutex.lock();
+			matchLifetimeMutex.lock();
+			matchPutBufferMutex.lock();
+			//assert(match);
+			if (match) {
+				match->Exit();
+				delete match;
+				match = 0;
+			}
+			matchPutBufferMutex.unlock();
+			matchLifetimeMutex.unlock();
+			GetGraphicsSystem()->getPhaseMutex.unlock();
+			break;
 
-    case e_GameTaskMessage_StartMenuScene:
-      if (Verbose()) printf("*gametaskmessage: starting menu scene\n");
+		case e_GameTaskMessage_StartMenuScene:
+			if (Verbose()) printf("*gametaskmessage: starting menu scene\n");
 
-      GetGraphicsSystem()->getPhaseMutex.lock();
-      menuSceneLifetimeMutex.lock();
-      assert(!menuScene);
-      menuScene = new MenuScene();
-      GetScheduler()->ResetTaskSequenceTime("game");
-      menuSceneLifetimeMutex.unlock();
-      GetGraphicsSystem()->getPhaseMutex.unlock();
-      break;
+			GetGraphicsSystem()->getPhaseMutex.lock();
+			menuSceneLifetimeMutex.lock();
+			assert(!menuScene);
+			menuScene = new MenuScene();
+			GetScheduler()->ResetTaskSequenceTime("game");
+			menuSceneLifetimeMutex.unlock();
+			GetGraphicsSystem()->getPhaseMutex.unlock();
+			break;
 
-    case e_GameTaskMessage_StopMenuScene:
-      if (Verbose()) printf("*gametaskmessage: stopping menu scene\n");
+		case e_GameTaskMessage_StopMenuScene:
+			if (Verbose()) printf("*gametaskmessage: stopping menu scene\n");
 
-      GetGraphicsSystem()->getPhaseMutex.lock();
-      menuSceneLifetimeMutex.lock();
-      //assert(menuScene);
-      if (menuScene) {
-        delete menuScene;
-        menuScene = 0;
-      }
-      menuSceneLifetimeMutex.unlock();
-      GetGraphicsSystem()->getPhaseMutex.unlock();
-      break;
+			GetGraphicsSystem()->getPhaseMutex.lock();
+			menuSceneLifetimeMutex.lock();
+			//assert(menuScene);
+			if (menuScene) {
+				delete menuScene;
+				menuScene = 0;
+			}
+			menuSceneLifetimeMutex.unlock();
+			GetGraphicsSystem()->getPhaseMutex.unlock();
+			break;
 
-    default:
-      break;
+		default:
+			break;
 
-  }
+	}
 }
 
 void GameTask::GetPhase() {
 
-  // process messageQueue
-  if (match) match->Get();
-  if (menuScene) menuScene->Get();
+	// process messageQueue
+	if (match) match->Get();
+	if (menuScene) menuScene->Get();
 }
 
 void GameTask::ProcessPhase() {
 
-  for (unsigned int i = 0; i < GetControllers().size(); i++) {
-    GetControllers().at(i)->Process();
-  }
+	for (unsigned int i = 0; i < GetControllers().size(); i++) {
+		GetControllers().at(i)->Process();
+	}
 
-  if (match) {
-    match->Process();
+	if (match) {
+		match->Process();
 
-    matchPutBufferMutex.lock();
-    match->PreparePutBuffers();
-    matchPutBufferMutex.unlock();
-  }
+		matchPutBufferMutex.lock();
+		match->PreparePutBuffers();
+		matchPutBufferMutex.unlock();
+	}
 
-  if (menuScene) {
-    menuScene->Process();
-  }
+	if (menuScene) {
+		menuScene->Process();
+	}
 
 }
 
 void GameTask::PutPhase() {
 
-  std::vector < boost::intrusive_ptr<UpdateFullbodyModel> > updateFullbodyModels;
-  std::vector < boost::intrusive_ptr<UploadFullbodyModel> > uploadFullbodyModels;
-  std::vector<PlayerBase*> playersToProcess;
+	std::vector < boost::intrusive_ptr<UpdateFullbodyModel> > updateFullbodyModels;
+	std::vector < boost::intrusive_ptr<UploadFullbodyModel> > uploadFullbodyModels;
+	std::vector<PlayerBase*> playersToProcess;
 
-  matchLifetimeMutex.lock();
+	matchLifetimeMutex.lock();
 
-  if (match) {
+	if (match) {
 
-    matchPutBufferMutex.lock();
-    match->FetchPutBuffers();
-    matchPutBufferMutex.unlock();
+		matchPutBufferMutex.lock();
+		match->FetchPutBuffers();
+		matchPutBufferMutex.unlock();
 
-    match->Put();
+		match->Put();
 
-    std::vector<Player*> players;
-    match->GetActiveTeamPlayers(0, players);
-    match->GetActiveTeamPlayers(1, players);
-    std::vector<PlayerBase*> officials;
-    match->GetOfficialPlayers(officials);
+		std::vector<Player*> players;
+		match->GetActiveTeamPlayers(0, players);
+		match->GetActiveTeamPlayers(1, players);
+		std::vector<PlayerBase*> officials;
+		match->GetOfficialPlayers(officials);
 
-    for (unsigned int i = 0; i < players.size(); i++) {
-      if (match->GetPause() || players.at(i)->NeedsModelUpdate()) playersToProcess.push_back(players.at(i));
-    }
-    for (unsigned int i = 0; i < officials.size(); i++) {
-      playersToProcess.push_back(officials.at(i));
-    }
+		for (unsigned int i = 0; i < players.size(); i++) {
+			if (match->GetPause() || players.at(i)->NeedsModelUpdate()) playersToProcess.push_back(players.at(i));
+		}
+		for (unsigned int i = 0; i < officials.size(); i++) {
+			playersToProcess.push_back(officials.at(i));
+		}
 
-    //printf("%i players, %i threads.\n", playersToProcess.size(), threadCount);
-    unsigned int playersPerThread = 7;
-    unsigned int playerStartIndex = 0;
-    while (playerStartIndex < playersToProcess.size()) {
-      std::vector<PlayerBase*> playersToProcessInThread;
-      for (unsigned int p = 0; p < playersPerThread; p++) {
-        if (playerStartIndex + p >= playersToProcess.size()) break;
-        playersToProcessInThread.push_back(playersToProcess.at(playerStartIndex + p));
-        //printf("adding player %i\n", playerStartIndex + p);
-        // unthreaded version: playersToProcess.at(playerStartIndex + p)->UpdateFullbodyModel();
-      }
-      playerStartIndex += playersPerThread;
+		//printf("%i players, %i threads.\n", playersToProcess.size(), threadCount);
+		unsigned int playersPerThread = 7;
+		unsigned int playerStartIndex = 0;
+		while (playerStartIndex < playersToProcess.size()) {
+			std::vector<PlayerBase*> playersToProcessInThread;
+			for (unsigned int p = 0; p < playersPerThread; p++) {
+				if (playerStartIndex + p >= playersToProcess.size()) break;
+				playersToProcessInThread.push_back(playersToProcess.at(playerStartIndex + p));
+				//printf("adding player %i\n", playerStartIndex + p);
+				// unthreaded version: playersToProcess.at(playerStartIndex + p)->UpdateFullbodyModel();
+			}
+			playerStartIndex += playersPerThread;
 
-      boost::intrusive_ptr<UpdateFullbodyModel> updateFullbodyModel(new UpdateFullbodyModel(playersToProcessInThread));
-      updateFullbodyModels.push_back(updateFullbodyModel);
-      TaskManager::GetInstance().EnqueueWork(updateFullbodyModel, true);
-    }
+			boost::intrusive_ptr<UpdateFullbodyModel> updateFullbodyModel(new UpdateFullbodyModel(playersToProcessInThread));
+			updateFullbodyModels.push_back(updateFullbodyModel);
+			TaskManager::GetInstance().EnqueueWork(updateFullbodyModel, true);
+		}
 
-    match->UploadGoalNetting(); // won't this block the whole process thing too? (opengl busy == wait, while mutex locked == no process)
+		match->UploadGoalNetting(); // won't this block the whole process thing too? (opengl busy == wait, while mutex locked == no process)
 
-  }
+	}
 
 
-  for (unsigned int t = 0; t < updateFullbodyModels.size(); t++) {
-    updateFullbodyModels.at(t)->Wait();
-  }
+	for (unsigned int t = 0; t < updateFullbodyModels.size(); t++) {
+		updateFullbodyModels.at(t)->Wait();
+	}
 
-  if (match) {
+	if (match) {
 
-    unsigned int playersPerThread = 7;
-    unsigned int playerStartIndex = 0;
-    while (playerStartIndex < playersToProcess.size()) {
-      std::vector < boost::intrusive_ptr<Geometry> > geometryToUploadInThread;
-      for (unsigned int p = 0; p < playersPerThread; p++) {
-        if (playerStartIndex + p >= playersToProcess.size()) break;
-        geometryToUploadInThread.push_back(boost::static_pointer_cast<Geometry>(playersToProcess.at(playerStartIndex + p)->GetFullbodyNode()->GetObject("fullbody")));
-      }
-      playerStartIndex += playersPerThread;
+		unsigned int playersPerThread = 7;
+		unsigned int playerStartIndex = 0;
+		while (playerStartIndex < playersToProcess.size()) {
+			std::vector < boost::intrusive_ptr<Geometry> > geometryToUploadInThread;
+			for (unsigned int p = 0; p < playersPerThread; p++) {
+				if (playerStartIndex + p >= playersToProcess.size()) break;
+				geometryToUploadInThread.push_back(boost::static_pointer_cast<Geometry>(playersToProcess.at(playerStartIndex + p)->GetFullbodyNode()->GetObject("fullbody")));
+			}
+			playerStartIndex += playersPerThread;
 
-      boost::intrusive_ptr<UploadFullbodyModel> uploadFullbodyModel(new UploadFullbodyModel(geometryToUploadInThread));
-      uploadFullbodyModels.push_back(uploadFullbodyModel);
-      TaskManager::GetInstance().EnqueueWork(uploadFullbodyModel, true);
+			boost::intrusive_ptr<UploadFullbodyModel> uploadFullbodyModel(new UploadFullbodyModel(geometryToUploadInThread));
+			uploadFullbodyModels.push_back(uploadFullbodyModel);
+			TaskManager::GetInstance().EnqueueWork(uploadFullbodyModel, true);
 
-      //working on: maybe we need to use the gfx system get pointer somewhere here? too tired to analyse this now :p
-    }
+			//working on: maybe we need to use the gfx system get pointer somewhere here? too tired to analyse this now :p
+		}
 
-  } // !match
+	} // !match
 
-  matchLifetimeMutex.unlock();
+	matchLifetimeMutex.unlock();
 
-  menuSceneLifetimeMutex.lock();
-  if (menuScene) menuScene->Put();
-  menuSceneLifetimeMutex.unlock();
+	menuSceneLifetimeMutex.lock();
+	if (menuScene) menuScene->Put();
+	menuSceneLifetimeMutex.unlock();
 
 }

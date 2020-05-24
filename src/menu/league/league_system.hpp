@@ -20,31 +20,31 @@ using namespace blunted;
 
 class LeagueSystemPage : public Gui2Page {
 
-  public:
-    LeagueSystemPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueSystemPage();
+	public:
+		LeagueSystemPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueSystemPage();
 
-  protected:
+	protected:
 
 };
 
 class LeagueSystemSavePage : public Gui2Page {
 
-  public:
-    LeagueSystemSavePage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueSystemSavePage();
+	public:
+		LeagueSystemSavePage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueSystemSavePage();
 
-  protected:
+	protected:
 
 };
 
 class LeagueSystemSettingsPage : public Gui2Page {
 
-  public:
-    LeagueSystemSettingsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueSystemSettingsPage();
+	public:
+		LeagueSystemSettingsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueSystemSettingsPage();
 
-  protected:
+	protected:
 
 };
 

@@ -13,35 +13,35 @@ using namespace blunted;
 
 class HIDGamepad : public IHIDevice {
 
-  public:
-    HIDGamepad(int gamepadID);
-    virtual ~HIDGamepad();
+	public:
+		HIDGamepad(int gamepadID);
+		virtual ~HIDGamepad();
 
-    virtual void LoadConfig();
-    virtual void SaveConfig();
+		virtual void LoadConfig();
+		virtual void SaveConfig();
 
-    virtual void Process();
+		virtual void Process();
 
-    virtual bool GetButton(e_ButtonFunction buttonFunction);
-    virtual float GetButtonValue(e_ButtonFunction buttonFunction); // for analog support
-    virtual void SetButton(e_ButtonFunction buttonFunction, bool state);
-    virtual bool GetPreviousButtonState(e_ButtonFunction buttonFunction);
-    virtual Vector3 GetDirection();
+		virtual bool GetButton(e_ButtonFunction buttonFunction);
+		virtual float GetButtonValue(e_ButtonFunction buttonFunction); // for analog support
+		virtual void SetButton(e_ButtonFunction buttonFunction, bool state);
+		virtual bool GetPreviousButtonState(e_ButtonFunction buttonFunction);
+		virtual Vector3 GetDirection();
 
-    e_ControllerButton GetFunctionMapping(e_ButtonFunction buttonFunction) { boost::mutex::scoped_lock blah(mutex); return functionMapping[buttonFunction]; }
-    void SetFunctionMapping(e_ButtonFunction buttonFunction, e_ControllerButton controllerButton) { boost::mutex::scoped_lock blah(mutex); functionMapping[buttonFunction] = controllerButton; }
-    signed int GetControllerMapping(e_ControllerButton controllerButton) { boost::mutex::scoped_lock blah(mutex); return controllerMapping[controllerButton]; }
-    void SetControllerMapping(e_ControllerButton controllerButton, signed int id) { boost::mutex::scoped_lock blah(mutex); controllerMapping[controllerButton] = id; }
+		e_ControllerButton GetFunctionMapping(e_ButtonFunction buttonFunction) { boost::mutex::scoped_lock blah(mutex); return functionMapping[buttonFunction]; }
+		void SetFunctionMapping(e_ButtonFunction buttonFunction, e_ControllerButton controllerButton) { boost::mutex::scoped_lock blah(mutex); functionMapping[buttonFunction] = controllerButton; }
+		signed int GetControllerMapping(e_ControllerButton controllerButton) { boost::mutex::scoped_lock blah(mutex); return controllerMapping[controllerButton]; }
+		void SetControllerMapping(e_ControllerButton controllerButton, signed int id) { boost::mutex::scoped_lock blah(mutex); controllerMapping[controllerButton] = id; }
 
-    int GetGamepadID() { return gamepadID; }
+		int GetGamepadID() { return gamepadID; }
 
-  protected:
-    int gamepadID;
-    float controllerButtonState[e_ControllerButton_Size];
-    float previousControllerButtonState[e_ControllerButton_Size];
+	protected:
+		int gamepadID;
+		float controllerButtonState[e_ControllerButton_Size];
+		float previousControllerButtonState[e_ControllerButton_Size];
 
-    e_ControllerButton functionMapping[e_ButtonFunction_Size];
-    signed int controllerMapping[e_ControllerButton_Size];
+		e_ControllerButton functionMapping[e_ButtonFunction_Size];
+		signed int controllerMapping[e_ControllerButton_Size];
 
 };
 

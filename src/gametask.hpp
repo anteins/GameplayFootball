@@ -21,83 +21,83 @@ using namespace blunted;
 
 class UpdateFullbodyModel : public Command {
 
-  public:
-    UpdateFullbodyModel(std::vector<PlayerBase*> playersToProcess) : Command("UpdateFullBodyModel"), playersToProcess(playersToProcess) {};
-    virtual ~UpdateFullbodyModel() {};
+	public:
+		UpdateFullbodyModel(std::vector<PlayerBase*> playersToProcess) : Command("UpdateFullBodyModel"), playersToProcess(playersToProcess) {};
+		virtual ~UpdateFullbodyModel() {};
 
-  protected:
-    void Update() {
-      for (unsigned int i = 0; i < playersToProcess.size(); i++) {
-        playersToProcess.at(i)->UpdateFullbodyModel();
-      }
-    }
+	protected:
+		void Update() {
+			for (unsigned int i = 0; i < playersToProcess.size(); i++) {
+				playersToProcess.at(i)->UpdateFullbodyModel();
+			}
+		}
 
-    virtual bool Execute(void *caller = NULL) {
-      Update();
-      return true;
-    }
+		virtual bool Execute(void *caller = NULL) {
+			Update();
+			return true;
+		}
 
-    std::vector<PlayerBase*> playersToProcess;
+		std::vector<PlayerBase*> playersToProcess;
 
 };
 
 class UploadFullbodyModel : public Command {
 
-  public:
-    UploadFullbodyModel(std::vector < boost::intrusive_ptr<Geometry> > geometryToUpload) : Command("UploadFullBodyModel"), geometryToUpload(geometryToUpload) {};
-    virtual ~UploadFullbodyModel() {};
+	public:
+		UploadFullbodyModel(std::vector < boost::intrusive_ptr<Geometry> > geometryToUpload) : Command("UploadFullBodyModel"), geometryToUpload(geometryToUpload) {};
+		virtual ~UploadFullbodyModel() {};
 
-  protected:
-    void Update();
+	protected:
+		void Update();
 
-    virtual bool Execute(void *caller = NULL) {
-      Update();
-      return true;
-    }
+		virtual bool Execute(void *caller = NULL) {
+			Update();
+			return true;
+		}
 
-    std::vector < boost::intrusive_ptr<Geometry> > geometryToUpload; // use shared pointers to geometry objects instead, to assure lifetime
+		std::vector < boost::intrusive_ptr<Geometry> > geometryToUpload; // use shared pointers to geometry objects instead, to assure lifetime
 
 };
 
 enum e_GameTaskMessage {
-  e_GameTaskMessage_StartMatch,
-  e_GameTaskMessage_StopMatch,
-  e_GameTaskMessage_StartMenuScene,
-  e_GameTaskMessage_StopMenuScene,
-  e_GameTaskMessage_None
+	e_GameTaskMessage_StartMatch,
+	e_GameTaskMessage_StopMatch,
+	e_GameTaskMessage_StartMenuScene,
+	e_GameTaskMessage_StopMenuScene,
+	e_GameTaskMessage_None
 };
 
 class GameTask : public IUserTask {
 
-  public:
-    GameTask();
-    virtual ~GameTask();
+	public:
+		GameTask();
+		virtual ~GameTask();
 
-    void Exit();
+		void Exit();
 
-    void Action(e_GameTaskMessage message);
+		void Action(e_GameTaskMessage message);
 
-    virtual void GetPhase();
-    virtual void ProcessPhase();
-    virtual void PutPhase();
+		virtual void GetPhase();
+		virtual void ProcessPhase();
+		virtual void PutPhase();
 
-    Match *GetMatch() { return match; }
-    MenuScene *GetMenuScene() { return menuScene; }
+		Match *GetMatch() { return match; }
+		MenuScene *GetMenuScene() { return menuScene; }
 
-    MessageQueue<e_GameTaskMessage> messageQueue;
+		MessageQueue<e_GameTaskMessage> messageQueue;
 
-    virtual std::string GetName() const { return "game"; }
+		virtual std::string GetName() const { return "game"; }
 
-    boost::mutex matchLifetimeMutex;
+		boost::mutex matchLifetimeMutex;
 
-  protected:
-    Match *match;
-    MenuScene *menuScene;
+	protected:
+		Match *match;
+		MenuScene *menuScene;
 
-    boost::timed_mutex matchPutBufferMutex;
-    boost::mutex menuSceneLifetimeMutex;
+		boost::timed_mutex matchPutBufferMutex;
+		boost::mutex menuSceneLifetimeMutex;
 
-    boost::shared_ptr<Scene3D> scene3D;
+		boost::shared_ptr<Scene3D> scene3D;
 
 };
 

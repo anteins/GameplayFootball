@@ -15,38 +15,38 @@ class Match;
 
 namespace blunted {
 
-  class Gui2PlanMap : public Gui2View {
+	class Gui2PlanMap : public Gui2View {
 
-    public:
-      Gui2PlanMap(Gui2WindowManager *windowManager, const std::string &name, float x_percent, float y_percent, float width_percent, float height_percent, TeamData *teamData);
-      virtual ~Gui2PlanMap();
+		public:
+			Gui2PlanMap(Gui2WindowManager *windowManager, const std::string &name, float x_percent, float y_percent, float width_percent, float height_percent, TeamData *teamData);
+			virtual ~Gui2PlanMap();
 
-      virtual void Process();
+			virtual void Process();
 
-    protected:
-      boost::intrusive_ptr<Image2D> image;
+		protected:
+			boost::intrusive_ptr<Image2D> image;
 
-      int w, h;
+			int w, h;
 
-      SDL_Surface *bg;
+			SDL_Surface *bg;
 
-      TeamData *teamData;
+			TeamData *teamData;
 
-  };
+	};
 
-  class Gui2PlanMapEntry : public Gui2View {
+	class Gui2PlanMapEntry : public Gui2View {
 
-    public:
-      Gui2PlanMapEntry(Gui2WindowManager *windowManager, const std::string &name, float x_percent, float y_percent, float width_percent, float height_percent, const std::string &roleName, const std::string &playerName);
-      virtual ~Gui2PlanMapEntry();
+		public:
+			Gui2PlanMapEntry(Gui2WindowManager *windowManager, const std::string &name, float x_percent, float y_percent, float width_percent, float height_percent, const std::string &roleName, const std::string &playerName);
+			virtual ~Gui2PlanMapEntry();
 
-    protected:
-      SDL_Surface *zoomedImage;
+		protected:
+			SDL_Surface *zoomedImage;
 
-      Gui2Caption *roleNameCaption; // formerly: captionView
-      Gui2Caption *playerNameCaption;
+			Gui2Caption *roleNameCaption; // formerly: captionView
+			Gui2Caption *playerNameCaption;
 
-  };
+	};
 
 }
 

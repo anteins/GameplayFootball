@@ -15,7 +15,7 @@ using namespace blunted;
 #define BM (SAMPLE_SIZE-1)
 
 #define N 0x1000
-#define NP 12   /* 2^N */
+#define NP 12	 /* 2^N */
 #define NM 0xfff
 
 #define s_curve(t) ( t * t * (3.0f - 2.0f * t) )
@@ -36,8 +36,8 @@ float Perlin::noise1(float arg)
 	vec[0] = arg;
 
 	if (mStart)
-  {
-    srand(mSeed);
+	{
+		srand(mSeed);
 		mStart = false;
 		init();
 	}
@@ -59,8 +59,8 @@ float Perlin::noise2(float vec[2])
 	int i, j;
 
 	if (mStart)
-  {
-    srand(mSeed);
+	{
+		srand(mSeed);
 		mStart = false;
 		init();
 	}
@@ -79,7 +79,7 @@ float Perlin::noise2(float vec[2])
 	sx = s_curve(rx0);
 	sy = s_curve(ry0);
 
-  #define at2(rx,ry) ( rx * q[0] + ry * q[1] )
+	#define at2(rx,ry) ( rx * q[0] + ry * q[1] )
 
 	q = g2[b00];
 	u = at2(rx0,ry0);
@@ -103,8 +103,8 @@ float Perlin::noise3(float vec[3])
 	int i, j;
 
 	if (mStart)
-  {
-    srand(mSeed);
+	{
+		srand(mSeed);
 		mStart = false;
 		init();
 	}
@@ -121,11 +121,11 @@ float Perlin::noise3(float vec[3])
 	b01 = p[ i + by1 ];
 	b11 = p[ j + by1 ];
 
-	t  = s_curve(rx0);
+	t	= s_curve(rx0);
 	sy = s_curve(ry0);
 	sz = s_curve(rz0);
 
-  #define at3(rx,ry,rz) ( rx * q[0] + ry * q[1] + rz * q[2] )
+	#define at3(rx,ry,rz) ( rx * q[0] + ry * q[1] + rz * q[2] )
 
 	q = g3[ b00 + bz0 ] ; u = at3(rx0,ry0,rz0);
 	q = g3[ b10 + bz0 ] ; v = at3(rx1,ry0,rz0);
@@ -155,7 +155,7 @@ void Perlin::normalize2(float v[2])
 	float s;
 
 	s = (float)sqrt(v[0] * v[0] + v[1] * v[1]);
-  s = 1.0f/s;
+	s = 1.0f/s;
 	v[0] = v[0] * s;
 	v[1] = v[1] * s;
 }
@@ -165,7 +165,7 @@ void Perlin::normalize3(float v[3])
 	float s;
 
 	s = (float)sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-  s = 1.0f/s;
+	s = 1.0f/s;
 
 	v[0] = v[0] * s;
 	v[1] = v[1] * s;
@@ -177,7 +177,7 @@ void Perlin::init(void)
 	int i, j, k;
 
 	for (i = 0 ; i < B ; i++)
-  {
+	{
 		p[i] = i;
 		g1[i] = (float)((rand() % (B + B)) - B) / B;
 		for (j = 0 ; j < 2 ; j++)
@@ -189,14 +189,14 @@ void Perlin::init(void)
 	}
 
 	while (--i)
-  {
+	{
 		k = p[i];
 		p[i] = p[j = rand() % B];
 		p[j] = k;
 	}
 
 	for (i = 0 ; i < B + 2 ; i++)
-  {
+	{
 		p[B + i] = p[i];
 		g1[B + i] = g1[i];
 		for (j = 0 ; j < 2 ; j++)
@@ -210,20 +210,20 @@ void Perlin::init(void)
 
 float Perlin::perlin_noise_2D(float vec[2])
 {
-  int terms    = mOctaves;
-	float freq   = mFrequency;
+	int terms		= mOctaves;
+	float freq	 = mFrequency;
 	float result = 0.0f;
-  float amp = mAmplitude;
+	float amp = mAmplitude;
 
-  vec[0]*=mFrequency;
-  vec[1]*=mFrequency;
+	vec[0]*=mFrequency;
+	vec[1]*=mFrequency;
 
 	for( int i=0; i<terms; i++ )
 	{
 		result += noise2(vec)*amp;
 		vec[0] *= 2.0f;
 		vec[1] *= 2.0f;
-    amp*=0.5f;
+		amp*=0.5f;
 	}
 
 
@@ -234,10 +234,10 @@ float Perlin::perlin_noise_2D(float vec[2])
 
 Perlin::Perlin(int octaves,float freq,float amp,int seed)
 {
-  mOctaves = octaves;
-  mFrequency = freq;
-  mAmplitude = amp;
-  mSeed = seed;
-  mStart = true;
+	mOctaves = octaves;
+	mFrequency = freq;
+	mAmplitude = amp;
+	mSeed = seed;
+	mStart = true;
 }
 

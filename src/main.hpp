@@ -19,9 +19,9 @@
 #include "misc/sqlite3.h"
 
 enum e_DebugMode {
-  e_DebugMode_Off,
-  e_DebugMode_Tactical,
-  e_DebugMode_AI
+	e_DebugMode_Off,
+	e_DebugMode_Tactical,
+	e_DebugMode_AI
 };
 
 class Match;

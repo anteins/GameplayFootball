@@ -19,17 +19,17 @@ using namespace blunted;
 
 class MatchOptionsPage : public Gui2Page {
 
-  public:
-    MatchOptionsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~MatchOptionsPage();
+	public:
+		MatchOptionsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~MatchOptionsPage();
 
-    void GoLoadingMatchPage();
+		void GoLoadingMatchPage();
 
-    Gui2Button *buttonStart;
+		Gui2Button *buttonStart;
 
-  protected:
-    Gui2Slider *difficultySlider;
-    Gui2Slider *matchDurationSlider;
+	protected:
+		Gui2Slider *difficultySlider;
+		Gui2Slider *matchDurationSlider;
 
 };
 

@@ -19,8 +19,8 @@ Gui2PlayerHUD::~Gui2PlayerHUD() {
 }
 
 void Gui2PlayerHUD::GetImages(std::vector < boost::intrusive_ptr<Image2D> > &target) {
-  target.push_back(image);
-  Gui2View::GetImages(target);
+	target.push_back(image);
+	Gui2View::GetImages(target);
 }
 
 void Gui2PlayerHUD::Redraw() {

@@ -10,67 +10,67 @@
 
 HIDKeyboard::HIDKeyboard() {
 
-  deviceType = e_HIDeviceType_Keyboard;
-  identifier = "keyboard";
+	deviceType = e_HIDeviceType_Keyboard;
+	identifier = "keyboard";
 
-  LoadConfig();
+	LoadConfig();
 }
 
 HIDKeyboard::~HIDKeyboard() {
 }
 
 void HIDKeyboard::LoadConfig() {
-  boost::mutex::scoped_lock blah(mutex);
-  for (int i = 0; i < e_ButtonFunction_Size; i++) {
-    functionButtonState[i] = false;
-    previousFunctionButtonState[i] = false;
+	boost::mutex::scoped_lock blah(mutex);
+	for (int i = 0; i < e_ButtonFunction_Size; i++) {
+		functionButtonState[i] = false;
+		previousFunctionButtonState[i] = false;
 
-    functionMapping[i] = (SDLKey)GetConfiguration()->GetInt(("input_keyboard_" + int_to_str(i)).c_str(), (SDLKey)defaultKeyIDs[i]);//48);
-  }
+		functionMapping[i] = (SDLKey)GetConfiguration()->GetInt(("input_keyboard_" + int_to_str(i)).c_str(), (SDLKey)defaultKeyIDs[i]);//48);
+	}
 }
 
 void HIDKeyboard::SaveConfig() {
-  boost::mutex::scoped_lock blah(mutex);
-  for (int i = 0; i < e_ButtonFunction_Size; i++) {
-    GetConfiguration()->Set(("input_keyboard_" + int_to_str(i)).c_str(), functionMapping[i]);
-  }
-  GetConfiguration()->SaveFile(GetConfigFilename());
+	boost::mutex::scoped_lock blah(mutex);
+	for (int i = 0; i < e_ButtonFunction_Size; i++) {
+		GetConfiguration()->Set(("input_keyboard_" + int_to_str(i)).c_str(), functionMapping[i]);
+	}
+	GetConfiguration()->SaveFile(GetConfigFilename());
 }
 
 void HIDKeyboard::Process() {
-  boost::mutex::scoped_lock blah(mutex);
-  for (int i = 0; i < e_ButtonFunction_Size; i++) {
-    previousFunctionButtonState[i] = functionButtonState[i];
-    functionButtonState[i] = UserEventManager::GetInstance().GetKeyboardState(functionMapping[i]);
-  }
+	boost::mutex::scoped_lock blah(mutex);
+	for (int i = 0; i < e_ButtonFunction_Size; i++) {
+		previousFunctionButtonState[i] = functionButtonState[i];
+		functionButtonState[i] = UserEventManager::GetInstance().GetKeyboardState(functionMapping[i]);
+	}
 }
 
 bool HIDKeyboard::GetButton(e_ButtonFunction buttonFunction) {
-  boost::mutex::scoped_lock blah(mutex);
-  return functionButtonState[buttonFunction];
+	boost::mutex::scoped_lock blah(mutex);
+	return functionButtonState[buttonFunction];
 }
 
 float HIDKeyboard::GetButtonValue(e_ButtonFunction buttonFunction) {
-  boost::mutex::scoped_lock blah(mutex);
-  if (functionButtonState[buttonFunction]) return 1.0; else return 0.0;
+	boost::mutex::scoped_lock blah(mutex);
+	if (functionButtonState[buttonFunction]) return 1.0; else return 0.0;
 }
 
 void HIDKeyboard::SetButton(e_ButtonFunction buttonFunction, bool state) {
-  boost::mutex::scoped_lock blah(mutex);
-  functionButtonState[buttonFunction] = state;
+	boost::mutex::scoped_lock blah(mutex);
+	functionButtonState[buttonFunction] = state;
 }
 
 bool HIDKeyboard::GetPreviousButtonState(e_ButtonFunction buttonFunction) {
-  boost::mutex::scoped_lock blah(mutex);
-  return previousFunctionButtonState[buttonFunction];
+	boost::mutex::scoped_lock blah(mutex);
+	return previousFunctionButtonState[buttonFunction];
 }
 
 Vector3 HIDKeyboard::GetDirection() {
-  Vector3 inputDirection;
-  if (GetButton(e_ButtonFunction_Left))  inputDirection.coords[0] -= 1;
-  if (GetButton(e_ButtonFunction_Right)) inputDirection.coords[0] += 1;
-  if (GetButton(e_ButtonFunction_Up))    inputDirection.coords[1] += 1;
-  if (GetButton(e_ButtonFunction_Down))  inputDirection.coords[1] -= 1;
-  inputDirection.Normalize(0);
-  return inputDirection;
+	Vector3 inputDirection;
+	if (GetButton(e_ButtonFunction_Left))	inputDirection.coords[0] -= 1;
+	if (GetButton(e_ButtonFunction_Right)) inputDirection.coords[0] += 1;
+	if (GetButton(e_ButtonFunction_Up))		inputDirection.coords[1] += 1;
+	if (GetButton(e_ButtonFunction_Down))	inputDirection.coords[1] -= 1;
+	inputDirection.Normalize(0);
+	return inputDirection;
 }

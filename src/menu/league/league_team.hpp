@@ -20,71 +20,71 @@ using namespace blunted;
 
 class LeagueTeamPage : public Gui2Page {
 
-  public:
-    LeagueTeamPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueTeamPage();
+	public:
+		LeagueTeamPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueTeamPage();
 
-  protected:
+	protected:
 
 };
 
 class LeagueTeamFormationPage : public Gui2Page {
 
-  public:
-    LeagueTeamFormationPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueTeamFormationPage();
+	public:
+		LeagueTeamFormationPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueTeamFormationPage();
 
-  protected:
+	protected:
 
 };
 
 class LeagueTeamPlayerSelectionPage : public Gui2Page {
 
-  public:
-    LeagueTeamPlayerSelectionPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueTeamPlayerSelectionPage();
+	public:
+		LeagueTeamPlayerSelectionPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueTeamPlayerSelectionPage();
 
-  protected:
+	protected:
 
 };
 
 class LeagueTeamTacticsPage : public Gui2Page {
 
-  public:
-    LeagueTeamTacticsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueTeamTacticsPage();
+	public:
+		LeagueTeamTacticsPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueTeamTacticsPage();
 
-  protected:
+	protected:
 
 };
 
 class LeagueTeamPlayerOverviewPage : public Gui2Page {
 
-  public:
-    LeagueTeamPlayerOverviewPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueTeamPlayerOverviewPage();
+	public:
+		LeagueTeamPlayerOverviewPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueTeamPlayerOverviewPage();
 
-  protected:
+	protected:
 
 };
 
 class LeagueTeamPlayerDevelopmentPage : public Gui2Page {
 
-  public:
-    LeagueTeamPlayerDevelopmentPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueTeamPlayerDevelopmentPage();
+	public:
+		LeagueTeamPlayerDevelopmentPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueTeamPlayerDevelopmentPage();
 
-  protected:
+	protected:
 
 };
 
 class LeagueTeamSetupPage : public Gui2Page {
 
-  public:
-    LeagueTeamSetupPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
-    virtual ~LeagueTeamSetupPage();
+	public:
+		LeagueTeamSetupPage(Gui2WindowManager *windowManager, const Gui2PageData &pageData);
+		virtual ~LeagueTeamSetupPage();
 
-  protected:
+	protected:
 
 };
 
