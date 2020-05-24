@@ -1233,14 +1233,35 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 	{
 		float focusDistance = (match->GetDesignatedPossessionPlayer()->GetPosition() - spatialState.position).GetLength();
 
-		if (currentAnim->functionType != e_FunctionType_Movement && command.desiredFunctionType == e_FunctionType_Movement) return false;
-		if (currentAnim->functionType == e_FunctionType_Movement && command.desiredFunctionType == e_FunctionType_Movement && (CastPlayer()->HasPossession()/* || team->GetTeamPossessionAmount() >= 1.0f*/ || focusDistance > 12.0f)) return false;
-		if (currentAnim->functionType == e_FunctionType_Movement && command.desiredFunctionType == e_FunctionType_Movement && currentAnim->frameNum + minRemainingMovementReQueueFrames > currentAnim->anim->GetEffectiveFrameCount()) return false;
-		if (currentAnim->functionType == e_FunctionType_Movement && command.desiredFunctionType == e_FunctionType_Movement && (!allowMovementReQueue || reQueueDelayFrames > 0)) return false;
-		if (currentAnim->functionType == e_FunctionType_BallControl && command.desiredFunctionType == e_FunctionType_BallControl && (!allowBallControlReQueue || currentAnim->frameNum > maxBallControlReQueueFrame || reQueueDelayFrames > 0)) return false;
-		if (currentAnim->functionType == e_FunctionType_BallControl && command.desiredFunctionType == e_FunctionType_Trap) return false;
-		if (currentAnim->functionType == e_FunctionType_Trap && command.desiredFunctionType == e_FunctionType_Trap && (!allowTrapReQueue || currentAnim->frameNum + minRemainingTrapReQueueFrames > currentAnim->touchFrame || reQueueDelayFrames > 0)) return false;
-		if (currentAnim->functionType == e_FunctionType_Trap && command.desiredFunctionType == e_FunctionType_BallControl && (!allowTrapReQueue || currentAnim->frameNum + minRemainingTrapReQueueFrames > currentAnim->touchFrame || reQueueDelayFrames > 0)) return false;
+		if (currentAnim->functionType != e_FunctionType_Movement && command.desiredFunctionType == e_FunctionType_Movement) 
+			return false;
+		if (currentAnim->functionType == e_FunctionType_Movement 
+			&& command.desiredFunctionType == e_FunctionType_Movement 
+			&& (CastPlayer()->HasPossession()/* || team->GetTeamPossessionAmount() >= 1.0f*/ || focusDistance > 12.0f)) 
+			return false;
+		if (currentAnim->functionType == e_FunctionType_Movement 
+			&& command.desiredFunctionType == e_FunctionType_Movement 
+			&& currentAnim->frameNum + minRemainingMovementReQueueFrames > currentAnim->anim->GetEffectiveFrameCount()) 
+			return false;
+		if (currentAnim->functionType == e_FunctionType_Movement 
+			&& command.desiredFunctionType == e_FunctionType_Movement 
+			&& (!allowMovementReQueue || reQueueDelayFrames > 0)) 
+			return false;
+		if (currentAnim->functionType == e_FunctionType_BallControl 
+			&& command.desiredFunctionType == e_FunctionType_BallControl 
+			&& (!allowBallControlReQueue || currentAnim->frameNum > maxBallControlReQueueFrame || reQueueDelayFrames > 0)) 
+			return false;
+		if (currentAnim->functionType == e_FunctionType_BallControl 
+			&& command.desiredFunctionType == e_FunctionType_Trap) 
+			return false;
+		if (currentAnim->functionType == e_FunctionType_Trap 
+			&& command.desiredFunctionType == e_FunctionType_Trap 
+			&& (!allowTrapReQueue || currentAnim->frameNum + minRemainingTrapReQueueFrames > currentAnim->touchFrame || reQueueDelayFrames > 0)) 
+			return false;
+		if (currentAnim->functionType == e_FunctionType_Trap 
+			&& command.desiredFunctionType == e_FunctionType_BallControl 
+			&& (!allowTrapReQueue || currentAnim->frameNum + minRemainingTrapReQueueFrames > currentAnim->touchFrame || reQueueDelayFrames > 0)) 
+			return false;
 
 		// too similar to what we are already trying to accomplish
 		if (currentAnim->originatingCommand.desiredFunctionType == command.desiredFunctionType &&
@@ -1252,20 +1273,28 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 		if ((currentAnim->functionType == e_FunctionType_Movement && command.desiredFunctionType == e_FunctionType_Movement) ||
 				(currentAnim->functionType == e_FunctionType_BallControl && command.desiredFunctionType == e_FunctionType_BallControl) ||
 				(currentAnim->functionType == e_FunctionType_Trap && command.desiredFunctionType == e_FunctionType_BallControl) ||
-				(currentAnim->functionType == e_FunctionType_Trap && command.desiredFunctionType == e_FunctionType_Trap)) {
-
+				(currentAnim->functionType == e_FunctionType_Trap && command.desiredFunctionType == e_FunctionType_Trap)) 
+		{
 			// current change in momentum
 			Vector3 plannedMomentumChange = currentAnim->outgoingMovement - currentAnim->incomingMovement;
 			Vector3 desiredMomentumChange = (command.desiredDirection * command.desiredVelocityFloat) - spatialState.movement;
 
-			if ((desiredMomentumChange.GetDotProduct(plannedMomentumChange) > 0.0f && desiredMomentumChange.GetDistance(plannedMomentumChange) < 4.0f) ||
-					desiredMomentumChange.GetDotProduct(plannedMomentumChange) > 0.8f || desiredMomentumChange.GetDistance(plannedMomentumChange) < 2.0f) {
+			if ((desiredMomentumChange.GetDotProduct(plannedMomentumChange) > 0.0f 
+				&& desiredMomentumChange.GetDistance(plannedMomentumChange) < 4.0f) ||
+					desiredMomentumChange.GetDotProduct(plannedMomentumChange) > 0.8f || desiredMomentumChange.GetDistance(plannedMomentumChange) < 2.0f) 
+			{
 				return false;
 			}
 		}
 
 		// don't requeue movement to ballcontrol halfway movement anims, unless there's a serious change of movement desired
-		if ((currentAnim->functionType == e_FunctionType_Movement) && command.desiredFunctionType == e_FunctionType_BallControl && (match->GetActualTime_ms() - CastPlayer()->GetLastTouchTime_ms() < 600 && CastPlayer()->GetLastTouchType() == e_TouchType_Intentional_Kicked) && CastPlayer()->HasPossession()) {// && !CastPlayer()->AllowLastDitch()) {
+		if ((currentAnim->functionType == e_FunctionType_Movement) 
+			&& command.desiredFunctionType == e_FunctionType_BallControl 
+			&& (match->GetActualTime_ms() - CastPlayer()->GetLastTouchTime_ms() < 600 
+			&& CastPlayer()->GetLastTouchType() == e_TouchType_Intentional_Kicked) 
+			&& CastPlayer()->HasPossession()) 
+		{
+			// && !CastPlayer()->AllowLastDitch()) {
 			float desiredMovementChange = (spatialState.movement - (command.desiredDirection * command.desiredVelocityFloat)).GetLength();
 			if (desiredMovementChange < 1.0f) 
 				return false;
@@ -1418,11 +1447,15 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 	}
 
 	query.properties.Set("incoming_special_state", currentAnim->anim->GetVariable("outgoing_special_state"));
-	if (match->GetBallRetainer() == player) query.properties.Set("incoming_retain_state", currentAnim->anim->GetVariable("outgoing_retain_state"));
-	if (command.useSpecialVar1) query.properties.Set("specialvar1", command.specialVar1);
-	if (command.useSpecialVar2) query.properties.Set("specialvar2", command.specialVar2);
+	if (match->GetBallRetainer() == player) 
+		query.properties.Set("incoming_retain_state", currentAnim->anim->GetVariable("outgoing_retain_state"));
+	if (command.useSpecialVar1) 
+		query.properties.Set("specialvar1", command.specialVar1);
+	if (command.useSpecialVar2) 
+		query.properties.Set("specialvar2", command.specialVar2);
 
-	if (currentAnim->anim->GetVariable("outgoing_special_state").compare("") != 0) query.incomingVelocity = e_Velocity_Idle; // standing up anims always start out idle
+	if (currentAnim->anim->GetVariable("outgoing_special_state").compare("") != 0) 
+		query.incomingVelocity = e_Velocity_Idle; // standing up anims always start out idle
 
 	DataSet dataSet;
 	anims->CrudeSelection(dataSet, query);
@@ -1664,7 +1697,8 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 	std::stable_sort(dataSet.begin(), dataSet.end(), boost::bind(&Humanoid::CompareFootSimilarity, this, _1, _2));
 	#endif
 
-	if (command.desiredFunctionType != e_FunctionType_BallControl) {
+	if (command.desiredFunctionType != e_FunctionType_BallControl) 
+	{
 		SetIncomingBodyDirectionSimilarityPredicate(spatialState.relBodyDirectionVec);
 		#ifdef dataSetSortable
 		dataSet.sort(boost::bind(&Humanoid::CompareIncomingBodyDirectionSimilarity, this, _1, _2));
@@ -1778,14 +1812,16 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 	}
 	else if (command.desiredFunctionType == e_FunctionType_Trap ||
 					 command.desiredFunctionType == e_FunctionType_Interfere ||
-					 command.desiredFunctionType == e_FunctionType_Deflect) {
+					 command.desiredFunctionType == e_FunctionType_Deflect) 
+	{
 		float hasteFactor = GetHasteFactor(false);
 		selectedAnimID = GetBestCheatableAnimID(dataSet, command.useDesiredMovement, command.desiredDirection, command.desiredVelocityFloat, command.useDesiredLookAt, desiredBodyDirectionRel, positions_tmp, touchFrame_tmp, radiusOffset_tmp, touchPos_tmp, fullActionSmuggle_tmp, actionSmuggle_tmp, rotationSmuggle_tmp, hasteFactor, localInterruptAnim, preferPassAndShot);
 	}
 	else if (command.desiredFunctionType == e_FunctionType_ShortPass ||
 					 command.desiredFunctionType == e_FunctionType_LongPass ||
 					 command.desiredFunctionType == e_FunctionType_HighPass ||
-					 command.desiredFunctionType == e_FunctionType_Shot) {
+					 command.desiredFunctionType == e_FunctionType_Shot) 
+	{
 		float hasteFactor = GetHasteFactor(false);
 		selectedAnimID = GetBestCheatableAnimID(dataSet, command.useDesiredMovement, command.desiredDirection, command.desiredVelocityFloat, command.useDesiredLookAt, desiredBodyDirectionRel, positions_tmp, touchFrame_tmp, radiusOffset_tmp, touchPos_tmp, fullActionSmuggle_tmp, actionSmuggle_tmp, rotationSmuggle_tmp, hasteFactor, localInterruptAnim);
 /*
@@ -1817,20 +1853,20 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 	// Log(e_Notice, "Humanoid", "Humanoid", "selectedAnimID=" + to_string(selectedAnimID));
 
 	// check if we really want to requeue; if the anim we dug up is actually better than the current
-	if (localInterruptAnim == e_InterruptAnim_ReQueue && selectedAnimID != -1 && currentAnim->positions.size() > 1 && positions_tmp.size() > 1) {
-
+	if (localInterruptAnim == e_InterruptAnim_ReQueue && selectedAnimID != -1 && currentAnim->positions.size() > 1 && positions_tmp.size() > 1) 
+	{
 		// don't requeue to same quadrant
 		if (currentAnim->functionType == command.desiredFunctionType &&
-
 				((FloatToEnumVelocity(currentAnim->anim->GetOutgoingVelocity()) != e_Velocity_Idle &&
 					currentAnim->anim->GetVariable("quadrant_id").compare(anims->GetAnim(selectedAnimID)->GetVariable("quadrant_id")) == 0)
 					||
 				 ((FloatToEnumVelocity(currentAnim->anim->GetOutgoingVelocity()) == e_Velocity_Idle && FloatToEnumVelocity(anims->GetAnim(selectedAnimID)->GetOutgoingVelocity()) == e_Velocity_Idle) &&
 					fabs((ForceIntoPreferredDirectionAngle(currentAnim->anim->GetOutgoingAngle()) - ForceIntoPreferredDirectionAngle(anims->GetAnim(selectedAnimID)->GetOutgoingAngle()))) < 0.06f * pi))
-			 ) {
-
+			 ) 
+		{
 			selectedAnimID = -1;
-			if (player->GetDebug() && !IsReleaseVersion()) printf("rejecting requeue anim for leading into the same quadrant (type: %i)\n", command.desiredFunctionType);
+			if (player->GetDebug() && !IsReleaseVersion()) 
+				printf("rejecting requeue anim for leading into the same quadrant (type: %i)\n", command.desiredFunctionType);
 		}
 	}
 
