@@ -77,8 +77,10 @@ IController *PlayerBase::GetController() {
 }
 
 void PlayerBase::RequestCommand(PlayerCommandQueue &commandQueue) {
-  if (externalController) externalController->RequestCommand(commandQueue);
-                     else controller->RequestCommand(commandQueue);
+  if (externalController) 
+    externalController->RequestCommand(commandQueue);
+  else 
+    controller->RequestCommand(commandQueue);
 }
 
 void PlayerBase::SetExternalController(IController *externalController) {

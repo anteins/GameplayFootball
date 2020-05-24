@@ -130,7 +130,8 @@ struct IdealAnimDescription {
   bool baseAnim;
 };
 
-struct AnimApplyBuffer {
+struct AnimApplyBuffer 
+{
   AnimApplyBuffer() {
     frameNum = 0;
     snapshotTime_ms = 0;
@@ -139,7 +140,8 @@ struct AnimApplyBuffer {
     noPos = false;
     orientation = 0;
   }
-  AnimApplyBuffer(const AnimApplyBuffer &src) {
+  AnimApplyBuffer(const AnimApplyBuffer &src) 
+  {
     anim = src.anim;
     frameNum = src.frameNum;
     snapshotTime_ms = src.snapshotTime_ms;

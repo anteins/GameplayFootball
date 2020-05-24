@@ -50,7 +50,7 @@ class Ball {
     void SetMomentum(const Vector3 &target);
     void SetRotation(radian x, radian y, radian z, float bias = 1.0); // radians per second for each axis
     void SetRotation(const Vector3 &rot, float bias = 1.0); // radians per second for each axis
-    BallSpatialInfo CalculatePrediction(); // returns momentum in 10ms
+    BallSpatialInfo CalculatePrediction(bool debug = false); // returns momentum in 10ms
     Vector3 GetPositionBuffer() { return buf_positionBuffer.GetValue(EnvironmentManager::GetInstance().GetTime_ms()); }
 
     bool BallTouchesNet() { return ballTouchesNet; }

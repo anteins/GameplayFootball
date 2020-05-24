@@ -82,13 +82,12 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
   anims = boost::shared_ptr<AnimCollection>(new AnimCollection(GetScene3D()));
   anims->Load("media/animations");
 
-
   // cache animation positions
-
   Log(e_Notice, "Match", "Match", "Caching animation positions");
 
-  const std::vector < Animation* > &animationsTmp = anims->GetAnimations();
-  for (unsigned int i = 0; i < animationsTmp.size(); i++) {
+  const std::vector<Animation*> &animationsTmp = anims->GetAnimations();
+  for (unsigned int i = 0; i < animationsTmp.size(); i++) 
+  {
     std::vector<Vector3> positions;
     Animation *someAnim = animationsTmp.at(i);
     Quaternion dud;
@@ -120,7 +119,6 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 
 
   // teams
-
   Log(e_Notice, "Match", "Match", "Creating teams/players");
 
   assert(matchData != 0);
@@ -129,8 +127,8 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
   teams[1] = 0;
   teams[0] = new Team(0, this, matchData->GetTeamData(0));
   teams[1] = new Team(1, this, matchData->GetTeamData(1));
-  teams[0]->InitPlayers(fullbodyNode, colorCoords);
-  teams[1]->InitPlayers(fullbodyNode, colorCoords);
+  teams[0]->InitPlayers(fullbodyNode, colorCoords, true);
+  teams[1]->InitPlayers(fullbodyNode, colorCoords, false);
 
   std::vector<Player*> activePlayers;
   teams[0]->GetActivePlayers(activePlayers);
@@ -2007,21 +2005,17 @@ void Match::CheckBallCollisions() {
                 Vector3 aabbCenter;
                 objAABB.GetCenter(aabbCenter);
                 bias += (1.0f - clamp(((ball->Predict(0) - aabbCenter).GetLength() - ballRadius) / objAABB.GetRadius(), 0.0f, 1.0f)) * 0.9f + 0.1f;
-
               }
-
             }
-
             objIter++;
           }
-
         }
-
       }
     }
   }
 
-  if (bias > 0.0f) {
+  if (bias > 0.0f)
+  {
     bounceVec /= (bounceCount * 1.0f);
     bounceVec.coords[2] *= 0.6f;
     bounceVec.Normalize();
@@ -2030,7 +2024,8 @@ void Match::CheckBallCollisions() {
     bias = clamp(bias, 0.0f, 1.0f);
     bias = bias * 0.5f + 0.5f;
     Vector3 resultVector = fullCollisionVec * bias + currentMovement * (1.0f - bias);
-    if (resultVector.GetLength() > currentMovement.GetLength()) resultVector = resultVector.GetNormalized(0) * currentMovement.GetLength();
+    if (resultVector.GetLength() > currentMovement.GetLength()) 
+      resultVector = resultVector.GetNormalized(0) * currentMovement.GetLength();
     //resultVector = resultVector.GetNormalized(0) * (currentMovement.GetLength() * 0.7f + resultVector.GetLength() * 0.3f); // EXPERIMENT!
     resultVector *= 0.7f;
 

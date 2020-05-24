@@ -493,28 +493,24 @@ const std::vector < Animation* > &AnimCollection::GetAnimations() const {
 void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery &query) {
 
   // makes a crude selection to later refine
-
-
   int animSize = animations.size();
 
-  for (int i = 0; i < animSize; i++) {
-
+  for (int i = 0; i < animSize; i++) 
+  {
     const std::string &animType = animations.at(i)->GetAnimType();
-
     bool selectAnim = true;
 
-
     // select by TYPE
-
-    if (selectAnim) {
-      if (query.byFunctionType == true) {
+    if (selectAnim) 
+    {
+      if (query.byFunctionType == true) 
+      {
         if (_CheckFunctionType(animType, query.functionType) == false) selectAnim = false;
       }
     }
 
 /*
     // select by FOOT
-
     if (selectAnim) {
       if (query.byFoot == true) {
         if (animations.at(i)->GetCurrentFoot() != query.foot && FloatToEnumVelocity(animations.at(i)->GetIncomingVelocity()) != e_Velocity_Idle) selectAnim = false;
@@ -522,18 +518,18 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
     }
 */
 
-
     // select by INCOMING VELOCITY
-
-    if (selectAnim) {
-      if (query.byIncomingVelocity == true) {
-
+    if (selectAnim) 
+    {
+      if (query.byIncomingVelocity == true) 
+      {
         e_Velocity animIncomingVelocity = FloatToEnumVelocity(animations.at(i)->GetIncomingVelocity());
 
-        if (query.incomingVelocity_Strict == false) {
-
+        if (query.incomingVelocity_Strict == false) 
+        {
           selectAnim = true;
-          if (query.incomingVelocity_NoDribbleToIdle) {
+          if (query.incomingVelocity_NoDribbleToIdle) 
+          {
             if (animIncomingVelocity == e_Velocity_Idle && query.incomingVelocity == e_Velocity_Dribble) selectAnim = false;
           }
           if (animIncomingVelocity == e_Velocity_Idle && query.incomingVelocity == e_Velocity_Walk) selectAnim = false;
@@ -542,11 +538,13 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
           if (animIncomingVelocity == e_Velocity_Walk && query.incomingVelocity == e_Velocity_Idle) selectAnim = false;
           if (animIncomingVelocity == e_Velocity_Sprint && query.incomingVelocity == e_Velocity_Idle) selectAnim = false;
 
-          if (query.incomingVelocity_NoDribbleToSprint) {
+          if (query.incomingVelocity_NoDribbleToSprint) 
+          {
             if (animIncomingVelocity == e_Velocity_Sprint && query.incomingVelocity == e_Velocity_Dribble) selectAnim = false;
           }
 
-          if (query.incomingVelocity_ForceLinearity) {
+          if (query.incomingVelocity_ForceLinearity) 
+          {
             // disallow going from current -> slower/faster -> current; the complete section needs to be linear
             float animIncomingVelocityFloat = RangeVelocity(animations.at(i)->GetIncomingVelocity());
             float animOutgoingVelocityFloat = RangeVelocity(animations.at(i)->GetOutgoingVelocity());
@@ -561,9 +559,12 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
             if (animIncomingVelocityFloat < std::min(queryVelocityFloat, animOutgoingVelocityFloat)) selectAnim = false;
           }
 
-        } else {
+        } 
+        else 
+        {
           // strict
-          if (animIncomingVelocity != query.incomingVelocity) selectAnim = false;
+          if (animIncomingVelocity != query.incomingVelocity) 
+            selectAnim = false;
         }
 
         // test: disallow idle -> moving and other way around
@@ -580,19 +581,21 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 
 
     // select by OUTGOING VELOCITY
-
-    if (selectAnim) {
-      if (query.byOutgoingVelocity == true) {
-        if (FloatToEnumVelocity(animations.at(i)->GetOutgoingVelocity()) != query.outgoingVelocity) selectAnim = false;
+    if (selectAnim) 
+    {
+      if (query.byOutgoingVelocity == true) 
+      {
+        if (FloatToEnumVelocity(animations.at(i)->GetOutgoingVelocity()) != query.outgoingVelocity) 
+          selectAnim = false;
       }
     }
 
 
     // CULL WRONG ROTATIONAL SIDE
-
-    if (selectAnim) {
-      if (query.bySide == true) {
-
+    if (selectAnim) 
+    {
+      if (query.bySide == true) 
+      {
         Vector3 animIncomingDirection = animations.at(i)->GetIncomingBodyDirection();
 
         // find out in what direction the anim rotates
@@ -617,7 +620,6 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
           if (animIncomingToFenceSide  == animSide && fenceToAnimOutgoingSide == animSide && fabs(animIncomingToFenceAngle + fenceToOutgoingAngle) < pi) selectAnim = false;
           if (queryIncomingToFenceSide == animSide && fenceToAnimOutgoingSide == animSide && fabs(queryIncomingToFenceSide + fenceToOutgoingAngle) < pi) selectAnim = false;
         }
-
       }
     }
 
@@ -635,9 +637,10 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 */
 
     // select by RETAIN BALL
-
-    if (selectAnim) {
-      if (query.byPickupBall == true) {
+    if (selectAnim) 
+    {
+      if (query.byPickupBall == true) 
+      {
         if ((animations.at(i)->GetVariable("outgoing_retain_state") == "" && query.pickupBall == true) ||
             (animations.at(i)->GetVariable("outgoing_retain_state") != "" && query.pickupBall == false)) {
           selectAnim = false;
@@ -647,10 +650,12 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 
 
     // select LAST DITCH ANIMS
-
-    if (selectAnim) {
-      if (query.allowLastDitchAnims == false) {
-        if (animations.at(i)->GetVariable("lastditch") == "true") {
+    if (selectAnim) 
+    {
+      if (query.allowLastDitchAnims == false) 
+      {
+        if (animations.at(i)->GetVariable("lastditch") == "true") 
+        {
           selectAnim = false;
         }
       }
@@ -659,14 +664,11 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 
     // select by INCOMING BODY ANGLE
 
-    if (selectAnim) {
-
+    if (selectAnim) 
+    {
       if (query.byIncomingBodyDirection == true && !(query.byIncomingVelocity == true && query.incomingVelocity == e_Velocity_Idle)) {
-
         radian marginRadians = 0.06f * pi; // anims can deviate a few degrees from the desired (quantized) directions
-
         if (FloatToEnumVelocity(animations.at(i)->GetIncomingVelocity()) != e_Velocity_Idle) {
-
           Vector3 incomingBodyDir = animations.at(i)->GetIncomingBodyDirection();
 
 /* this is implicitly happening already because of the section after this one anyway, so disable *todo: is it?
@@ -683,15 +685,16 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
             }
           //}
 */
-          if (selectAnim) {
+          if (selectAnim) 
+          {
             // disallow larger than x radians diff
             //if (fabs(query.incomingBodyDirection.GetAngle2D(animations.at(i)->GetIncomingBodyDirection())) > marginRadians) selectAnim = false;
             // disallow larger incoming than current
             if (fabs(FixAngle(animations.at(i)->GetIncomingBodyDirection().GetAngle2D())) > fabs(FixAngle(query.incomingBodyDirection.GetAngle2D())) + marginRadians) selectAnim = false;
           }
 
-          if (selectAnim) {
-
+          if (selectAnim) 
+          {
             // absolute outgoing body dir is body dir + outgoing dir
             Vector3 outgoingBodyDir = Vector3(0, -1, 0).GetRotated2D(animations.at(i)->GetOutgoingBodyAngle() + animations.at(i)->GetOutgoingAngle());
 
@@ -705,16 +708,21 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
             //if (fabs(fabs(FixAngle(animations.at(i)->GetIncomingBodyDirection().GetAngle2D())) - fabs(FixAngle(query.incomingBodyDirection.GetAngle2D()))) > 0.5f * pi + marginRadians) selectAnim = false;
             //if (fabs(animations.at(i)->GetIncomingBodyDirection().GetAngle2D(Vector3(0, -1, 0)) - query.incomingBodyDirection.GetAngle2D(Vector3(0, -1, 0))) > 0.5f * pi + marginRadians) selectAnim = false;
             // this version is not just moar beautiful, but also allows for -135 to 135 deg and vice versa
-            if (query.incomingBodyDirection_Strict == true) {
-              if (fabs(incomingBodyDir.GetAngle2D(query.incomingBodyDirection)) > marginRadians) selectAnim = false;
-            } else {
+            if (query.incomingBodyDirection_Strict == true) 
+            {
+              if (fabs(incomingBodyDir.GetAngle2D(query.incomingBodyDirection)) > marginRadians) 
+                selectAnim = false;
+            } 
+            else 
+            {
               if (fabs(incomingBodyDir.GetAngle2D(query.incomingBodyDirection)) > 0.5f * pi + marginRadians) selectAnim = false;
             }
 
             // disallow > ~135 degrees between query incoming and abs outgoing body dir (kills 180 deg anims!)
             //if (fabs(outgoingBodyDir.GetAngle2D(query.incomingBodyDirection)) > 0.75f * pi + marginRadians) selectAnim = false;
 
-            if (query.incomingBodyDirection_ForceLinearity) {
+            if (query.incomingBodyDirection_ForceLinearity) 
+            {
               // if anim incoming body dir == between (including) query incoming and anim outgoing dir, then this anim is legal (or rather: won't look idiotic)
               // how do we check this?
               // 1. if we look at the smallest angles between (anim incoming -> query incoming) and (anim incoming -> anim outgoing), one has to be positive, the other negative.
@@ -723,40 +731,41 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
               radian shortestAngle1 = incomingBodyDir.GetAngle2D(outgoingBodyDir);
               radian shortestAngle2 = incomingBodyDir.GetAngle2D(query.incomingBodyDirection);
               if ((shortestAngle1 >  marginRadians && shortestAngle2 >  marginRadians) ||
-                  (shortestAngle1 < -marginRadians && shortestAngle2 < -marginRadians)) {
+                  (shortestAngle1 < -marginRadians && shortestAngle2 < -marginRadians)) 
+              {
                 selectAnim = false;
               }
-              if (fabs(shortestAngle1) + fabs(shortestAngle2) > pi + marginRadians) selectAnim = false;
-
+              if (fabs(shortestAngle1) + fabs(shortestAngle2) > pi + marginRadians) 
+                selectAnim = false;
             }
-
           }
         }
-
-        else if (FloatToEnumVelocity(animations.at(i)->GetIncomingVelocity()) == e_Velocity_Idle) {
-
+        else if (FloatToEnumVelocity(animations.at(i)->GetIncomingVelocity()) == e_Velocity_Idle) 
+        {
           // allow only same angle (which is moving anims with 0 outgoing body angle. since @ idle, that will become their only angle)
           //if (fabs(animations.at(i)->GetIncomingBodyDirection().GetAngle2D(query.incomingBodyDirection)) > marginRadians) selectAnim = false;
-          if (query.incomingBodyDirection_Strict == true) {
+          if (query.incomingBodyDirection_Strict == true) 
+          {
             if (fabs(Vector3(0, -1, 0).GetAngle2D(query.incomingBodyDirection)) > marginRadians) selectAnim = false;
-          } else {
+          } 
+          else 
+          {
             if (fabs(Vector3(0, -1, 0).GetAngle2D(query.incomingBodyDirection)) > 0.25f * pi + marginRadians) selectAnim = false;
           }
-
         }
-
       }
-
       // no backwards body angles (test) if (fabs(animations.at(i)->GetIncomingBodyAngle()) > 0.5 * pi || fabs(animations.at(i)->GetOutgoingBodyAngle()) > 0.5 * pi) selectAnim = false;
     }
 
 
     // select by INCOMING BALL DIRECTION
-
-    if (selectAnim) {
-      if (query.byIncomingBallDirection == true) {
+    if (selectAnim) 
+    {
+      if (query.byIncomingBallDirection == true) 
+      {
         Vector3 animBallDirection = GetVectorFromString(animations.at(i)->GetVariable("incomingballdirection"));
-        if (animBallDirection.GetLength() < 0.1f) {
+        if (animBallDirection.GetLength() < 0.1f) 
+        {
           Log(e_FatalError, "AnimCollection", "Crudeselection", "Anim " + animations.at(i)->GetName() + " missing incoming ball direction");
         }
         if (animBallDirection.GetLength() != 0.0f && query.incomingBallDirection.GetLength() != 0.0f) {

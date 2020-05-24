@@ -401,13 +401,14 @@ void HumanoidBase::PrepareFullbodyModel(std::map<Vector3, Vector3> &colorCoords)
   //printf("vertexcount: %i, unique vertexcount: %i\n", elementOffset / 3, uniqueElementOffset / 3);
 }
 
-void HumanoidBase::UpdateFullbodyNodes() {
-
+void HumanoidBase::UpdateFullbodyNodes() 
+{
   Vector3 previousFullbodyOffset = fullbodyOffset;
   fullbodyOffset = humanoidNode->GetPosition().Get2D();
   fullbodyNode->SetPosition(fullbodyOffset);
 
-  for (unsigned int i = 0; i < joints.size(); i++) {
+  for (unsigned int i = 0; i < joints.size(); i++) 
+  {
     joints[i].orientation = joints[i].node->GetDerivedRotation();
     joints[i].position = joints[i].node->GetDerivedPosition() - fullbodyOffset;
   }
@@ -499,16 +500,17 @@ void HumanoidBase::UpdateFullbodyModel(bool updateSrc) {
           resultBitangent.Rotate(joints[weightedVertices[v].bones[0].jointID].orientation);
         }
 
-      } else {
-
+      } else 
+      {
         if (uploadVertices)   resultVertex.Set(0);
         if (uploadNormals)    resultNormal.Set(0);
         if (uploadTangents)   resultTangent.Set(0);
         if (uploadBitangents) resultBitangent.Set(0);
 
-        for (unsigned int b = 0; b < weightedVertices[v].bones.size(); b++) {
-
-          if (uploadVertices) {
+        for (unsigned int b = 0; b < weightedVertices[v].bones.size(); b++) 
+        {
+          if (uploadVertices) 
+          {
             adaptedVertex = origVertex;
             adaptedVertex -= joints[weightedVertices[v].bones[b].jointID].origPos * zMultiplier;
             adaptedVertex.Rotate(joints[weightedVertices[v].bones[b].jointID].orientation);
@@ -516,19 +518,22 @@ void HumanoidBase::UpdateFullbodyModel(bool updateSrc) {
             resultVertex += adaptedVertex * weightedVertices[v].bones[b].weight;
           }
 
-          if (uploadNormals) {
+          if (uploadNormals) 
+          {
             adaptedNormal = origNormal;
             adaptedNormal.Rotate(joints[weightedVertices[v].bones[b].jointID].orientation);
             resultNormal += adaptedNormal * weightedVertices[v].bones[b].weight;
           }
 
-          if (uploadTangents) {
+          if (uploadTangents) 
+          {
             adaptedTangent = origTangent;
             adaptedTangent.Rotate(joints[weightedVertices[v].bones[b].jointID].orientation);
             resultTangent += adaptedTangent * weightedVertices[v].bones[b].weight;
           }
 
-          if (uploadBitangents) {
+          if (uploadBitangents) 
+          {
             adaptedBitangent = origBitangent;
             adaptedBitangent.Rotate(joints[weightedVertices[v].bones[b].jointID].orientation);
             resultBitangent += adaptedBitangent * weightedVertices[v].bones[b].weight;
@@ -539,7 +544,6 @@ void HumanoidBase::UpdateFullbodyModel(bool updateSrc) {
         if (uploadNormals)    resultNormal.FastNormalize();
         if (uploadTangents)   resultTangent.FastNormalize();
         if (uploadBitangents) resultBitangent.FastNormalize();
-
       }
 
       if (updateSrc) {
@@ -558,7 +562,6 @@ void HumanoidBase::UpdateFullbodyModel(bool updateSrc) {
   } // subgeom
 
   fullbodyGeometryData->resourceMutex.unlock();
-
 }
 
 /* moved this to gametask upload thread, so it can be multithreaded, whilst assuring its lifetime
@@ -567,15 +570,14 @@ void HumanoidBase::UploadFullbodyModel() {
 }
 */
 
-void HumanoidBase::Process() {
-
+void HumanoidBase::Process() 
+{
   _cache_AgilityFactor = GetConfiguration()->GetReal("gameplay_agilityfactor", _default_AgilityFactor);
   _cache_AccelerationFactor = GetConfiguration()->GetReal("gameplay_accelerationfactor", _default_AccelerationFactor);
 
   decayingPositionOffset *= 0.95f;
   if (decayingPositionOffset.GetLength() < 0.005) decayingPositionOffset.Set(0);
   decayingDifficultyFactor = clamp(decayingDifficultyFactor - 0.002f, 0.0f, 1.0f);
-
 
   assert(match);
 
@@ -589,52 +591,50 @@ void HumanoidBase::Process() {
   currentAnim->frameNum++;
   previousAnim->frameNum++;
 
-
   if (currentAnim->frameNum == currentAnim->anim->GetFrameCount() - 1 && interruptAnim == e_InterruptAnim_None) {
     interruptAnim = e_InterruptAnim_Switch;
   }
 
-
   bool mayReQueue = false;
 
-
   // already some anim interrupt waiting?
-
-  if (mayReQueue) {
-    if (interruptAnim != e_InterruptAnim_None) {
+  if (mayReQueue) 
+  {
+    if (interruptAnim != e_InterruptAnim_None) 
+    {
       mayReQueue = false;
     }
   }
 
-
   // okay, see if we need to requeue
-
-  if (mayReQueue) {
+  if (mayReQueue) 
+  {
     interruptAnim = e_InterruptAnim_ReQueue;
   }
 
-  if (interruptAnim != e_InterruptAnim_None) {
-
+  if (interruptAnim != e_InterruptAnim_None) 
+  {
     PlayerCommandQueue commandQueue;
 
-    if (interruptAnim == e_InterruptAnim_Trip && tripType != 0) {
+    if (interruptAnim == e_InterruptAnim_Trip && tripType != 0) 
+    {
       AddTripCommandToQueue(commandQueue, tripDirection, tripType);
       tripType = 0;
       commandQueue.push_back(GetBasicMovementCommand(tripDirection, spatialState.floatVelocity)); // backup, if there's no applicable trip anim
-    } else {
+    } 
+    else 
+    {
       player->RequestCommand(commandQueue);
     }
 
-
     // iterate through the command queue and pick the first that is applicable
-
     bool found = false;
-    for (unsigned int i = 0; i < commandQueue.size(); i++) {
-
+    for (unsigned int i = 0; i < commandQueue.size(); i++) 
+    {
       const PlayerCommand &command = commandQueue.at(i);
-
       found = SelectAnim(command, interruptAnim);
-      if (found) break;
+      if (found) 
+        break;
     }
 
     if (interruptAnim != e_InterruptAnim_ReQueue && !found) {
@@ -665,12 +665,9 @@ void HumanoidBase::Process() {
       if (interruptAnim == e_InterruptAnim_ReQueue && previousAnim->functionType == currentAnim->functionType) {
         reQueueDelayFrames = initialReQueueDelayFrames; // don't try requeueing (some types of anims, see selectanim()) too often
       }
-
     }
-
   }
   reQueueDelayFrames = clamp(reQueueDelayFrames - 1, 0, 10000);
-
 
   interruptAnim = e_InterruptAnim_None;
 
@@ -678,7 +675,6 @@ void HumanoidBase::Process() {
     // the z coordinate not being 0 denotes something went horribly wrong :P
     Log(e_FatalError, "HumanoidBase", "Process", "BWAAAAAH FLYING PLAYERS!! height: " + real_to_str(startPos.coords[2]));
   }
-
 
   // movement/rotation smuggle
 
@@ -697,7 +693,6 @@ void HumanoidBase::Process() {
 
 
   // next frame
-
   animApplyBuffer.frameNum = currentAnim->frameNum;
 
   if (currentAnim->positions.size() > (unsigned int)currentAnim->frameNum) {
@@ -742,7 +737,6 @@ void HumanoidBase::PreparePutBuffers(unsigned long snapshotTime_ms) {
 
     if ((spatialState.position - focusPos).GetLength() > 14.0f) buf_LowDetailMode = true;
   }
-
 }
 
 void HumanoidBase::FetchPutBuffers(unsigned long putTime_ms) {
@@ -752,14 +746,15 @@ void HumanoidBase::FetchPutBuffers(unsigned long putTime_ms) {
 
   fetchedbuf_LowDetailMode = buf_LowDetailMode;
   buf_bodyUpdatePhase++;
-  if (buf_bodyUpdatePhase == 2) buf_bodyUpdatePhase = 0;
+  if (buf_bodyUpdatePhase == 2) 
+    buf_bodyUpdatePhase = 0;
   fetchedbuf_bodyUpdatePhase = buf_bodyUpdatePhase;
   fetchedbuf_bodyUpdatePhaseOffset = buf_bodyUpdatePhaseOffset;
 }
 
 void HumanoidBase::Put() {
 
-  //unsigned long timeDiff_ms = match->GetTimeSincePreviousPut_ms();//EnvironmentManager::GetInstance().GetTime_ms() - match->GetPreviousTime_ms();
+  // unsigned long timeDiff_ms = match->GetTimeSincePreviousPut_ms();//EnvironmentManager::GetInstance().GetTime_ms() - match->GetPreviousTime_ms();
   // the apply function doesn't know better than that it is displaying snapshot times, so continue this hoax into the timeDiff_ms value. then,
   // the temporalsmoother will convert it to 'realtime' once again
   unsigned long timeDiff_ms = fetchedbuf_animApplyBuffer.snapshotTime_ms - fetchedbuf_previousSnapshotTime_ms;
@@ -777,6 +772,8 @@ void HumanoidBase::Put() {
 
   //printf("anim ptr: %i\n", fetchedbuf_animApplyBuffer.anim);
   //printf("nodemap size: %i\n", nodeMap.size());
+
+  // Log(e_Notice, "HumanoidBase", "HumanoidBase", "anim->Apply frame=" + to_string(fetchedbuf_animApplyBuffer.frameNum));
   fetchedbuf_animApplyBuffer.anim->Apply(nodeMap, fetchedbuf_animApplyBuffer.frameNum, -1, fetchedbuf_animApplyBuffer.smooth, fetchedbuf_animApplyBuffer.smoothFactor, fetchedbuf_animApplyBuffer.position, fetchedbuf_animApplyBuffer.orientation, fetchedbuf_animApplyBuffer.offsets, &movementHistory, timeDiff_ms, fetchedbuf_animApplyBuffer.noPos, false);
 
   humanoidNode->RecursiveUpdateSpatialData(e_SpatialDataType_Both);
@@ -1106,8 +1103,8 @@ void HumanoidBase::_KeepBestDirectionAnims(DataSet &dataSet, const PlayerCommand
   assert(dataSet.size() != 0);
 
   int bestQuadrantID = forcedQuadrantID;
-  if (bestQuadrantID == -1) {
-
+  if (bestQuadrantID == -1) 
+  {
     #ifdef dataSetSortable
     dataSet.sort(boost::bind(&HumanoidBase::CompareMovementSimilarity, this, _1, _2));
     #else
@@ -1115,8 +1112,10 @@ void HumanoidBase::_KeepBestDirectionAnims(DataSet &dataSet, const PlayerCommand
     #endif
 
     // we want the best anim to be a baseanim, and compare other anims to it
-    if (strict) {
-      if (command.desiredFunctionType != e_FunctionType_Movement) {
+    if (strict) 
+    {
+      if (command.desiredFunctionType != e_FunctionType_Movement) 
+      {
         #ifdef dataSetSortable
         dataSet.sort(boost::bind(&Humanoid::CompareBaseanimSimilarity, this, _1, _2));
         #else
@@ -1134,40 +1133,50 @@ void HumanoidBase::_KeepBestDirectionAnims(DataSet &dataSet, const PlayerCommand
 
   DataSet::iterator iter = dataSet.begin();
   iter++;
-  while (iter != dataSet.end()) {
+  while (iter != dataSet.end()) 
+  {
     Animation *anim = anims->GetAnim(*iter);
-
-    if (strict) {
-      if (atoi(anim->GetVariable("quadrant_id").c_str()) == bestQuadrantID) {
+    if (strict) 
+    {
+      if (atoi(anim->GetVariable("quadrant_id").c_str()) == bestQuadrantID) 
+      {
         //if (player->GetDebug() && bestAnim->GetAnimType().compare("movement") == 0) printf("keeping %s\n", anim->GetName().c_str());
         iter++;
-      } else {
+      } 
+      else 
+      {
         //if (player->GetDebug() && bestAnim->GetAnimType().compare("movement") == 0) printf("deleting %s\n", anim->GetName().c_str());
         iter = dataSet.erase(iter);
       }
-    } else {
+    } 
+    else 
+    {
       int quadrantID = atoi(anim->GetVariable("quadrant_id").c_str());
       const Quadrant &bestQuadrant = anims->GetQuadrant(bestQuadrantID);
       const Quadrant &quadrant = anims->GetQuadrant(quadrantID);
 
       bool predicate = true;
 
-      if (anim->GetVariable("lastditch").compare("true") != 0) { // last ditch anims may always change velo
-        if (abs(GetVelocityID(quadrant.velocity, true) - GetVelocityID(bestQuadrant.velocity, true)) > allowedVelocitySteps) predicate = false;
+      if (anim->GetVariable("lastditch").compare("true") != 0) 
+      { 
+        // last ditch anims may always change velo
+        if (abs(GetVelocityID(quadrant.velocity, true) - GetVelocityID(bestQuadrant.velocity, true)) > allowedVelocitySteps) 
+          predicate = false;
       }
       if (fabs(quadrant.angle - bestQuadrant.angle) > allowedAngle) predicate = false;
 
-      if (predicate) {
+      if (predicate) 
+      {
         //if (player->GetDebug() && bestAnim->GetAnimType().compare("movement") == 0) printf("keeping %s\n", anim->GetName().c_str());
         iter++;
-      } else {
+      } 
+      else 
+      {
         //if (player->GetDebug() && bestAnim->GetAnimType().compare("movement") == 0) printf("deleting %s (quadrant.angle %f - bestQuadrant.angle %f)\n", anim->GetName().c_str(), quadrant.angle, bestQuadrant.angle);
         iter = dataSet.erase(iter);
       }
     }
-
   }
-
   //if (player->GetDebug() && bestAnim->GetAnimType().compare("movement") == 0) printf("\n");
 }
 
@@ -1763,6 +1772,7 @@ PlayerCommand HumanoidBase::GetTripCommand(const Vector3 &tripVector, int tripTy
 }
 
 PlayerCommand HumanoidBase::GetBasicMovementCommand(const Vector3 &desiredDirection, float velocityFloat) {
+  // Log(e_Notice, "Command", "Command", "GetBasicMovementCommand " + vec_string(desiredDirection));
   PlayerCommand command;
   command.desiredFunctionType = e_FunctionType_Movement;
   command.useDesiredMovement = true;

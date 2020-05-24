@@ -122,7 +122,8 @@ Database *GetDB() {
   return db;
 }
 
-bool IsReleaseVersion() {
+bool IsReleaseVersion() 
+{
   if (GetConfiguration()->GetBool("debug", false)) return false; else return true;
 }
 
@@ -130,16 +131,19 @@ bool Verbose() {
   return !IsReleaseVersion();
 }
 
-bool UpdateNonImportableDB() {
+bool UpdateNonImportableDB() 
+{
   if (IsReleaseVersion()) return false;
   else return true;
 }
 
-Properties *GetConfiguration() {
+Properties *GetConfiguration() 
+{
   return config;
 }
 
-std::string GetActiveSaveDirectory() {
+std::string GetActiveSaveDirectory() 
+{
   return activeSaveDirectory;
 }
 
@@ -159,11 +163,13 @@ boost::intrusive_ptr<Image2D> GetDebugImage() {
   return debugImage;
 }
 
-boost::intrusive_ptr<Image2D> GetDebugOverlay() {
+boost::intrusive_ptr<Image2D> GetDebugOverlay() 
+{
   return debugOverlay;
 }
 
-void GetDebugOverlayCoord(Match *match, const Vector3 &worldPos, int &x, int &y) {
+void GetDebugOverlayCoord(Match *match, const Vector3 &worldPos, int &x, int &y) 
+{
   Vector3 proj = GetProjectedCoord(worldPos, match->GetCamera());
   int dud1, dud2;
   GetMenuTask()->GetWindowManager()->GetCoordinates(proj.coords[0], proj.coords[1], 1, 1, x, y, dud1, dud2);
@@ -174,7 +180,8 @@ void GetDebugOverlayCoord(Match *match, const Vector3 &worldPos, int &x, int &y)
   y = clamp(y, 0, contextH - 1);
 }
 
-int PredictFrameTimeToGo_ms(int frameCount) {
+int PredictFrameTimeToGo_ms(int frameCount) 
+{
   int averageFrameTime_ms = GetGraphicsSystem()->GetAverageFrameTime_ms(frameCount);
   int timeSinceLastSwap_ms = GetGraphicsSystem()->GetTimeSinceLastSwap_ms();
   int timeToNextSwapPrediction_ms = averageFrameTime_ms - timeSinceLastSwap_ms;
@@ -183,7 +190,8 @@ int PredictFrameTimeToGo_ms(int frameCount) {
   return timeToNextSwapPrediction_ms;
 }
 
-void InitDebugImage() {
+void InitDebugImage() 
+{
   SDL_Surface *sdlSurface = CreateSDLSurface(200, 150);
 
   boost::intrusive_ptr < Resource <Surface> > resource = ResourceManagerPool::GetInstance().GetManager<Surface>(e_ResourceType_Surface)->Fetch("debugimage", false, true);
@@ -205,7 +213,8 @@ void InitDebugImage() {
   debugImage->OnChange();
 }
 
-void InitDebugOverlay() {
+void InitDebugOverlay() 
+{
   int contextW, contextH, bpp; // context
   scene2D->GetContextSize(contextW, contextH, bpp);
 
@@ -228,13 +237,16 @@ void InitDebugOverlay() {
   debugOverlay->OnChange();
 }
 
-const std::vector<IHIDevice*> &GetControllers() {
+const std::vector<IHIDevice*> &GetControllers() 
+{
   return controllers;
 }
 
-class ThreadHudThread : public Thread {
+class ThreadHudThread : public Thread 
+{
   public:
-    ThreadHudThread() {
+    ThreadHudThread() 
+    {
       hud = new ThreadHud(GetScene2D());
     }
     virtual ~ThreadHudThread() {
@@ -265,14 +277,14 @@ class ThreadHudThread : public Thread {
 
   protected:
     ThreadHud *hud;
-
 };
 
 
-int main(int argc, const char** argv) {
-
+int main(int argc, const char** argv) 
+{
   config = new Properties();
-  if (argc > 1) configFile = argv[1];
+  if (argc > 1) 
+    configFile = argv[1];
   config->LoadFile(configFile.c_str());
 
   Initialize(*config);
@@ -284,53 +296,54 @@ int main(int argc, const char** argv) {
 
   int timeStep_ms = config->GetInt("physics_frametime_ms", 10);
 
-
   // database
-
   db = new Database();
   bool dbSuccess = db->Load("databases/default/database.sqlite");
-  if (!dbSuccess) Log(e_FatalError, "main", "()", "Could not open database");
-
+  if (!dbSuccess) 
+    Log(e_FatalError, "main", "()", "Could not open database");
 
   // initialize systems
-
   SystemManager *systemManager = SystemManager::GetInstancePtr();
 
   graphicsSystem = new GraphicsSystem();
   bool returnvalue = systemManager->RegisterSystem("GraphicsSystem", graphicsSystem);
-  if (!returnvalue) Log(e_FatalError, "football", "main", "Could not register GraphicsSystem");
+  if (!returnvalue) 
+    Log(e_FatalError, "football", "main", "Could not register GraphicsSystem");
 
   audioSystem = new AudioSystem();
   returnvalue = systemManager->RegisterSystem("AudioSystem", audioSystem);
-  if (!returnvalue) Log(e_FatalError, "football", "main", "Could not register AudioSystem");
+  if (!returnvalue) 
+    Log(e_FatalError, "football", "main", "Could not register AudioSystem");
 
   // todo: let systemmanager init systems?
   graphicsSystem->Initialize(*config);
   audioSystem->Initialize(*config);
 
-
   // init scenes
-
   scene2D = boost::shared_ptr<Scene2D>(new Scene2D("scene2D", *config));
   SceneManager::GetInstance().RegisterScene(scene2D);
 
   scene3D = boost::shared_ptr<Scene3D>(new Scene3D("scene3D"));
   SceneManager::GetInstance().RegisterScene(scene3D);
 
-  if (SuperDebug()) InitDebugImage();
-  if (GetDebugMode() == e_DebugMode_AI) InitDebugOverlay();
+  if (SuperDebug()) 
+    InitDebugImage();
+
+  if (GetDebugMode() == e_DebugMode_AI) 
+    InitDebugOverlay();
 
   ThreadHudThread *threadHudThread = 0;
-  if (!IsReleaseVersion() && 1 == 2) {
+  if (!IsReleaseVersion() && 1 == 2) 
+  {
     threadHudThread = new ThreadHudThread();
     threadHudThread->Run();
-  } else {
+  } 
+  else 
+  {
     threadHudThread = 0;
   }
 
-
   // debug pilons
-
   boost::intrusive_ptr < Resource<GeometryData> > geometry = ResourceManagerPool::GetInstance().GetManager<GeometryData>(e_ResourceType_GeometryData)->Fetch("media/objects/helpers/green.ase", true);
   greenPilon = static_pointer_cast<Geometry>(ObjectFactory::GetInstance().CreateObject("greenPilon", e_ObjectType_Geometry));
   scene3D->CreateSystemObjects(greenPilon);
@@ -389,19 +402,16 @@ int main(int argc, const char** argv) {
 
   geometry.reset();
 
-
   // controllers
-
   HIDKeyboard *keyboard = new HIDKeyboard();
   controllers.push_back(keyboard);
-  for (int i = 0; i < SDL_NumJoysticks(); i++) {
+  for (int i = 0; i < SDL_NumJoysticks(); i++) 
+  {
     HIDGamepad *gamepad = new HIDGamepad(i);
     controllers.push_back(gamepad);
   }
 
-
   // sequences
-
   boost::mutex graphicsGameMutex; // todo: this mutex seems necessary for visual fluency, doesn't this imply that i'm setting positional stuff during something else than gametask put? (or reading during something else than graphics get)
 
   gameTask = boost::shared_ptr<GameTask>(new GameTask());
@@ -414,8 +424,8 @@ int main(int argc, const char** argv) {
   TTF_Font *defaultOutlineFont = TTF_OpenFont(fontfilename.c_str(), 32);
   TTF_SetFontOutline(defaultOutlineFont, 2);
   menuTask = boost::shared_ptr<MenuTask>(new MenuTask(5.0f / 4.0f, 0, defaultFont, defaultOutlineFont));
-  if (controllers.size() > 1) menuTask->SetEventJoyButtons(static_cast<HIDGamepad*>(controllers.at(1))->GetControllerMapping(e_ControllerButton_A), static_cast<HIDGamepad*>(controllers.at(1))->GetControllerMapping(e_ControllerButton_B));
-
+  if (controllers.size() > 1) 
+    menuTask->SetEventJoyButtons(static_cast<HIDGamepad*>(controllers.at(1))->GetControllerMapping(e_ControllerButton_A), static_cast<HIDGamepad*>(controllers.at(1))->GetControllerMapping(e_ControllerButton_B));
 
   gameSequence = boost::shared_ptr<TaskSequence>(new TaskSequence("game", timeStep_ms, false));
 
@@ -436,8 +446,6 @@ int main(int argc, const char** argv) {
 
   GetScheduler()->RegisterTaskSequence(gameSequence);
 
-
-
   graphicsSequence = boost::shared_ptr<TaskSequence>(new TaskSequence("graphics", config->GetInt("graphics3d_frametime_ms", 0), true));
 
   graphicsSequence->AddUserTaskEntry(gameTask, e_TaskPhase_Put);
@@ -453,16 +461,14 @@ int main(int argc, const char** argv) {
 
   GetScheduler()->RegisterTaskSequence(graphicsSequence);
 
-
   // fire!
-
   Run();
 
-
   // exit
-
-  if (SuperDebug()) scene2D->DeleteObject(debugImage);
-  if (GetDebugMode() == e_DebugMode_AI) scene2D->DeleteObject(debugOverlay);
+  if (SuperDebug()) 
+    scene2D->DeleteObject(debugImage);
+  if (GetDebugMode() == e_DebugMode_AI) 
+    scene2D->DeleteObject(debugOverlay);
 
   gameTask.reset();
   menuTask.reset();

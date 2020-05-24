@@ -181,25 +181,33 @@ Vector3 GetBallControlVector(Ball *ball, Player *player, const Vector3 &nextStar
 
   // part of the resulting direction is physics, the other part is anim/controller. so originatingBias is only applied on the (1.0 - physicsBias) part of the result
   float physicsBias = 0.7f;
-  if (Verbose()) printf("ballctrl: ");
-  if (!player->HasPossession()) {
-    if (Verbose()) printf("noposs");
+  if (Verbose()) 
+    printf("ballctrl: ");
+  if (!player->HasPossession()) 
+  {
+    if (Verbose()) 
+      printf("noposs");
     physicsBias = 0.9f;
   }
 
-  if (Verbose()) printf("\n");
-  if (FloatToEnumVelocity(currentAnim->anim->GetOutgoingVelocity()) == e_Velocity_Idle) physicsBias = 1.0f;
+  if (Verbose()) 
+    printf("\n");
+  if (FloatToEnumVelocity(currentAnim->anim->GetOutgoingVelocity()) == e_Velocity_Idle) 
+    physicsBias = 1.0f;
 
   float explosivenessFactor = 0.6f;
   float maximumOverdrive_mps = 1.0f * explosivenessFactor;
-  if (currentAnim->originatingCommand.desiredVelocityFloat < dribbleWalkSwitch) maximumOverdrive_mps = 0.0f;
-  if (currentAnim->originatingCommand.desiredVelocityFloat > walkSprintSwitch) maximumOverdrive_mps = 2.0f * explosivenessFactor;
+  if (currentAnim->originatingCommand.desiredVelocityFloat < dribbleWalkSwitch) 
+    maximumOverdrive_mps = 0.0f;
+  if (currentAnim->originatingCommand.desiredVelocityFloat > walkSprintSwitch) 
+    maximumOverdrive_mps = 2.0f * explosivenessFactor;
   float dotFactor1 = spatialState.directionVec.GetDotProduct(currentAnim->originatingCommand.desiredDirection) * 0.5f + 0.5f; // inv deviation from the current direction
   float dotFactor2 = Vector3(0, -1, 0).GetRotated2D(nextStartAngle).GetDotProduct(currentAnim->originatingCommand.desiredDirection) * 0.5f + 0.5f; // inv deviation from the direction we wanted
   float dotFactor = std::min(dotFactor1, dotFactor2);
   maximumOverdrive_mps *= dotFactor;
 
-  if (FloatToEnumVelocity(currentAnim->anim->GetOutgoingVelocity()) == e_Velocity_Idle) maximumOverdrive_mps = 0.0f;
+  if (FloatToEnumVelocity(currentAnim->anim->GetOutgoingVelocity()) == e_Velocity_Idle) 
+    maximumOverdrive_mps = 0.0f;
 
   float originatingBias = 0.7f;
 
@@ -210,7 +218,8 @@ Vector3 GetBallControlVector(Ball *ball, Player *player, const Vector3 &nextStar
   //desiredMovement = desiredMovement.GetNormalized(0) * RangeVelocity(desiredMovement.GetLength());
 
   // hold velo to max player velo - else slow players will kick the ball too far away, which is sad
-  if (desiredMovement.GetLength() > walkSprintSwitch) desiredMovement = desiredMovement.GetNormalized(0) * StretchSprintTo(desiredMovement.GetLength(), sprintVelocity, player->GetMaxVelocity());
+  if (desiredMovement.GetLength() > walkSprintSwitch) 
+    desiredMovement = desiredMovement.GetNormalized(0) * StretchSprintTo(desiredMovement.GetLength(), sprintVelocity, player->GetMaxVelocity());
 
   // don't want to go below physics velo, else we will run over ball and stuff like that
   // don't want to go over physics velo too much either, else ball will be so far away!

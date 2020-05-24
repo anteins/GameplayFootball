@@ -12,13 +12,16 @@
 
 #include "blunted.hpp"
 
-void UploadFullbodyModel::Update() {
-  for (unsigned int i = 0; i < geometryToUpload.size(); i++) {
+void UploadFullbodyModel::Update() 
+{
+  for (unsigned int i = 0; i < geometryToUpload.size(); i++) 
+  {
     geometryToUpload.at(i)->OnUpdateGeometryData(false);
   }
 }
 
-GameTask::GameTask() {
+GameTask::GameTask() 
+{
 
   match = 0;
   menuScene = 0;
@@ -27,13 +30,15 @@ GameTask::GameTask() {
   scene3D = GetScene3D();
 }
 
-GameTask::~GameTask() {
+GameTask::~GameTask() 
+{
   if (Verbose()) printf("exiting gametask.. ");
   Exit();
   if (Verbose()) printf("done\n");
 }
 
-void GameTask::Exit() {
+void GameTask::Exit() 
+{
 
   Action(e_GameTaskMessage_StopMatch);
   Action(e_GameTaskMessage_StopMenuScene);

@@ -57,7 +57,6 @@ void HumanController::RequestCommand(PlayerCommandQueue &commandQueue) {
     actionBufferTime_ms = 0;
   }
 
-
   // cancels
 
   // shot cancel
@@ -91,9 +90,7 @@ void HumanController::RequestCommand(PlayerCommandQueue &commandQueue) {
     actionBufferTime_ms = 0;
   }
 
-
   // execute buffer?
-
   if (actionMode == 2) {
 
     if (!hid->GetButton(actionButton) ||
@@ -190,13 +187,10 @@ void HumanController::RequestCommand(PlayerCommandQueue &commandQueue) {
         command.touchInfo.desiredPower = clamp(pow(gaugeFactor, 0.6f), 0.01f, 1.0f);
 
         commandQueue.push_back(command);
-
       }
-
     }
-
-
-  } else if (actionMode == 1) {
+  } 
+  else if (actionMode == 1) {
 
     if (hid->GetButton(actionButton)) {
 
@@ -210,26 +204,22 @@ void HumanController::RequestCommand(PlayerCommandQueue &commandQueue) {
         command.useDesiredLookAt = true;
         command.desiredLookAt = CastPlayer()->GetPosition() + CastPlayer()->GetMovement() * 0.1f + command.desiredDirection * 10.0f;
         commandQueue.push_back(command);
-
       }
 
-      if (actionButton == e_ButtonFunction_TeamPressure) {
-
+      if (actionButton == e_ButtonFunction_TeamPressure) 
+      {
         team->GetController()->ApplyTeamPressure();
-
       }
 
-      if (actionButton == e_ButtonFunction_KeeperRush) {
-
+      if (actionButton == e_ButtonFunction_KeeperRush) 
+      {
         team->GetController()->ApplyKeeperRush();
-
       }
 
-    } else {
-
+    } else 
+    {
       // action button released!
       actionMode = 0;
-
     }
   }
 
@@ -303,7 +293,8 @@ void HumanController::RequestCommand(PlayerCommandQueue &commandQueue) {
   }
   _MovementCommand(commandQueue, forceMagnet, extraHaste);
 
-  if (commandQueue.size() > 0) {
+  if (commandQueue.size() > 0) 
+  {
     PlayerCommand &command = commandQueue.at(commandQueue.size() - 1);
     assert(command.desiredFunctionType == e_FunctionType_Movement); // make sure this is the movement command (is probably guaranteed, check out _MovementCommand)
 
@@ -317,8 +308,10 @@ void HumanController::RequestCommand(PlayerCommandQueue &commandQueue) {
 */
 
     // super cancel
-    if (hid->GetButton(e_ButtonFunction_Dribble) && hid->GetButton(e_ButtonFunction_Sprint)) {
-      if (!hasBestPossession) {
+    if (hid->GetButton(e_ButtonFunction_Dribble) && hid->GetButton(e_ButtonFunction_Sprint)) 
+    {
+      if (!hasBestPossession) 
+      {
         command.desiredDirection = inputDirection;
         command.desiredVelocityFloat = inputVelocityFloat;
       }

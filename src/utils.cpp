@@ -8,6 +8,7 @@
 
 #include "systems/graphics/resources/texture.hpp"
 #include "managers/resourcemanagerpool.hpp"
+#include "onthepitch/player/player.hpp"
 
 #include <boost/algorithm/string.hpp>
 
@@ -560,6 +561,16 @@ float CalculateStat(float baseStat, float profileStat, float age, e_DevelopmentC
   float agedProfileStat = clamp(profileStat * 2.0f * agedBaseStat, 0.01f, 1.0f); // profile stat * 2 because average == 0.5
 
   return agedProfileStat;
+}
+
+std::string vec_string(const Vector3& vec){
+  return "(" + to_string(vec.coords[0]) + ", " + to_string(vec.coords[1]) + ", " + to_string(vec.coords[2]) + ")";
+}
+
+void DebugLog(Player& player, const std::string& message){
+  if(player.GetDebug()){
+    Log(e_Notice, "PlayerDebug", "PlayerDebug", message);
+  }
 }
 
 /*

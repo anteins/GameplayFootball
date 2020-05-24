@@ -13,15 +13,15 @@
 
 using namespace blunted;
 
+class Player;
+
 float GetQuantizedDirectionBias();
 void QuantizeDirection(Vector3 &inputDirection, float bias = 1.0f);
 Vector3 GetProjectedCoord(const Vector3 &pos3D, boost::intrusive_ptr<Camera> camera);
 
 int GetVelocityID(e_Velocity velo, bool treatDribbleAsWalk = false);
 
-
 // stats fiddling
-
 enum e_PositionName {
   e_PositionName_GK,
   e_PositionName_SW,
@@ -100,5 +100,19 @@ template <typename T> class TemporalSmoother {
 };
 
 template <> Quaternion TemporalSmoother<Quaternion>::MixData(const Quaternion &data1, const Quaternion &data2, float bias) const;
+
+std::string vec_string(const Vector3& vec);
+
+void DebugLog(Player& player, const std::string& message);
+//
+// 将64位浮点数转换为32位整数
+// 小数部分将四舍五入到偶数
+//
+inline void RoundToInt64 (int &val, double dval)
+{
+  static double magic = 6755399441055744.0;
+  dval += magic;
+  val = *(int*)&dval;
+}
 
 #endif

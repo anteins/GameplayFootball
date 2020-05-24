@@ -326,19 +326,23 @@ void PlayerController::_TrapCommand(PlayerCommandQueue &commandQueue, bool idleT
     command.desiredFunctionType = e_FunctionType_Trap;
     command.useDesiredMovement = true;
     command.desiredDirection = inputDirection;
-    if (quantizeDirection) QuantizeDirection(command.desiredDirection, GetQuantizedDirectionBias());
+    if (quantizeDirection) 
+      QuantizeDirection(command.desiredDirection, GetQuantizedDirectionBias());
 
     command.desiredVelocityFloat = inputVelocityFloat;
-    if (CastPlayer()->GetFormationEntry().role == e_PlayerRole_GK && !team->IsHumanControlled(player->GetID())) {
+    if (CastPlayer()->GetFormationEntry().role == e_PlayerRole_GK && !team->IsHumanControlled(player->GetID())) 
+    {
       command.desiredDirection = Vector3(-team->GetSide(), 0, 0);
       command.desiredVelocityFloat = idleVelocity;
     }
 
-    if (FloatToEnumVelocity(command.desiredVelocityFloat) == e_Velocity_Idle && idleTurnToOpponentGoal) {
+    if (FloatToEnumVelocity(command.desiredVelocityFloat) == e_Velocity_Idle && idleTurnToOpponentGoal) 
+    {
       command.desiredDirection = Vector3(-team->GetSide(), 0, 0);
     }
 
-    if (knockOn) {
+    if (knockOn) 
+    {
       command.modifier |= e_PlayerCommandModifier_KnockOn;
     }
 
@@ -350,14 +354,17 @@ void PlayerController::_TrapCommand(PlayerCommandQueue &commandQueue, bool idleT
 }
 
 void PlayerController::_InterfereCommand(PlayerCommandQueue &commandQueue, bool byAnyMeans) {
-  if (match->GetBall()->Predict(200).GetDistance(player->GetPosition()) > ballDistanceOptimizeThreshold) return;
-  if (match->GetBallRetainer() != 0) return;
+  if (match->GetBall()->Predict(200).GetDistance(player->GetPosition()) > ballDistanceOptimizeThreshold) 
+    return;
+  if (match->GetBallRetainer() != 0) 
+    return;
 
   if (!teamHasBestPossession) {
 
     if (!byAnyMeans) {
       // if dot nears 1, it means opp is somewhat between ball and me
-      if (CouldWinABallDuelLikeliness() < 0.2f) return;
+      if (CouldWinABallDuelLikeliness() < 0.2f) 
+        return;
     }
 
     PlayerCommand command;
@@ -401,12 +408,13 @@ void PlayerController::_SlidingCommand(PlayerCommandQueue &commandQueue) {
   }
 }
 
-void PlayerController::_MovementCommand(PlayerCommandQueue &commandQueue, bool forceMagnet, bool extraHaste) {
-
+void PlayerController::_MovementCommand(PlayerCommandQueue &commandQueue, bool forceMagnet, bool extraHaste) 
+{
   int defaultLookAtTime_ms = 40;
 
   Vector3 quantizedInputDirection = inputDirection;
-  if (quantizeDirection) QuantizeDirection(quantizedInputDirection, GetQuantizedDirectionBias());
+  if (quantizeDirection) 
+    QuantizeDirection(quantizedInputDirection, GetQuantizedDirectionBias());
 
   PlayerCommand command;
   command.desiredFunctionType = e_FunctionType_Movement;
@@ -437,16 +445,13 @@ void PlayerController::_MovementCommand(PlayerCommandQueue &commandQueue, bool f
 
   float autoBias = 0.0;
 
-
   // decide what type of magnet is to be used
-
   float inputDirIsOwnHalfFactor = NormalizedClamp(inputDirection.GetDotProduct(Vector3(team->GetSide(), 0, 0)), -1.0f, 1.0f);
 
   if (match->GetBallRetainer() == player) {
-
     autoBias = 0.0f;
-
-  } else if (forceMagnet ||
+  } 
+  else if (forceMagnet ||
              match->GetDesignatedPossessionPlayer() == player ||
              ( (CastPlayer()->GetLastTouchBias(2000) > 0.01f && possessionAmount > 0.5f) && team->GetDesignatedTeamPossessionPlayer() == player ) ||
              ( (!oppTeamHasPossession && possessionAmount > 0.5f)                        && team->GetDesignatedTeamPossessionPlayer() == player ) ||
@@ -455,21 +460,22 @@ void PlayerController::_MovementCommand(PlayerCommandQueue &commandQueue, bool f
 
 
     // WE ARE THE MAN OF THE MOMENT! WOOHOO
-
-
-    if (hasBestPossession) {
-
+    if (hasBestPossession) 
+    {
       Vector3 autoLookAt; // dud
       CastPlayer()->SetDesiredTimeToBall_ms(AI_GetBallControlMovement(_mentalImage, CastPlayer(), quantizedInputDirection, inputVelocityFloat, autoDirection, autoVelocityFloat, autoLookAt));
       autoLookDirection = (autoLookAt - player->GetPosition()).GetNormalized(0);
       autoBias = 1.0f;
-
-    } else { // !hasPossession
-
+    } 
+    else 
+    { 
+      // !hasPossession
       float haste = 0.0f;
-      if (extraHaste || forceMagnet) {
+      if (extraHaste || forceMagnet) 
+      {
         haste = 1.0f;
-      } else {
+      } else 
+      {
         float thresholdPossessionAmountForHaste = 1.1f; // 2.0f - AI_GetMindSet(CastPlayer()->GetFormationEntry().role) * 2.0f; // attacking players may want to gamble on the defenders missing the ball
         if (adaptedPossessionAmount < thresholdPossessionAmountForHaste) haste = 1.0f;
       }
@@ -480,38 +486,36 @@ void PlayerController::_MovementCommand(PlayerCommandQueue &commandQueue, bool f
       autoLookDirection = (autoLookAt - player->GetPosition()).GetNormalized(0);
       autoBias = 1.0f;
 
-      if (match->GetDesignatedPossessionPlayer() != player) {
+      if (match->GetDesignatedPossessionPlayer() != player) 
+      {
         float sameDirFactor = 1.0f - clamp(fabs(autoDirection.GetAngle2D(manualDirection)) / pi, 0.0f, 1.0f);
         sameDirFactor = sameDirFactor * 0.5f + 0.5f; // todo: can't fully trust this; it just isn't a 100% indication of the player's intentions. just use this hax for now
         autoBias = 0.0f;
-        if (CastPlayer()->GetLastTouchBias(2000) > 0.01f) {
+        if (CastPlayer()->GetLastTouchBias(2000) > 0.01f) 
+        {
           if (CastPlayer()->GetTimeNeededToGetToBall_ms() < 1700) autoBias = pow(CastPlayer()->GetLastTouchBias(2000), 0.4f) * pow(sameDirFactor, 0.5f);
         }
         if (!oppTeamHasPossession) {
-          if (team->IsHumanControlled(player->GetID())) {
+          if (team->IsHumanControlled(player->GetID())) 
+          {
             float magnetBias = std::max(curve(sameDirFactor, 0.8f), powf(GetLastSwitchBias(), 0.5f)); // needed for when we get passed a ball while we are not the designated player. we want to at least try to get there.
             magnetBias *= 1.0f - inputDirIsOwnHalfFactor; // if we run for our own half, don't accidentally magnet somewhere
             // assumes possessionAmount > 0.5f (see 'if' clause above)
             autoBias = clamp(pow((possessionAmount - 0.5f) * 2.0f, 0.5f) * magnetBias, autoBias, 1.0f);
           }
         }
-        if (forceMagnet) {
+        if (forceMagnet) 
+        {
           autoBias = 1.0f;
         }
-
       }
-
     }
-
-
-  } else if (match->GetDesignatedPossessionPlayer()->GetTeamID() != team->GetID()) {
-
-
+  } 
+  else if (match->GetDesignatedPossessionPlayer()->GetTeamID() != team->GetID()) 
+  {
     // OTHER TEAM IS IN BALL CONTROL, DEM BASTERDS
-
-    if (team->GetDesignatedTeamPossessionPlayer() == player) {
-
-
+    if (team->GetDesignatedTeamPossessionPlayer() == player) 
+    {
       // WE ARE THE BEST OUR TEAM HAS GOT, CHOOSE OUR ACTIONS WISELY
 
 
@@ -554,11 +558,8 @@ void PlayerController::_MovementCommand(PlayerCommandQueue &commandQueue, bool f
         autoVelocityFloat = clamp(autoVelocityFloat_manMarking * manMarkingBias + autoVelocityFloat_hunt * (1.0f - manMarkingBias), idleVelocity, sprintVelocity);
         autoLookDirection = ( (autoLookDirection_manMarking * manMarkingBias + autoLookDirection_hunt * (1.0f - manMarkingBias)) ).GetNormalized(0);
       }
-
     }
-
   }
-
 
   {
     Vector3 autoMovement = autoDirection * autoVelocityFloat;

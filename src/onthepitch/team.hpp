@@ -20,7 +20,7 @@ class Team {
 
     void Exit();
 
-    void InitPlayers(boost::intrusive_ptr<Node> fullbodyNode, std::map<Vector3, Vector3> &colorCoords);
+    void InitPlayers(boost::intrusive_ptr<Node> fullbodyNode, std::map<Vector3, Vector3> &colorCoords, bool isHomeTeam);
 
     Match *GetMatch() { return match; }
     TeamAIController *GetController() { return teamController; }
