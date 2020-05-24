@@ -1759,14 +1759,16 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 		#endif
 	}
 
-	/*
+	
 	DataSet::iterator iter = dataSet.begin();
-	while (iter != dataSet.end()) {
+	while (iter != dataSet.end()) 
+	{
 		Animation *anim = anims->GetAnim(*iter);
-		if (player->GetDebug()) printf("animname: %s\n", anim->GetName().c_str());
+		if (player->GetDebug()) 
+			Log(e_Notice, "Humanoid", "Humanoid", "animname: " + to_string(anim->GetName()));
 		iter++;
 	}
-	*/
+	
 
 	int selectedAnimID = -1;
 	std::vector<Vector3> positions_tmp;
@@ -2081,7 +2083,10 @@ float Humanoid::GetBodyBallDistanceAdvantage(const Animation *anim, e_FunctionTy
 
 	float result = 1.0f;
 	float allowedRadius = (radius + effectiveRadiusCheatDistance) * cheatFactor + cheatDistanceBonus;
-	if (adaptedActualBallPos2D.GetDistance(behindCenter) > allowedRadius) { result = 0.0f; stat_GetBodyBallDistanceAdvantage_RadiusDeny++; }
+	if (adaptedActualBallPos2D.GetDistance(behindCenter) > allowedRadius) 
+	{ 
+		result = 0.0f; stat_GetBodyBallDistanceAdvantage_RadiusDeny++; 
+	}
 
 	if (debug && player->GetDebug() && anim->GetName().find("180_decel.anim") != std::string::npos) 
 	{
@@ -2263,10 +2268,11 @@ signed int Humanoid::GetBestCheatableAnimID(const DataSet &sortedDataSet, bool u
 			if (functionType == e_FunctionType_Deflect) ballDistanceZ *= 0.8f;
 			if (match->GetBallRetainer() == player) ballDistanceZ = 0.0f;
 
-			if (ballPos.coords[2] < 0.5f && isBase) ballDistanceZ = std::max(ballDistanceZ - 0.15f, 0.0f); // low balls should be doable with ground level anims, doesn't look that bad :P
+			if (ballPos.coords[2] < 0.5f && isBase) 
+				ballDistanceZ = std::max(ballDistanceZ - 0.15f, 0.0f); // low balls should be doable with ground level anims, doesn't look that bad :P
 
-			if (ballDistanceZ < 0.22f) {
-
+			if (ballDistanceZ < 0.22f) 
+			{
 				// default touch can be 'cheated' towards best, has biggest 'radius'
 				float touchFrameAwkwardness = NormalizedClamp(abs(defaultTouchFrame - animTouchFrame), 0.0f, 4.0f);
 				touchFrameAwkwardness = pow(touchFrameAwkwardness, 2.0f) * 0.5f;
@@ -2297,7 +2303,8 @@ signed int Humanoid::GetBestCheatableAnimID(const DataSet &sortedDataSet, bool u
 				if (functionType == e_FunctionType_HighPass) { radiusFactor *= 1.3f; radiusCheatOffset += 0.15f; }
 				if (functionType == e_FunctionType_Shot) { radiusFactor *= 1.3f; radiusCheatOffset += 0.15f; }
 
-				if ((functionType == e_FunctionType_Trap || functionType == e_FunctionType_BallControl) && preferPassAndShot == true) {
+				if ((functionType == e_FunctionType_Trap || functionType == e_FunctionType_BallControl) && preferPassAndShot == true) 
+				{
 					radiusFactor *= 0.3f;
 				}
 
@@ -2306,9 +2313,12 @@ signed int Humanoid::GetBestCheatableAnimID(const DataSet &sortedDataSet, bool u
 				float touchVelo = touchMovement.GetLength();
 
 				Vector3 FFO = GetFrontOfFootOffsetRel(touchVelo, z, ballPos.coords[2]);
-				if (FloatToEnumVelocity(touchVelo) == e_Velocity_Idle) {
+				if (FloatToEnumVelocity(touchVelo) == e_Velocity_Idle) 
+				{
 					//FFO.Rotate2D(z); // always towards y = -1, right? (hmmm not really)
-				} else {
+				} 
+				else 
+				{
 					FFO.Rotate2D(FixAngle(touchMovement.GetNormalized(Vector3(0, -1, 0)).GetAngle2D()));
 				}
 				// if (player->GetDebug() && animType.compare("ballcontrol") == 0) {
@@ -2318,7 +2328,8 @@ signed int Humanoid::GetBestCheatableAnimID(const DataSet &sortedDataSet, bool u
 
 				// just touched ball
 				float lastTouchBias = curve(player->GetLastTouchBias(600, match->GetActualTime_ms() + animTouchFrame * 10), 1.0f);
-				if (lastTouchBias > 0.0f) {
+				if (lastTouchBias > 0.0f) 
+				{
 					float factor = 1.0f - lastTouchBias * 0.97f * (1.0f - player->GetStat("technical_ballcontrol") * 0.1f);
 					radiusFactor *= factor;
 					radiusCheatOffset *= factor;
@@ -2429,7 +2440,8 @@ signed int Humanoid::GetBestCheatableAnimID(const DataSet &sortedDataSet, bool u
 
 Vector3 Humanoid::CalculateMovementSmuggle(const Vector3 &desiredDirection, float desiredVelocityFloat) 
 {
-	if (!enableMovementSmuggle) return Vector3(0);
+	if (!enableMovementSmuggle) 
+		return Vector3(0);
 
 	if (team->GetDesignatedTeamPossessionPlayer() != player || match->GetDesignatedPossessionPlayer() != player ||
 			currentAnim->touchFrame != -1 || (currentAnim->functionType == e_FunctionType_Trip && currentAnim->anim->GetVariable("triptype").compare("1") != 0) || currentAnim->anim->GetVariable("incoming_special_state").compare("") != 0 || currentAnim->anim->GetVariable("outgoing_special_state").compare("") != 0 ||
@@ -2521,11 +2533,13 @@ Vector3 Humanoid::GetBestPossibleTouch(const Vector3 &desiredTouch, e_FunctionTy
 
 	Vector3 resultTouch = desiredTouch;
 
-	if (Verbose()) printf("powers: %f\n", desiredTouch.GetLength());
+	if (Verbose()) 
+		printf("powers: %f\n", desiredTouch.GetLength());
 
 	// fetch vars
 	float maxPowerFactor = atof(currentAnim->anim->GetVariable("touch_maxpowerfactor").c_str());
-	if (maxPowerFactor == 0.0f) maxPowerFactor = 1.0f;
+	if (maxPowerFactor == 0.0f) 
+		maxPowerFactor = 1.0f;
 	maxPowerFactor = maxPowerFactor * 0.7f + 0.3f;
 
 	// clamp to maximum possible power (from anim vars)
@@ -2571,7 +2585,8 @@ Vector3 Humanoid::GetBestPossibleTouch(const Vector3 &desiredTouch, e_FunctionTy
 	else 
 	{
 		radian rotation = random(-0.5f * pi, 0.5f * pi) * std::min(randomRotation, 0.5f);
-		if (Verbose()) printf("randomrotation: %f\n", rotation);
+		if (Verbose()) 
+			printf("randomrotation: %f\n", rotation);
 		resultTouch.Rotate2D(rotation);
 	}
 

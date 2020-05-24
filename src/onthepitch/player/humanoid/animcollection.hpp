@@ -22,7 +22,8 @@ inline float FloorVelocity(float velocity);
 inline float EnumToFloatVelocity(e_Velocity velocity);
 inline e_Velocity FloatToEnumVelocity(float velocity);
 
-enum e_DefString {
+enum e_DefString 
+{
 	e_DefString_Empty = 0,
 	e_DefString_OutgoingSpecialState = 1,
 	e_DefString_IncomingSpecialState = 2,
@@ -47,14 +48,16 @@ enum e_DefString {
 	e_DefString_Size = 21
 };
 
-radian FixAngle(radian angle) {
+radian FixAngle(radian angle) 
+{
 	// convert engine angle into football angle (different base orientation: 'down' on y instead of 'right' on x)
 	radian newAngle = angle;
 	newAngle += 0.5f * pi;
 	return ModulateIntoRange(-pi, pi, newAngle);
 }
 
-float RangeVelocity(float velocity) {
+float RangeVelocity(float velocity) 
+{
 	float retVelocity = idleVelocity;
 	if (velocity >= idleDribbleSwitch && velocity < dribbleWalkSwitch) retVelocity = dribbleVelocity;
 	else if (velocity >= dribbleWalkSwitch && velocity < walkSprintSwitch) retVelocity = walkVelocity;
@@ -62,13 +65,15 @@ float RangeVelocity(float velocity) {
 	return retVelocity;
 }
 
-float ClampVelocity(float velocity) {
+float ClampVelocity(float velocity) 
+{
 	if (velocity < 0) return 0;
 	if (velocity > sprintVelocity) return sprintVelocity;
 	return velocity;
 }
 
-float FloorVelocity(float velocity) {
+float FloorVelocity(float velocity) 
+{
 	float retVelocity = idleVelocity;
 	if (velocity > 0 && velocity < dribbleVelocity) retVelocity = dribbleVelocity;
 	else if (velocity <= walkVelocity) retVelocity = walkVelocity;
@@ -76,7 +81,8 @@ float FloorVelocity(float velocity) {
 	return retVelocity;
 }
 
-float EnumToFloatVelocity(e_Velocity velocity) {
+float EnumToFloatVelocity(e_Velocity velocity) 
+{
 	switch (velocity) {
 		case e_Velocity_Idle:
 			return idleVelocity;
@@ -94,17 +100,25 @@ float EnumToFloatVelocity(e_Velocity velocity) {
 	return 0;
 }
 
-e_Velocity FloatToEnumVelocity(float velocity) {
+e_Velocity FloatToEnumVelocity(float velocity) 
+{
 	float rangedVelocity = RangeVelocity(velocity);
-	if (rangedVelocity == idleVelocity) return e_Velocity_Idle;
-	else if (rangedVelocity == dribbleVelocity) return e_Velocity_Dribble;
-	else if (rangedVelocity == walkVelocity) return e_Velocity_Walk;
-	else if (rangedVelocity == sprintVelocity) return e_Velocity_Sprint;
-	else return e_Velocity_Idle;
+	if (rangedVelocity == idleVelocity) 
+		return e_Velocity_Idle;
+	else if (rangedVelocity == dribbleVelocity) 
+		return e_Velocity_Dribble;
+	else if (rangedVelocity == walkVelocity) 
+		return e_Velocity_Walk;
+	else if (rangedVelocity == sprintVelocity) 
+		return e_Velocity_Sprint;
+	else 
+		return e_Velocity_Idle;
 }
 
-struct CrudeSelectionQuery {
-	CrudeSelectionQuery() {
+struct CrudeSelectionQuery 
+{
+	CrudeSelectionQuery() 
+	{
 		byFunctionType = false;
 		byFoot = false; foot = e_Foot_Left;
 		heedForcedFoot = false; strongFoot = e_Foot_Right;
@@ -163,7 +177,8 @@ struct CrudeSelectionQuery {
 	Properties properties;
 };
 
-struct Quadrant {
+struct Quadrant 
+{
 	int id;
 	Vector3 position;
 	e_Velocity velocity;
@@ -172,8 +187,8 @@ struct Quadrant {
 
 void FillNodeMap(boost::intrusive_ptr<Node> targetNode, std::map < const std::string, boost::intrusive_ptr<Node> > &nodeMap);
 
-class AnimCollection {
-
+class AnimCollection 
+{
 	public:
 		// scene3D for debugging pilon
 		AnimCollection(boost::shared_ptr<Scene3D> scene3D);
