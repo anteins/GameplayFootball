@@ -14,32 +14,32 @@ class PlayerBase;
 
 class IController {
 
-  public:
-    IController(Match *match) : match(match), fallbackController(0) {};
-    virtual ~IController() {};
+	public:
+		IController(Match *match) : match(match), fallbackController(0) {};
+		virtual ~IController() {};
 
-    virtual void RequestCommand(PlayerCommandQueue &commandQueue) = 0;
-    virtual void Process() {};
-    virtual Vector3 GetDirection() = 0;
-    virtual float GetFloatVelocity() = 0;
+		virtual void RequestCommand(PlayerCommandQueue &commandQueue) = 0;
+		virtual void Process() {};
+		virtual Vector3 GetDirection() = 0;
+		virtual float GetFloatVelocity() = 0;
 
-    virtual void SetPlayer(PlayerBase *player);
+		virtual void SetPlayer(PlayerBase *player);
 
-    // for convenience
-    PlayerBase *GetPlayer() { return player; }
-    Match *GetMatch() { return match; }
+		// for convenience
+		PlayerBase *GetPlayer() { return player; }
+		Match *GetMatch() { return match; }
 
-    virtual int GetReactionTime_ms();
+		virtual int GetReactionTime_ms();
 
-    void SetFallbackController(IController *controller) { fallbackController = controller; }
+		void SetFallbackController(IController *controller) { fallbackController = controller; }
 
-    virtual void Reset() = 0;
+		virtual void Reset() = 0;
 
-  protected:
-    PlayerBase *player;
-    Match *match;
+	protected:
+		PlayerBase *player;
+		Match *match;
 
-    IController *fallbackController;
+		IController *fallbackController;
 
 };
 

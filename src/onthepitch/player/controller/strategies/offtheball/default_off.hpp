@@ -9,13 +9,13 @@
 
 class DefaultOffenseStrategy : public Strategy {
 
-  public:
-    DefaultOffenseStrategy(ElizaController *controller);
-    virtual ~DefaultOffenseStrategy();
+	public:
+		DefaultOffenseStrategy(ElizaController *controller);
+		virtual ~DefaultOffenseStrategy();
 
-    virtual void RequestInput(const MentalImage *mentalImage, Vector3 &direction, float &velocity);
+		virtual void RequestInput(const MentalImage *mentalImage, Vector3 &direction, float &velocity);
 
-  protected:
+	protected:
 
 };
 

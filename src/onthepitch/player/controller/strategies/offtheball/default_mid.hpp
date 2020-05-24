@@ -9,13 +9,13 @@
 
 class DefaultMidfieldStrategy : public Strategy {
 
-  public:
-    DefaultMidfieldStrategy(ElizaController *controller);
-    virtual ~DefaultMidfieldStrategy();
+	public:
+		DefaultMidfieldStrategy(ElizaController *controller);
+		virtual ~DefaultMidfieldStrategy();
 
-    virtual void RequestInput(const MentalImage *mentalImage, Vector3 &direction, float &velocity);
+		virtual void RequestInput(const MentalImage *mentalImage, Vector3 &direction, float &velocity);
 
-  protected:
+	protected:
 
 };
 

@@ -9,14 +9,14 @@
 
 class CelebrationStrategy : public Strategy {
 
-  public:
-    CelebrationStrategy(ElizaController *controller);
-    virtual ~CelebrationStrategy();
+	public:
+		CelebrationStrategy(ElizaController *controller);
+		virtual ~CelebrationStrategy();
 
-    virtual void RequestInput(const MentalImage *mentalImage, Vector3 &direction, e_Velocity &velocity);
+		virtual void RequestInput(const MentalImage *mentalImage, Vector3 &direction, e_Velocity &velocity);
 
-  protected:
-    unsigned long startTime_ms;
+	protected:
+		unsigned long startTime_ms;
 
 };
 

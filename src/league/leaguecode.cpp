@@ -10,10 +10,9 @@
 #include "utils/database.hpp"
 #include "utils/xmlloader.hpp"
 
-int CreateNewLeagueSave(const std::string &srcDbName, const std::string &saveName) {
-
+int CreateNewLeagueSave(const std::string &srcDbName, const std::string &saveName) 
+{
 	// copy db file
-
 	int errorCode = 0;
 	// 1 == could not create save dir
 	// 2 == could not copy db file
@@ -40,45 +39,48 @@ int CreateNewLeagueSave(const std::string &srcDbName, const std::string &saveNam
 	namespace fs = boost::filesystem;
 	fs::copy_file(dest / "database.sqlite", dest / "autosave.sqlite", error);
 
-
 	// check db for graphics files and copy those
-
 	Database *database;
-
-	if (errorCode == 0) {
+	if (errorCode == 0) 
+	{
 		database = GetDB();
-		if (!database->Load(dest.string() + "/autosave.sqlite")) {
+		if (!database->Load(dest.string() + "/autosave.sqlite")) 
+		{
 			errorCode = 3; // could not open database
 		}
 	}
 
-	if (errorCode == 0) {
+	if (errorCode == 0) 
+	{
 		std::vector<std::string> imageList;
 		DatabaseResult *result = database->Query("select logo_url, kit_url from teams");
-		for (unsigned int r = 0; r < result->data.size(); r++) {
+		for (unsigned int r = 0; r < result->data.size(); r++) 
+		{
 			imageList.push_back(result->data.at(r).at(0));
 			imageList.push_back(result->data.at(r).at(1));
 		}
 		delete result;
 		result = database->Query("select logo_url from competitions");
-		for (unsigned int r = 0; r < result->data.size(); r++) {
+		for (unsigned int r = 0; r < result->data.size(); r++) 
+		{
 			imageList.push_back(result->data.at(r).at(0));
 		}
 		delete result;
 
-
 		// create directories, copy files
-
-		for (unsigned int i = 0; i < imageList.size(); i++) {
+		for (unsigned int i = 0; i < imageList.size(); i++) 
+		{
 			//printf("copying %s\n", imageList.at(i).c_str());
 			std::vector<std::string> tokens;
 			tokenize(imageList.at(i), tokens, "/\\");
 
 			boost::filesystem::path newdir = dest;
-			for (unsigned int x = 0; x < tokens.size() - 1; x++) {
+			for (unsigned int x = 0; x < tokens.size() - 1; x++) 
+			{
 				// does directory exist?
 				newdir /= tokens.at(x);
-				if (!boost::filesystem::exists(newdir)) {
+				if (!boost::filesystem::exists(newdir)) 
+				{
 					boost::filesystem::create_directory(newdir);
 					//printf("created dir: %s\n", newdir.string().c_str());
 				}
@@ -91,8 +93,10 @@ int CreateNewLeagueSave(const std::string &srcDbName, const std::string &saveNam
 			sourcefile /= imageList.at(i);
 			boost::system::error_code error;
 			//printf("copying from %s to %s\n", sourcefile.string().c_str(), destfile.string().c_str());
-			if (!boost::filesystem::exists(destfile)) boost::filesystem::copy_file(sourcefile, destfile, error);
-			if (error) errorCode = 4;
+			if (!boost::filesystem::exists(destfile)) 
+				boost::filesystem::copy_file(sourcefile, destfile, error);
+			if (error) 
+				errorCode = 4;
 			//if (error) printf("file %s could not be copied\n", imageList.at(i).c_str());
 			//printf("\n");
 		}
@@ -101,7 +105,8 @@ int CreateNewLeagueSave(const std::string &srcDbName, const std::string &saveNam
 	return errorCode;
 }
 
-bool PrepareDatabaseForLeague() {
+bool PrepareDatabaseForLeague() 
+{
 
 	DatabaseResult *result = GetDB()->Query("CREATE TABLE settings(id INTEGER PRIMARY KEY AUTOINCREMENT, "
 																																"managername VARCHAR(32), "
@@ -154,8 +159,8 @@ bool PrepareDatabaseForLeague() {
 	return true;
 }
 
-bool SaveAutosaveToDatabase() {
-
+bool SaveAutosaveToDatabase() 
+{
 	namespace fs = boost::filesystem;
 	fs::path dest("saves");
 	dest /= GetActiveSaveDirectory();
@@ -171,8 +176,8 @@ bool SaveAutosaveToDatabase() {
 	if (error) return false; else return true;
 }
 
-bool SaveDatabaseToAutosave() {
-
+bool SaveDatabaseToAutosave() 
+{
 	namespace fs = boost::filesystem;
 	fs::path dest("saves");
 	dest /= GetActiveSaveDirectory();

@@ -4,7 +4,8 @@
 
 #include "matchdata.hpp"
 
-MatchData::MatchData(int team1DatabaseID, int team2DatabaseID) {
+MatchData::MatchData(int team1DatabaseID, int team2DatabaseID) 
+{
 	teamData[0] = new TeamData(team1DatabaseID);
 	teamData[1] = new TeamData(team2DatabaseID);
 
@@ -20,14 +21,18 @@ MatchData::MatchData(int team1DatabaseID, int team2DatabaseID) {
 	possession60seconds = 0.0f;
 }
 
-MatchData::~MatchData() {
+MatchData::~MatchData() 
+{
 	delete teamData[0];
 	delete teamData[1];
 }
 
-void MatchData::AddPossessionTime_10ms(int teamID) {
+void MatchData::AddPossessionTime_10ms(int teamID) 
+{
 	possessionTime_ms[teamID] += 10;
-	if (teamID == 0) possession60seconds = std::max(possession60seconds - 0.01f, -60.0f);
-	else if (teamID == 1) possession60seconds = std::min(possession60seconds + 0.01f, 60.0f);
+	if (teamID == 0) 
+		possession60seconds = std::max(possession60seconds - 0.01f, -60.0f);
+	else if (teamID == 1) 
+		possession60seconds = std::min(possession60seconds + 0.01f, 60.0f);
 	//printf("pos60s: %f\n", possession60seconds);
 }

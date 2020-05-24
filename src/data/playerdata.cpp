@@ -10,8 +10,8 @@
 
 #include "../main.hpp"
 
-PlayerData::PlayerData(int playerDatabaseID) : databaseID(playerDatabaseID) {
-
+PlayerData::PlayerData(int playerDatabaseID) : databaseID(playerDatabaseID) 
+{
 	//std::string test = "select * from players where id = " + int_to_str(databaseID) + " limit 1";
 	//printf("test: %s\n", test.c_str());
 
@@ -27,7 +27,8 @@ PlayerData::PlayerData(int playerDatabaseID) : databaseID(playerDatabaseID) {
 	hairColor = "darkblonde";
 	height = 1.8f;
 
-	for (unsigned int c = 0; c < result->data.at(0).size(); c++) {
+	for (unsigned int c = 0; c < result->data.at(0).size(); c++) 
+	{
 		if (result->header.at(c).compare("firstname") == 0) firstName = result->data.at(0).at(c);
 		if (result->header.at(c).compare("lastname") == 0) lastName = result->data.at(0).at(c);
 		if (result->header.at(c).compare("role") == 0) roleString = result->data.at(0).at(c);
@@ -45,19 +46,19 @@ PlayerData::PlayerData(int playerDatabaseID) : databaseID(playerDatabaseID) {
 	std::vector<std::string> roleStrings;
 	tokenize(roleString, roleStrings);
 
-	for (int i = 0; i < (signed int)roleStrings.size(); i++) {
+	for (int i = 0; i < (signed int)roleStrings.size(); i++) 
+	{
 		roles.push_back(GetRoleFromString(roleStrings.at(i)));
 	}
 
-
 	// get average stat for current age
-
 	XMLLoader loader;
 	XMLTree tree = loader.Load(profileString);
 
 	//printf("player: %s, %s (age %i)\n", lastName.c_str(), firstName.c_str(), age);
 	map_XMLTree::const_iterator iter = tree.children.begin();
-	while (iter != tree.children.end()) {
+	while (iter != tree.children.end()) 
+	{
 		float profileStat = atof((*iter).second.value.c_str()); // profile value
 
 		float value = CalculateStat(baseStat, profileStat, age, e_DevelopmentCurveType_Normal);
@@ -69,7 +70,8 @@ PlayerData::PlayerData(int playerDatabaseID) : databaseID(playerDatabaseID) {
 
 }
 
-PlayerData::PlayerData() {
+PlayerData::PlayerData() 
+{
 	// officials, for example, use this constructor
 	skinColor = int(round(random(1, 4)));
 	hairStyle = "short01";
@@ -100,16 +102,20 @@ PlayerData::PlayerData() {
 	stats.Set("mental_vision", 0.6);
 }
 
-PlayerData::~PlayerData() {
+PlayerData::~PlayerData() 
+{
 }
 
-const std::vector<e_PlayerRole> &PlayerData::GetRoles() const {
+const std::vector<e_PlayerRole> &PlayerData::GetRoles() const 
+{
 	return roles;
 }
 
-float PlayerData::GetStat(const char *name) {
+float PlayerData::GetStat(const char *name) 
+{
 	bool exists = stats.Exists(name);
-	if (!exists) printf("Stat named '%s' does not exist!\n", name);
+	if (!exists) 
+		printf("Stat named '%s' does not exist!\n", name);
 	assert(exists);
 	return stats.GetReal(name, 1.0f);
 }

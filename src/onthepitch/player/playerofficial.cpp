@@ -15,40 +15,44 @@ PlayerOfficial::PlayerOfficial(e_OfficialType officialType, Match *match, Player
 }
 
 PlayerOfficial::~PlayerOfficial() {
-  if (Verbose()) printf("exiting playerofficial.. ");
-  if (Verbose()) printf("done\n");
+	if (Verbose()) printf("exiting playerofficial.. ");
+	if (Verbose()) printf("done\n");
 }
 
 HumanoidBase *PlayerOfficial::CastHumanoid() { return static_cast<HumanoidBase*>(humanoid); }
 
 RefereeController *PlayerOfficial::CastController() {
-  return static_cast<RefereeController*>(controller);
+	return static_cast<RefereeController*>(controller);
 }
 
 void PlayerOfficial::Activate(boost::intrusive_ptr<Node> humanoidSourceNode, boost::intrusive_ptr<Node> fullbodySourceNode, std::map<Vector3, Vector3> &colorCoords, boost::intrusive_ptr < Resource<Surface> > kit, boost::shared_ptr<AnimCollection> animCollection) {
-  isActive = true;
-  humanoid = new HumanoidBase(this, match, humanoidSourceNode, fullbodySourceNode, colorCoords, animCollection, match->GetDynamicNode(), kit, 0);
+	isActive = true;
+	humanoid = new HumanoidBase(this, match, humanoidSourceNode, fullbodySourceNode, colorCoords, animCollection, match->GetDynamicNode(), kit, 0);
 
-  CastHumanoid()->ResetPosition(Vector3(0), Vector3(0));
+	CastHumanoid()->ResetPosition(Vector3(0), Vector3(0));
 
-  controller = new RefereeController(match);
-  CastController()->SetPlayer(this);
+	controller = new RefereeController(match);
+	CastController()->SetPlayer(this);
 }
 
-void PlayerOfficial::Deactivate() {
-  PlayerBase::Deactivate();
+void PlayerOfficial::Deactivate() 
+{
+	PlayerBase::Deactivate();
 }
 
-void PlayerOfficial::Process() {
-  CastController()->Process();
-  CastHumanoid()->Process();
+void PlayerOfficial::Process() 
+{
+	CastController()->Process();
+	CastHumanoid()->Process();
 }
 
-void PlayerOfficial::PreparePutBuffers(unsigned long snapshotTime_ms) {
-  PlayerBase::PreparePutBuffers(snapshotTime_ms);
+void PlayerOfficial::PreparePutBuffers(unsigned long snapshotTime_ms) 
+{
+	PlayerBase::PreparePutBuffers(snapshotTime_ms);
 }
 
-void PlayerOfficial::FetchPutBuffers(unsigned long putTime_ms) {
-  PlayerBase::FetchPutBuffers(putTime_ms);
+void PlayerOfficial::FetchPutBuffers(unsigned long putTime_ms) 
+{
+	PlayerBase::FetchPutBuffers(putTime_ms);
 }
 

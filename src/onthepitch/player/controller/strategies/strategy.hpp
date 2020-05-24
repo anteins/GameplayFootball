@@ -20,25 +20,25 @@ using namespace blunted;
 
 class Strategy {
 
-  public:
-    Strategy(ElizaController *controller) : controller(controller), player(controller->GetPlayer()), team(controller->GetTeam()), match(controller->GetMatch()) {};
-    virtual ~Strategy() {};
+	public:
+		Strategy(ElizaController *controller) : controller(controller), player(controller->GetPlayer()), team(controller->GetTeam()), match(controller->GetMatch()) {};
+		virtual ~Strategy() {};
 
-    Player *CastPlayer() { return static_cast<Player*>(player); }
+		Player *CastPlayer() { return static_cast<Player*>(player); }
 
-    virtual void RequestInput(const MentalImage *mentalImage, Vector3 &direction, float &velocity) = 0;
+		virtual void RequestInput(const MentalImage *mentalImage, Vector3 &direction, float &velocity) = 0;
 
-    std::string GetName() { return name; }
+		std::string GetName() { return name; }
 
-  protected:
-    ElizaController *controller;
+	protected:
+		ElizaController *controller;
 
-    std::string name;
+		std::string name;
 
-    // for convenience
-    PlayerBase *player;
-    Team *team;
-    Match *match;
+		// for convenience
+		PlayerBase *player;
+		Team *team;
+		Match *match;
 
 };
 

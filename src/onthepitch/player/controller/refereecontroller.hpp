@@ -11,24 +11,24 @@ class PlayerOfficial;
 
 class RefereeController : public IController {
 
-  public:
-    RefereeController(Match *match);
-    virtual ~RefereeController();
+	public:
+		RefereeController(Match *match);
+		virtual ~RefereeController();
 
-    PlayerOfficial *CastPlayer();
+		PlayerOfficial *CastPlayer();
 
-    void GetForceField(std::vector<ForceSpot> &forceField);
+		void GetForceField(std::vector<ForceSpot> &forceField);
 
-    virtual void RequestCommand(PlayerCommandQueue &commandQueue);
-    virtual void Process();
-    virtual Vector3 GetDirection();
-    virtual float GetFloatVelocity();
+		virtual void RequestCommand(PlayerCommandQueue &commandQueue);
+		virtual void Process();
+		virtual Vector3 GetDirection();
+		virtual float GetFloatVelocity();
 
-    virtual int GetReactionTime_ms();
+		virtual int GetReactionTime_ms();
 
-    virtual void Reset();
+		virtual void Reset();
 
-  protected:
+	protected:
 
 };
 

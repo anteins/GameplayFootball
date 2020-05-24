@@ -9,8 +9,8 @@
 #include "playerbase.hpp"
 
 enum e_OfficialType {
-  e_OfficialType_Referee,
-  e_OfficialType_Linesman
+	e_OfficialType_Referee,
+	e_OfficialType_Linesman
 };
 
 class Match;
@@ -18,24 +18,24 @@ class RefereeController;
 
 class PlayerOfficial : public PlayerBase {
 
-  public:
-    PlayerOfficial(e_OfficialType officialType, Match *match, PlayerData *playerData);
-    virtual ~PlayerOfficial();
+	public:
+		PlayerOfficial(e_OfficialType officialType, Match *match, PlayerData *playerData);
+		virtual ~PlayerOfficial();
 
-    HumanoidBase *CastHumanoid();
-    RefereeController *CastController();
+		HumanoidBase *CastHumanoid();
+		RefereeController *CastController();
 
-    e_OfficialType GetOfficialType() { return officialType; }
+		e_OfficialType GetOfficialType() { return officialType; }
 
-    virtual void Activate(boost::intrusive_ptr<Node> humanoidSourceNode, boost::intrusive_ptr<Node> fullbodySourceNode, std::map<Vector3, Vector3> &colorCoords, boost::intrusive_ptr < Resource<Surface> > kit, boost::shared_ptr<AnimCollection> animCollection);
-    virtual void Deactivate();
+		virtual void Activate(boost::intrusive_ptr<Node> humanoidSourceNode, boost::intrusive_ptr<Node> fullbodySourceNode, std::map<Vector3, Vector3> &colorCoords, boost::intrusive_ptr < Resource<Surface> > kit, boost::shared_ptr<AnimCollection> animCollection);
+		virtual void Deactivate();
 
-    virtual void Process();
-    virtual void PreparePutBuffers(unsigned long snapshotTime_ms);
-    virtual void FetchPutBuffers(unsigned long putTime_ms);
+		virtual void Process();
+		virtual void PreparePutBuffers(unsigned long snapshotTime_ms);
+		virtual void FetchPutBuffers(unsigned long putTime_ms);
 
-  protected:
-    e_OfficialType officialType;
+	protected:
+		e_OfficialType officialType;
 
 };
 

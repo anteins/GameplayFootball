@@ -19,19 +19,21 @@
 
 #include "main.hpp"
 
-void FillNodeMap(boost::intrusive_ptr<Node> targetNode, std::map < const std::string, boost::intrusive_ptr<Node> > &nodeMap) {
+void FillNodeMap(boost::intrusive_ptr<Node> targetNode, std::map < const std::string, boost::intrusive_ptr<Node> > &nodeMap) 
+{
 	//printf("%s\n", targetNode->GetName().c_str());
 	nodeMap.insert(std::pair < std::string, boost::intrusive_ptr<Node> >(targetNode->GetName(), targetNode));
 
 	std::vector < boost::intrusive_ptr<Node> > gatherNodes;
 	targetNode->GetNodes(gatherNodes);
-	for (unsigned int i = 0; i < gatherNodes.size(); i++) {
+	for (unsigned int i = 0; i < gatherNodes.size(); i++) 
+	{
 		FillNodeMap(gatherNodes.at(i), nodeMap);
 	}
-
 }
 
-AnimCollection::AnimCollection(boost::shared_ptr<Scene3D> scene3D) : scene3D(scene3D) {
+AnimCollection::AnimCollection(boost::shared_ptr<Scene3D> scene3D) : scene3D(scene3D) 
+{
 	defString[0] = "";
 	defString[1] = "outgoing_special_state";
 	defString[2] = "incoming_special_state";
@@ -57,7 +59,6 @@ AnimCollection::AnimCollection(boost::shared_ptr<Scene3D> scene3D) : scene3D(sce
 	maxIncomingBallDirectionDeviation = 0.25f * pi;
 	maxOutgoingBallDirectionDeviation = 0.25f * pi;
 
-
 	// quadrants denote the quantized outgoing movement - there are only certain possibilities:
 	// idle - dribble - walk - run, in combination with angles: 0 - 20 - 45 - 90 - 135 - 180 (and their negatives, where applicable)
 	// so every anim falls into one of these quadrants.
@@ -71,26 +72,40 @@ AnimCollection::AnimCollection(boost::shared_ptr<Scene3D> scene3D) : scene3D(sce
 	quadrants.push_back(quadrant);
 
 	int id = 1;
-	for (int velocityID = 1; velocityID < 4; velocityID++) {
-
+	for (int velocityID = 1; velocityID < 4; velocityID++) 
+	{
 		e_Velocity velocity;
-		if (velocityID == 1) velocity = e_Velocity_Dribble;
-		else if (velocityID == 2) velocity = e_Velocity_Walk;
-		else if (velocityID == 3) velocity = e_Velocity_Sprint;
+		if (velocityID == 1) 
+			velocity = e_Velocity_Dribble;
+		else if (velocityID == 2) 
+			velocity = e_Velocity_Walk;
+		else if (velocityID == 3) 
+			velocity = e_Velocity_Sprint;
 
-		for (int angleID = 0; angleID < 11; angleID++) {
+		for (int angleID = 0; angleID < 11; angleID++) 
+		{
 
 			radian angle;
-			if			(angleID == 0)	angle = pi / 180.0f *		0.0f;
-			else if (angleID == 1)	angle = pi / 180.0f *	 20.0f;
-			else if (angleID == 2)	angle = pi / 180.0f *	 45.0f;
-			else if (angleID == 3)	angle = pi / 180.0f *	 90.0f;
-			else if (angleID == 4)	angle = pi / 180.0f *	135.0f;
-			else if (angleID == 5)	angle = pi / 180.0f *	179.0f;
-			else if (angleID == 6)	angle = pi / 180.0f *	-20.0f;
-			else if (angleID == 7)	angle = pi / 180.0f *	-45.0f;
-			else if (angleID == 8)	angle = pi / 180.0f *	-90.0f;
-			else if (angleID == 9)	angle = pi / 180.0f * -135.0f;
+			if (angleID == 0)	
+				angle = pi / 180.0f * 0.0f;
+			else if (angleID == 1)	
+				angle = pi / 180.0f *	 20.0f;
+			else if (angleID == 2)	
+				angle = pi / 180.0f *	 45.0f;
+			else if (angleID == 3)	
+				angle = pi / 180.0f *	 90.0f;
+			else if (angleID == 4)	
+				angle = pi / 180.0f *	135.0f;
+			else if (angleID == 5)	
+				angle = pi / 180.0f *	179.0f;
+			else if (angleID == 6)	
+				angle = pi / 180.0f *	-20.0f;
+			else if (angleID == 7)	
+				angle = pi / 180.0f *	-45.0f;
+			else if (angleID == 8)	
+				angle = pi / 180.0f *	-90.0f;
+			else if (angleID == 9)	
+				angle = pi / 180.0f * -135.0f;
 			//else if (angleID == 10) angle = pi / 180.0f * -179.0f;
 
 			Quadrant quadrant;
@@ -103,27 +118,33 @@ AnimCollection::AnimCollection(boost::shared_ptr<Scene3D> scene3D) : scene3D(sce
 			id++;
 		}
 	}
-
 }
 
-AnimCollection::~AnimCollection() {
-	if (Verbose()) printf("exiting animcollection.. ");
+AnimCollection::~AnimCollection() 
+{
+	if (Verbose()) 
+		printf("exiting animcollection.. ");
 	Clear();
-	if (Verbose()) printf("done\n");
+	if (Verbose()) 
+		printf("done\n");
 }
 
-void AnimCollection::Clear() {
+void AnimCollection::Clear() 
+{
 	std::vector < Animation* >::iterator animIter = animations.begin();
-	while (animIter != animations.end()) {
+	while (animIter != animations.end()) 
+	{
 		delete *animIter;
 		animIter++;
 	}
 	animations.clear();
 }
 
-radian GetAngle(int directionID) {
+radian GetAngle(int directionID) 
+{
 	radian angle = 0.0f;
-	switch (directionID) {
+	switch (directionID) 
+	{
 		case 0:
 			angle = 0.0f;
 			break;
@@ -153,13 +174,12 @@ radian GetAngle(int directionID) {
 			break;
 		default:
 			break;
-
 	}
 	return angle;
 }
 
-void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Animation*> &autoAnims) {
-
+void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Animation*> &autoAnims) 
+{
 	const float leanAmount = 0.001f;
 	const int frameCount = 25;
 	const float margin = 0.01f;
@@ -231,8 +251,8 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 
 				float animSpeedFactor = 1.0f;
 
-				if (legalAnim == true) {
-
+				if (legalAnim == true) 
+				{
 					Animation *gen = new Animation(*templates.at(t1));
 					gen->SetName("autogen [v" + int_to_str(GetVelocityID(FloatToEnumVelocity(incomingVelocityT1))) + " b" + int_to_str(incomingBodyAngleT1 / pi * 180) + "] => [v" + int_to_str(GetVelocityID(FloatToEnumVelocity(outgoingVelocityT2))) + " b" + int_to_str(outgoingBodyAngleT2 / pi * 180) + " a" + int_to_str(angle / pi * 180) + "]");
 					gen->SetVariable("priority", "1");
@@ -240,8 +260,8 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 					std::vector<NodeAnimation*> &nodeAnimsT1 = anim1->GetNodeAnimations();
 					std::vector<NodeAnimation*> &nodeAnimsT2 = anim2->GetNodeAnimations();
 
-					for (unsigned int n = 0; n < nodeAnimsT1.size(); n++) {
-
+					for (unsigned int n = 0; n < nodeAnimsT1.size(); n++) 
+					{
 						gen->GetNodeAnimations().at(n)->animation.clear();
 
 						// NodeAnimation *nodeAnimT1 = nodeAnimsT1.at(n);
@@ -264,7 +284,8 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 						while (animKeyIter != animationT1.end()) { keyFrames.push_back(animKeyIter->first); animKeyIter++; }
 						animKeyIter = animationT2.begin();
 						while (animKeyIter != animationT2.end()) { keyFrames.push_back(animKeyIter->first); animKeyIter++; }
-						if (n == 0) {
+						if (n == 0) 
+						{
 							// make sure there's 2 position keyframes close to each other at the start and at the end, so we will have the right ingoing and outgoing velocities
 							keyFrames.push_back(1);
 							keyFrames.push_back(23);
@@ -274,11 +295,10 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 						keyFrames.sort();
 						keyFrames.unique(); // delete duplicates
 
-
 						// ITERATE AND INTERPOLATE KEYFRAMES
-
 						std::list<int>::iterator keyIter = keyFrames.begin();
-						while (keyIter != keyFrames.end()) {
+						while (keyIter != keyFrames.end()) 
+						{
 							int frame = *keyIter;
 							float targetFrame = frame * (1.0f / animSpeedFactor);
 
@@ -304,7 +324,9 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 							//if (frame == frameCount - 2) printf("after: %f\n", bias);
 							Quaternion orientation = orientationT1.GetSlerped(bias, orientationT2);
 
-							if (n == 1) { // body
+							if (n == 1) 
+							{ 
+								// body
 								// body orientation
 								Quaternion angleQuat; angleQuat.SetAngleAxis(angle * pow((bias * 0.7f + origBias * 0.3f), 1.0f), Vector3(0, 0, 1));
 								orientation = angleQuat * orientation;
@@ -317,7 +339,9 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 							}
 
 							float height = 0.0f;
-							if (n == 0) { // player
+							if (n == 0) 
+							{ 
+								// player
 								//if (outgoingVeloID == 0 && incomingVeloID != 0) printf("frame: %i, bias: %f\n", frame, bias);
 								cumulativePosition += anim1->GetIncomingMovement() * ((frame - prevFrame) * 0.01f) * (1.0f - bias) +
 																			outgoingMovement * ((frame - prevFrame) * 0.01f) * (bias);
@@ -350,11 +374,9 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 	Log(e_Notice, "AnimCollection", "GenerateAutoAnims", int_to_str(autoAnims.size()) + " autogenerated anims! huzzah!");
 }
 
-void AnimCollection::Load(boost::filesystem::path directory) {
-
-
+void AnimCollection::Load(boost::filesystem::path directory) 
+{
 	// load utility player to get things like foot position in the frames around the balltouch etc.
-
 	Log(e_Notice, "AnimCollection", "Load", "Loading utility player");
 
 	ObjectLoader loader;
@@ -369,7 +391,6 @@ void AnimCollection::Load(boost::filesystem::path directory) {
 	std::map < const std::string, boost::intrusive_ptr<Node> > nodeMap;
 	FillNodeMap(playerNode, nodeMap);
 
-
 	// base anim with default angles - all anims' joints will be inversely rotated by the joints in this anim. this way, the fullbody mesh doesn't need to have 0 degree angles
 
 /*
@@ -377,9 +398,7 @@ void AnimCollection::Load(boost::filesystem::path directory) {
 	baseAnim->Load("media/animations/base.anim.util");
 */
 
-
 	// auto generated anims
-
 	Log(e_Notice, "AnimCollection", "Load", "Parsing autogenerated animation template directory");
 
 	DirectoryParser parser;
@@ -389,7 +408,8 @@ void AnimCollection::Load(boost::filesystem::path directory) {
 	Log(e_Notice, "AnimCollection", "Load", "Loading autogenerated animation templates");
 
 	std::vector<Animation*> templates;
-	for (unsigned int i = 0; i < files.size(); i++) {
+	for (unsigned int i = 0; i < files.size(); i++) 
+	{
 		Animation *animTemplate = new Animation();
 		animTemplate->Load(files.at(i));
 		templates.push_back(animTemplate);
@@ -398,13 +418,15 @@ void AnimCollection::Load(boost::filesystem::path directory) {
 	std::vector<Animation*> autoAnims;
 	GenerateAutoAnims(templates, autoAnims);
 	std::vector < Animation* >::iterator animIter = templates.begin();
-	while (animIter != templates.end()) {
+	while (animIter != templates.end()) 
+	{
 		delete *animIter;
 		animIter++;
 	}
 	templates.clear();
 
-	for (unsigned int i = 0; i < autoAnims.size(); i++) {
+	for (unsigned int i = 0; i < autoAnims.size(); i++) 
+	{
 		Animation *animation = new Animation(*autoAnims.at(i));
 		boost::shared_ptr<FootballAnimationExtension> extension(new FootballAnimationExtension(animation));
 		animation->AddExtension("football", extension);
@@ -419,7 +441,6 @@ void AnimCollection::Load(boost::filesystem::path directory) {
 
 
 	// load all other animations
-
 	Log(e_Notice, "AnimCollection", "Load", "Parsing animation directory");
 
 	files.clear();
@@ -428,24 +449,26 @@ void AnimCollection::Load(boost::filesystem::path directory) {
 	Log(e_Notice, "AnimCollection", "Load", "Loading animations");
 
 	bool omitLuxuryAnims = true;
-
-	for (unsigned int i = 0; i < files.size(); i++) {
-
+	for (unsigned int i = 0; i < files.size(); i++) 
+	{
 		//printf("%s\n", files.at(i).c_str());
-
-		if ((omitLuxuryAnims && files.at(i).find("luxury") != std::string::npos) || files.at(i).find("templates") != std::string::npos) {
+		if ((omitLuxuryAnims && files.at(i).find("luxury") != std::string::npos) || files.at(i).find("templates") != std::string::npos) 
+		{
 			//printf ("ignoring\n");
+		} 
+		else 
+		{
+			if (Verbose()) 
+				printf("%s\n", files.at(i).c_str());
 
-		} else {
-
-			if (Verbose()) printf("%s\n", files.at(i).c_str());
-
-			for (int mirror = 0; mirror < 2; mirror++) {
+			for (int mirror = 0; mirror < 2; mirror++) 
+			{
 				Animation *animation = new Animation();
 				boost::shared_ptr<FootballAnimationExtension> extension(new FootballAnimationExtension(animation));
 				animation->AddExtension("football", extension);
 				animation->Load(files.at(i));
-				if (mirror == 1) animation->Mirror();
+				if (mirror == 1) 
+					animation->Mirror();
 
 				_PrepareAnim(animation, playerNode, bodyParts, nodeMap, false);
 
@@ -469,9 +492,7 @@ void AnimCollection::Load(boost::filesystem::path directory) {
 					}
 				}*/
 			}
-
 		}
-
 	}
 
 	//Log(e_Notice, "AnimCollection", "Load", "Deleting base anim");
@@ -485,13 +506,13 @@ void AnimCollection::Load(boost::filesystem::path directory) {
 	Log(e_Notice, "AnimCollection", "Load", "Ready");
 }
 
-const std::vector < Animation* > &AnimCollection::GetAnimations() const {
+const std::vector < Animation* > &AnimCollection::GetAnimations() const 
+{
 	return animations;
 }
 
-
-void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery &query) {
-
+void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery &query) 
+{
 	// makes a crude selection to later refine
 	int animSize = animations.size();
 
@@ -508,7 +529,6 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 				if (_CheckFunctionType(animType, query.functionType) == false) selectAnim = false;
 			}
 		}
-
 /*
 		// select by FOOT
 		if (selectAnim) {
@@ -814,10 +834,9 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 			}
 		}
 
-
 		// select by PROPERTIES
-
-		if (selectAnim) {
+		if (selectAnim) 
+		{
 			if (query.properties.Get("incoming_special_state").compare(animations.at(i)->GetVariable("incoming_special_state")) != 0) selectAnim = false;
 			// hax: allow switching of hands (except for deflect anims) (in future, maybe make special case for 'both hands at the same time')
 			if ((query.functionType == e_FunctionType_Deflect || ((query.properties.Get("incoming_retain_state").compare("") != 0) != (animations.at(i)->GetVariable("incoming_retain_state").compare("") != 0))) &&
@@ -828,9 +847,10 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 
 
 		// select by TRIP TYPE
-
-		if (selectAnim) {
-			if (query.byTripType == true) {
+		if (selectAnim) 
+		{
+			if (query.byTripType == true) 
+			{
 				if (int(round(atof(animations.at(i)->GetVariable("triptype").c_str()))) != query.tripType) selectAnim = false;
 			}
 		}
@@ -838,23 +858,30 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 
 		// select by FORCED FOOT
 		// todonow: unit test! not sure if working correctly
-
-		if (selectAnim) {
-			if (query.heedForcedFoot == true) {
-
+		if (selectAnim) 
+		{
+			if (query.heedForcedFoot == true) 
+			{
 				std::string forcedFoot = animations.at(i)->GetVariable("forcedfoot");
 				int which = 0;
-				if (forcedFoot.compare("strong") == 0) which = 1;
-				else if (forcedFoot.compare("weak") == 0) which = 2;
-				if (which != 0) {
-
+				if (forcedFoot.compare("strong") == 0) 
+					which = 1;
+				else if (forcedFoot.compare("weak") == 0) 
+					which = 2;
+				if (which != 0) 
+				{
 					std::string touchFoot = animations.at(i)->GetVariable("touchfoot");
 					e_Foot animFoot = e_Foot_Right;
-					if (touchFoot.compare("left") == 0) animFoot = e_Foot_Left;
+					if (touchFoot.compare("left") == 0) 
+						animFoot = e_Foot_Left;
 
 					// for mirrored anims that, therefore, don't start with right foot
-					if (animations.at(i)->GetCurrentFoot() == e_Foot_Left) {
-						if (animFoot == e_Foot_Left) animFoot = e_Foot_Right; else animFoot = e_Foot_Left;
+					if (animations.at(i)->GetCurrentFoot() == e_Foot_Left) 
+					{
+						if (animFoot == e_Foot_Left) 
+							animFoot = e_Foot_Right; 
+						else 
+							animFoot = e_Foot_Left;
 					}
 
 					if (which == 1 && query.strongFoot != animFoot) selectAnim = false;
@@ -864,21 +891,22 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 			}
 		}
 
-
-		if (selectAnim) dataSet.push_back(i);
-
+		if (selectAnim) 
+			dataSet.push_back(i);
 	}
 }
 
-int AnimCollection::GetQuadrantID(Animation *animation, const Vector3 &movement, radian angle) const {
-		// assign the animation it's rightful quadrant
-
+int AnimCollection::GetQuadrantID(Animation *animation, const Vector3 &movement, radian angle) const 
+{
+	// assign the animation it's rightful quadrant
 	Vector3 adaptedMovement = movement.GetNormalized(0) * RangeVelocity(movement.GetLength());
 	int quadrantID = 0;
 	float shortestDistance = 100000.0f;
-	for (unsigned int i = 0; i < quadrants.size(); i++) {
+	for (unsigned int i = 0; i < quadrants.size(); i++) 
+	{
 		float distance = adaptedMovement.GetDistance(quadrants.at(i).position);
-		if (distance < shortestDistance) {
+		if (distance < shortestDistance) 
+		{
 			shortestDistance = distance;
 			quadrantID = quadrants.at(i).id;
 		}
@@ -893,7 +921,8 @@ int AddExtraTouches(Animation* animation, boost::intrusive_ptr<Node> playerNode,
 	int animTouchFrame = -1;
 	bool isTouch = boost::static_pointer_cast<FootballAnimationExtension>(animation->GetExtension("football"))->GetFirstTouch(animBallPos, animTouchFrame);
 	//printf("touchframe: %i\n", animTouchFrame);
-	if (isTouch) {
+	if (isTouch) 
+	{
 		//printf("[touchframe: %i(%i); nodeMap size: %i] ", animTouchFrame, animation->GetFrameCount(), nodeMap.size());
 
 		// find out what body part the balltouchpos is closest to
@@ -904,9 +933,11 @@ int AddExtraTouches(Animation* animation, boost::intrusive_ptr<Node> playerNode,
 		Vector3 toBallVector = Vector3(0);
 		std::list < boost::intrusive_ptr<Object> > ::const_iterator iter = bodyParts.begin();
 
-		while (iter != bodyParts.end()) {
+		while (iter != bodyParts.end()) 
+		{
 			float distance = (animBallPos - (*iter)->GetDerivedPosition()).GetLength();
-			if (distance < closestDistance) {
+			if (distance < closestDistance) 
+			{
 				closestDistance = distance;
 				closestBodyPart = *iter;
 				toBallVector = animBallPos - (*iter)->GetDerivedPosition();
@@ -919,7 +950,8 @@ int AddExtraTouches(Animation* animation, boost::intrusive_ptr<Node> playerNode,
 		return animTouchFrame; // XDEBUG disable this
 
 		int heightCheat = 0.0f;
-		if (animBallPos.coords[2] > 0.8f) heightCheat = 2.0f;
+		if (animBallPos.coords[2] > 0.8f) 
+			heightCheat = 2.0f;
 
 		int range_pre = 2 + heightCheat;
 		int range_post = 2 + heightCheat;
@@ -938,9 +970,10 @@ int AddExtraTouches(Animation* animation, boost::intrusive_ptr<Node> playerNode,
 */
 		float bodypartBias = 1.0f;
 
-		for (int i = animTouchFrame - range_pre; i < animTouchFrame + range_post + 1; i += 1) {
-			if (i >= 0 && i < animation->GetFrameCount() - frameOffset - 1) {
-
+		for (int i = animTouchFrame - range_pre; i < animTouchFrame + range_post + 1; i += 1) 
+		{
+			if (i >= 0 && i < animation->GetFrameCount() - frameOffset - 1) 
+			{
 				// set animation to this frame
 				animation->Apply(nodeMap, i, 0, false);
 
@@ -982,7 +1015,8 @@ int AddExtraTouches(Animation* animation, boost::intrusive_ptr<Node> playerNode,
 	return animTouchFrame; // default
 }
 
-float CalculateAnimDifficulty(Animation *animation, float &absoluteDifficulty) {
+float CalculateAnimDifficulty(Animation *animation, float &absoluteDifficulty) 
+{
 	Vector3 animBallPos;
 	int animTouchFrame;
 	bool isTouch = boost::static_pointer_cast<FootballAnimationExtension>(animation->GetExtension("football"))->GetFirstTouch(animBallPos, animTouchFrame);
@@ -1022,13 +1056,15 @@ float CalculateAnimDifficulty(Animation *animation, float &absoluteDifficulty) {
 	//float relativeDifficulty = clamp(relativeDifficultyFactor, 0.0, 2.0);
 	absoluteDifficulty = clamp(absoluteDifficultyFactor, 0.0, 1.0);
 
-	if (isTouch) {
+	if (isTouch) 
+	{
 		expectedFrameCount *= 1.1f;
 		expectedFrameCount += 4;
 	}
 
 	absoluteDifficulty *= 0.88f;
-	if (isTouch) absoluteDifficulty += 0.12f;
+	if (isTouch) 
+		absoluteDifficulty += 0.12f;
 
 	//if ((int)expectedFrameCount > animation->GetFrameCount())
 	//	printf("%s: framenum offset: %i, abs: %f\n", animation->GetName().c_str(), (int)expectedFrameCount - animation->GetFrameCount(), absoluteDifficulty);
@@ -1040,7 +1076,8 @@ float CalculateAnimDifficulty(Animation *animation, float &absoluteDifficulty) {
 	return expectedFrameCount;
 }
 
-void Slowdown(Animation *animation, float veloFactor, float expectedFrameCount, bool debug = false) {
+void Slowdown(Animation *animation, float veloFactor, float expectedFrameCount, bool debug = false) 
+{
 	// stretches animations without changing their velocities
 
 	assert(veloFactor >= 0.1f);
@@ -1053,7 +1090,8 @@ void Slowdown(Animation *animation, float veloFactor, float expectedFrameCount, 
 
 	int targetFrameCount = clamp(round(expectedFrameCount), animation->GetEffectiveFrameCount(), 1000000); // will not come out perfectly correct, because we can only add between frames (not before first/after last)
 
-	if (targetFrameCount > animation->GetFrameCount()) {
+	if (targetFrameCount > animation->GetFrameCount()) 
+	{
 		float insertsPerFrame = ((float)targetFrameCount / (float)animation->GetFrameCount()) - 1.0;
 		int originalFrameCount = animation->GetFrameCount();
 
@@ -1062,9 +1100,10 @@ void Slowdown(Animation *animation, float veloFactor, float expectedFrameCount, 
 		e_Velocity originalIncomingVelocity = FloatToEnumVelocity(animation->GetIncomingVelocity());
 		e_Velocity originalOutgoingVelocity = FloatToEnumVelocity(animation->GetOutgoingVelocity());
 
-		for (int frame = 1; frame < animation->GetFrameCount(); frame++) {
-
-			while (overflowCounter >= 1.0f) {
+		for (int frame = 1; frame < animation->GetFrameCount(); frame++)
+		{
+			while (overflowCounter >= 1.0f) 
+			{
 				animation->Shift(frame, 1);
 				overflowCounter -= 1.0f;
 
@@ -1076,13 +1115,15 @@ void Slowdown(Animation *animation, float veloFactor, float expectedFrameCount, 
 
 			// stretch position to retain proper velocity
 			bool isFrame = animation->GetKeyFrame("player", frame, orientation, position);
-			if (isFrame) {
+			if (isFrame) 
+			{
 				position.coords[0] *= currentShiftFactor;
 				position.coords[1] *= currentShiftFactor;
 				animation->SetKeyFrame("player", frame, orientation, position);
 			}
 			isFrame = animation->GetExtension("football")->GetKeyFrame(frame, orientation, position, power);
-			if (isFrame) {
+			if (isFrame) 
+			{
 				position.coords[0] *= currentShiftFactor;
 				position.coords[1] *= currentShiftFactor;
 				animation->GetExtension("football")->SetKeyFrame(frame, orientation, position, power);
@@ -1092,7 +1133,8 @@ void Slowdown(Animation *animation, float veloFactor, float expectedFrameCount, 
 			overflowCounter += insertsPerFrame;
 		}
 
-		if (debug) {
+		if (debug) 
+		{
 			if (FloatToEnumVelocity(animation->GetIncomingVelocity()) != originalIncomingVelocity) printf("incoming: %s: %f to %f\n", animation->GetName().c_str(), EnumToFloatVelocity(originalIncomingVelocity), RangeVelocity(animation->GetIncomingVelocity()));
 			if (FloatToEnumVelocity(animation->GetOutgoingVelocity()) != originalOutgoingVelocity) printf("outgoing: %s: %f to %f\n", animation->GetName().c_str(), EnumToFloatVelocity(originalOutgoingVelocity), RangeVelocity(animation->GetOutgoingVelocity()));
 		}
@@ -1101,27 +1143,35 @@ void Slowdown(Animation *animation, float veloFactor, float expectedFrameCount, 
 
 }
 
-void SmoothPositions(Animation *animation, bool convertAngledDribbleToWalk) {
-
+void SmoothPositions(Animation *animation, bool convertAngledDribbleToWalk) 
+{
 	float bias = 1.0, exp = 1.0;
-
-	if (animation->GetAnimType().compare("movement") == 0) {
+	if (animation->GetAnimType().compare("movement") == 0) 
+	{
 		bias = 0.5;
 		exp = 0.8 + pow(clamp(animation->GetOutgoingVelocity(), 0, sprintVelocity) / sprintVelocity, 1.5) * 0.4 +
 							+ pow(clamp(animation->GetOutgoingVelocity() - animation->GetIncomingVelocity(), 0, sprintVelocity) / sprintVelocity, 1.3) * 0.4;
-	} else if (animation->GetAnimType().compare("ballcontrol") == 0) {
+	} 
+	else if (animation->GetAnimType().compare("ballcontrol") == 0) 
+	{
 		bias = 0.3;
 		exp = 0.9 + pow(clamp(animation->GetOutgoingVelocity(), 0, sprintVelocity) / sprintVelocity, 1.5) * 0.5 +
 							+ pow(clamp(animation->GetOutgoingVelocity() - animation->GetIncomingVelocity(), 0, sprintVelocity) / sprintVelocity, 1.3) * 0.5;
-	} else if (animation->GetAnimType().compare("trap") == 0) {
+	} 
+	else if (animation->GetAnimType().compare("trap") == 0) 
+	{
 		bias = 0.3;
 		exp = 0.9 + pow(clamp(animation->GetOutgoingVelocity(), 0, sprintVelocity) / sprintVelocity, 1.5) * 0.5 +
 							+ pow(clamp(animation->GetOutgoingVelocity() - animation->GetIncomingVelocity(), 0, sprintVelocity) / sprintVelocity, 1.3) * 0.5;
-	} else if (animation->GetAnimType().compare("interfere") == 0) {
+	} 
+	else if (animation->GetAnimType().compare("interfere") == 0) 
+	{
 		bias = 0.3;
 		exp = 0.7 + pow(clamp(animation->GetOutgoingVelocity(), 0, sprintVelocity) / sprintVelocity, 1.5) * 0.5 +
 							+ pow(clamp(animation->GetOutgoingVelocity() - animation->GetIncomingVelocity(), 0, sprintVelocity) / sprintVelocity, 1.3) * 0.5;
-	} else return;
+	} 
+	else 
+		return;
 
 	e_Velocity originalIncomingVelocity = FloatToEnumVelocity(animation->GetIncomingVelocity());
 	e_Velocity originalOutgoingVelocity = FloatToEnumVelocity(animation->GetOutgoingVelocity());
@@ -1135,7 +1185,8 @@ void SmoothPositions(Animation *animation, bool convertAngledDribbleToWalk) {
 
 	// backup previous positions
 	Vector3 origPositions[animation->GetFrameCount()];
-	for (int frame = 1; frame < animation->GetFrameCount(); frame++) {
+	for (int frame = 1; frame < animation->GetFrameCount(); frame++) 
+	{
 		animation->GetKeyFrame("player", frame, orientation, origPositions[frame]);
 	}
 
@@ -1143,7 +1194,8 @@ void SmoothPositions(Animation *animation, bool convertAngledDribbleToWalk) {
 	Vector3 outgoing = animation->GetOutgoingMovement();
 
 	//bias = 0.0f; // !!!!!!! disables smoothing !!!!!!! (except for the convert thing below)
-	if (convertAngledDribbleToWalk) {
+	if (convertAngledDribbleToWalk) 
+	{
 		if (FloatToEnumVelocity(animation->GetIncomingVelocity()) == e_Velocity_Dribble) { incoming.Normalize(0); incoming *= walkVelocity; bias = 1.0; }
 		if (FloatToEnumVelocity(animation->GetOutgoingVelocity()) == e_Velocity_Dribble && fabs(animation->GetOutgoingAngle()) < 0.5 * pi) { outgoing.Normalize(0); outgoing *= walkVelocity; bias = 1.0; }
 	}
@@ -1151,7 +1203,8 @@ void SmoothPositions(Animation *animation, bool convertAngledDribbleToWalk) {
 	animation->GetKeyFrame("player", 0, orientation, origPosition);
 	prevPosition = origPosition;
 
-	for (int frame = 1; frame < animation->GetFrameCount(); frame++) {
+	for (int frame = 1; frame < animation->GetFrameCount(); frame++) 
+	{
 		float frameBias = (float)(frame - 1) / (float)(animation->GetFrameCount() - 3); // first 2 and last 2 frames need to be bias 0 and 1, so our anim keeps having the original in- and outgoing movement
 		frameBias = pow(clamp(frameBias, 0.0, 1.0), exp);
 		//printf("%f, ", bias);

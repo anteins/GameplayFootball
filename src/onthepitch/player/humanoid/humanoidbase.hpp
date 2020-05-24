@@ -22,29 +22,34 @@ class Match;
 
 typedef std::map < const std::string, boost::intrusive_ptr<Node> > NodeMap;
 
-struct Joint {
+struct Joint 
+{
 	boost::intrusive_ptr<Node> node;
 	Vector3 position;
 	Quaternion orientation;
 	Vector3 origPos;
 };
 
-struct WeightedBone {
+struct WeightedBone 
+{
 	int jointID;
 	float weight;
 };
 
-struct WeightedVertex {
+struct WeightedVertex 
+{
 	int vertexID;
 	std::vector<WeightedBone> bones;
 };
 
-struct FloatArray {
+struct FloatArray 
+{
 	float *data;
 	int size;
 };
 
-enum e_InterruptAnim {
+enum e_InterruptAnim 
+{
 	e_InterruptAnim_None,
 	e_InterruptAnim_Switch,
 	e_InterruptAnim_Sliding,
@@ -55,12 +60,15 @@ enum e_InterruptAnim {
 	e_InterruptAnim_ReQueue
 };
 
-struct RotationSmuggle {
-	RotationSmuggle() {
+struct RotationSmuggle 
+{
+	RotationSmuggle() 
+	{
 		begin = 0;
 		end = 0;
 	}
-	void operator = (const float &value) {
+	void operator = (const float &value) 
+	{
 		begin = value;
 		end = value;
 	}
@@ -68,9 +76,10 @@ struct RotationSmuggle {
 	radian end;
 };
 
-struct Anim {
-
-	Anim() {
+struct Anim 
+{
+	Anim() 
+	{
 		id = 0;
 		frameNum = 0;
 
@@ -112,8 +121,10 @@ struct Anim {
 	std::vector<Vector3> positions;
 };
 
-struct IdealAnimDescription {
-	IdealAnimDescription() {
+struct IdealAnimDescription 
+{
+	IdealAnimDescription() 
+	{
 		foot = e_Foot_Left;
 		incomingVelocityFloat = 0.0f;
 		outgoingMovementRel = Vector3(0, 0, 0);;
@@ -132,7 +143,8 @@ struct IdealAnimDescription {
 
 struct AnimApplyBuffer 
 {
-	AnimApplyBuffer() {
+	AnimApplyBuffer() 
+	{
 		frameNum = 0;
 		snapshotTime_ms = 0;
 		smooth = true;
@@ -163,7 +175,8 @@ struct AnimApplyBuffer
 	std::map < std::string, BiasedOffset > offsets;
 };
 
-struct TemporalHumanoidNode {
+struct TemporalHumanoidNode 
+{
 	boost::intrusive_ptr<Node> actualNode;
 	Vector3 cachedPosition;
 	Quaternion cachedOrientation;
@@ -171,7 +184,8 @@ struct TemporalHumanoidNode {
 	TemporalSmoother<Quaternion> orientation;
 };
 
-struct SpatialState {
+struct SpatialState 
+{
 	Vector3 position;
 	radian angle;
 	Vector3 directionVec; // for efficiency, vector version of angle
@@ -197,8 +211,8 @@ struct SpatialState {
 
 static const Vector3 emptyVec(0);
 
-class HumanoidBase {
-
+class HumanoidBase 
+{
 	public:
 		HumanoidBase(PlayerBase *player, Match *match, boost::intrusive_ptr<Node> humanoidSourceNode, boost::intrusive_ptr<Node> fullbodySourceNode, std::map<Vector3, Vector3> &colorCoords, boost::shared_ptr<AnimCollection> animCollection, boost::intrusive_ptr<Node> fullbodyTargetNode, boost::intrusive_ptr < Resource<Surface> > kit, int bodyUpdatePhaseOffset);
 		virtual ~HumanoidBase();
