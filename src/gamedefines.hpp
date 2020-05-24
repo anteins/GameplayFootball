@@ -78,19 +78,22 @@ const SDLKey defaultKeyIDs[18] = { SDLK_UP, SDLK_RIGHT, SDLK_DOWN, SDLK_LEFT, SD
 
 class Player;
 
-enum e_Side {
+enum e_Side 
+{
 	e_Side_Left,
 	e_Side_Right
 };
 
-enum e_Velocity {
+enum e_Velocity 
+{
 	e_Velocity_Idle,
 	e_Velocity_Dribble,
 	e_Velocity_Walk,
 	e_Velocity_Sprint
 };
 
-enum e_FunctionType {
+enum e_FunctionType 
+{
 	e_FunctionType_None,
 	e_FunctionType_Movement,
 	e_FunctionType_BallControl,
@@ -108,7 +111,8 @@ enum e_FunctionType {
 	e_FunctionType_Special
 };
 
-enum e_TouchType {
+enum e_TouchType 
+{
 	e_TouchType_Intentional_Kicked, // goalies can't touch this
 	e_TouchType_Intentional_Nonkicked, // headers and such
 	e_TouchType_Accidental, // collisions
@@ -116,7 +120,8 @@ enum e_TouchType {
 	e_TouchType_SIZE
 };
 
-enum e_SetPiece {
+enum e_SetPiece 
+{
 	e_SetPiece_None,
 	e_SetPiece_KickOff,
 	e_SetPiece_GoalKick,
@@ -126,7 +131,8 @@ enum e_SetPiece {
 	e_SetPiece_Penalty,
 };
 
-enum e_MatchPhase {
+enum e_MatchPhase 
+{
 	e_MatchPhase_PreMatch,
 	e_MatchPhase_1stHalf,
 	e_MatchPhase_2ndHalf,
@@ -135,16 +141,18 @@ enum e_MatchPhase {
 	e_MatchPhase_Penalties,
 };
 
-enum e_PlayerCommandModifier {
+enum e_PlayerCommandModifier 
+{
 	e_PlayerCommandModifier_None = 0,
 	e_PlayerCommandModifier_KnockOn = 1
 };
 
 class IController;
 
-struct TouchInfo {
-
-	TouchInfo() {
+struct TouchInfo
+{
+	TouchInfo() 
+	{
 		inputPower = 0;
 		autoDirectionBias = 0;
 		autoPowerBias = 0;
@@ -166,13 +174,15 @@ struct TouchInfo {
 
 };
 
-enum e_StrictMovement {
+enum e_StrictMovement 
+{
 	e_StrictMovement_False,
 	e_StrictMovement_True,
 	e_StrictMovement_Dynamic
 };
 
-struct PlayerCommand {
+struct PlayerCommand 
+{
 
 	/* specialVar1:
 
@@ -181,7 +191,8 @@ struct PlayerCommand {
 		3: referee showing card
 	*/
 
-	PlayerCommand() {
+	PlayerCommand() 
+	{
 		desiredFunctionType = e_FunctionType_Movement;
 		useDesiredMovement = false;
 		desiredVelocityFloat = idleVelocity;
@@ -230,7 +241,8 @@ struct PlayerCommand {
 
 typedef std::vector<PlayerCommand> PlayerCommandQueue;
 
-enum e_PlayerRole {
+enum e_PlayerRole 
+{
 	e_PlayerRole_GK,
 	e_PlayerRole_CB,
 	e_PlayerRole_LB,
@@ -246,13 +258,15 @@ enum e_PlayerRole {
 std::string GetRoleName(e_PlayerRole playerRole);
 e_PlayerRole GetRoleFromString(const std::string &roleString);
 
-struct FormationEntry {
+struct FormationEntry 
+{
 	e_PlayerRole role;
 	Vector3 databasePosition;
 	Vector3 position; // adapted to player role (combination of databasePosition and hardcoded role position)
 };
 
-struct PlayerImage {
+struct PlayerImage 
+{
 	int teamID;
 	signed int side;
 	int playerID;
@@ -278,19 +292,23 @@ const float goalDepth = 2.55f;
 const float goalHeight = 2.5f;
 const float goalHalfWidth = 3.7f;
 
-enum e_DecayType {
+enum e_DecayType 
+{
 	e_DecayType_Constant,
 	e_DecayType_Variable
 };
 
-enum e_MagnetType {
+enum e_MagnetType 
+{
 	e_MagnetType_Attract,
 	e_MagnetType_Repel
 };
 
 // forcefields consist of forcespots, representing a repelling or attracting force from a position, including linearity/etc parameters
-struct ForceSpot {
-	ForceSpot() {
+struct ForceSpot 
+{
+	ForceSpot() 
+	{
 		exp = 1.0f;
 	}
 	Vector3 origin;
@@ -301,8 +319,8 @@ struct ForceSpot {
 	float scale; // scaled #meters until effect is almost decimated
 };
 
-class PassRating {
-
+class PassRating 
+{
 	public:
 		PassRating(int playerID, float odds, float pos, float sit) : playerID(playerID), odds(odds), pos(pos), sit(sit), rating(0) {}
 		virtual ~PassRating() {}

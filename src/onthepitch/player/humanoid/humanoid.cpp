@@ -938,14 +938,14 @@ void Humanoid::CalculateGeomOffsets()
 					Quaternion elbow;
 
 					// player is behind us, somewhat to the left or right. hold up arm to keep him back
-					if (fabs(angle) > 0.6 * pi && fabs(angle) < 0.85 * pi) {
-						if (angle > 0) {
-
+					if (fabs(angle) > 0.6 * pi && fabs(angle) < 0.85 * pi) 
+					{
+						if (angle > 0) 
+						{
 							shoulder.SetAngleAxis(0.4 * pi, Vector3(0, 1, 0));
 							elbow.SetAngleAxis(0, Vector3(0, 1, 0));
 							SetOffset("right_shoulder", 0.8f * adaptArmsToOpp_influence, shoulder.GetNormalized());
 							SetOffset("right_elbow", 0.7f * adaptArmsToOpp_influence, elbow.GetNormalized());
-
 						} 
 						else 
 						{
@@ -1039,8 +1039,10 @@ void Humanoid::CalculateGeomOffsets()
 					float neededFactor = 1.0f;
 
 					Vector3 hipJointPos;
-					if (leftOrRightLeg == -1) hipJointPos = nodeMap.find("left_thigh")->second->GetDerivedPosition();
-					else										 hipJointPos = nodeMap.find("right_thigh")->second->GetDerivedPosition();
+					if (leftOrRightLeg == -1) 
+						hipJointPos = nodeMap.find("left_thigh")->second->GetDerivedPosition();
+					else
+						hipJointPos = nodeMap.find("right_thigh")->second->GetDerivedPosition();
 
 					Quaternion bodyOrientationRel = nodeMap.find("body")->second->GetRotation();
 
@@ -1099,7 +1101,9 @@ void Humanoid::CalculateGeomOffsets()
 						SetOffset("left_thigh",	frameFactor * neededFactor * adaptLegToTouchPos_influence, defaultHipOrientation);
 						SetOffset("left_knee",	 frameFactor * neededFactor * adaptLegToTouchPos_influence, defaultKneeOrientation);
 						SetOffset("left_ankle",	frameFactor * neededFactor * adaptLegToTouchPos_influence, defaultAnkleOrientation);
-					} else {
+					} 
+					else 
+					{
 						SetOffset("right_thigh", frameFactor * neededFactor * adaptLegToTouchPos_influence, defaultHipOrientation);
 						SetOffset("right_knee",	frameFactor * neededFactor * adaptLegToTouchPos_influence, defaultKneeOrientation);
 						SetOffset("right_ankle", frameFactor * neededFactor * adaptLegToTouchPos_influence, defaultAnkleOrientation);
@@ -1162,12 +1166,14 @@ void Humanoid::SelectRetainAnim()
 	match->SetBallRetainer(CastPlayer());
 }
 
-void Humanoid::ResetSituation(const Vector3 &focusPos) {
+void Humanoid::ResetSituation(const Vector3 &focusPos) 
+{
 	HumanoidBase::ResetSituation(focusPos);
 	//printf("humanoid reset\n");
 }
 
-float Humanoid::GetHasteFactor(bool considerOpponentProximity) const {
+float Humanoid::GetHasteFactor(bool considerOpponentProximity) const 
+{
 	float haste = 0.0f;
 
 	float playerMovementInfluence = 0.5f; // because a player is quite moveable, take it less seriously
@@ -1176,8 +1182,10 @@ float Humanoid::GetHasteFactor(bool considerOpponentProximity) const {
 
 	haste = NormalizedClamp((playerBallDistanceFuture - playerBallDistanceNow), 0.0f, 1.0f);
 
-	if (haste <= 1.0 && considerOpponentProximity) {
-		if (team->GetTeamPossessionAmount() < 2.0f) haste += 1.0f - team->GetTeamPossessionAmount() * 0.5f;
+	if (haste <= 1.0 && considerOpponentProximity) 
+	{
+		if (team->GetTeamPossessionAmount() < 2.0f) 
+			haste += 1.0f - team->GetTeamPossessionAmount() * 0.5f;
 	}
 
 	return clamp(haste, 0.0f, 1.0f);
@@ -1185,8 +1193,8 @@ float Humanoid::GetHasteFactor(bool considerOpponentProximity) const {
 
 bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInterruptAnim, bool preferPassAndShot) 
 { 
-	// DebugLog(*CastPlayer(), "=========SelectAnim: command.desiredFunctionType=" + to_string(command.desiredFunctionType));
-// returns false on no applicable anim found
+	DebugLog(*CastPlayer(), "=========SelectAnim: FunctionType=" + to_string(command.desiredFunctionType) + " InterruptAnim=" + to_string(localInterruptAnim));
+	// returns false on no applicable anim found
 	assert(command.desiredDirection.coords[2] == 0.0f);
 
 	// optimizations
@@ -1259,7 +1267,8 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 		// don't requeue movement to ballcontrol halfway movement anims, unless there's a serious change of movement desired
 		if ((currentAnim->functionType == e_FunctionType_Movement) && command.desiredFunctionType == e_FunctionType_BallControl && (match->GetActualTime_ms() - CastPlayer()->GetLastTouchTime_ms() < 600 && CastPlayer()->GetLastTouchType() == e_TouchType_Intentional_Kicked) && CastPlayer()->HasPossession()) {// && !CastPlayer()->AllowLastDitch()) {
 			float desiredMovementChange = (spatialState.movement - (command.desiredDirection * command.desiredVelocityFloat)).GetLength();
-			if (desiredMovementChange < 1.0f) return false;
+			if (desiredMovementChange < 1.0f) 
+				return false;
 		}
 	}
 
