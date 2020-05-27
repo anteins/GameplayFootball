@@ -119,6 +119,8 @@ void Humanoid::Process()
 	currentAnim->frameNum++;
 	previousAnim->frameNum++;
 
+	
+
 	assert(team);
 	int teamID = team->GetID();
 
@@ -133,9 +135,8 @@ void Humanoid::Process()
 	{
 		interruptAnim = e_InterruptAnim_Switch;
 	}
-
+	
 	bool mayReQueue = allowReQueue;
-
 	// already some anim interrupt waiting?
 	if (mayReQueue) 
 	{
@@ -158,22 +159,38 @@ void Humanoid::Process()
 	{
 		bool frameNumPredicate = false;
 		float actionDistance = ((spatialState.position + spatialState.movement * 0.1f) - match->GetBall()->Predict(100).Get2D()).GetLength();//(spatialState.position - match->GetDesignatedPossessionPlayer()->GetPosition()).GetLength();
+		// DebugLog(*CastPlayer(), "actionDistance=" + to_string(actionDistance));
+		if (CastPlayer()->GetDebug())
+		{
+			// SetGreenDebugPilon(match->GetBall()->Predict(100).Get2D());
+			// SetGreenDebugPilon(spatialState.position + spatialState.movement * 0.1f);
+		}
 
-		if (match->GetDesignatedPossessionPlayer() == player && actionDistance < 3.0f) {
+		if (match->GetDesignatedPossessionPlayer() == player && actionDistance < 3.0f) 
+		{
 			frameNumPredicate = ((match->GetActualTime_ms() + team->GetID() * 10) % 20) == 0; // .. 1 .. 2 .. 1 .. 2 ..
-
-		} else if (match->GetDesignatedPossessionPlayer() == player) {
+			// if(frameNumPredicate){
+			// 	DebugLog(*CastPlayer(), "mayReQueue aa  [true]");
+			// }
+			// else{
+			// 	DebugLog(*CastPlayer(), "mayReQueue aa  [false]");
+			// }
+		} 
+		else if (match->GetDesignatedPossessionPlayer() == player) 
+		{
 			frameNumPredicate = ((match->GetActualTime_ms() + team->GetID() * 10) % 30) == 0; // .. 1 .. 2 .. x .. 1 .. 2 .. x ..
-
-		} else if (team->GetDesignatedTeamPossessionPlayer() == player) {
+		} 
+		else if (team->GetDesignatedTeamPossessionPlayer() == player) 
+		{
 			frameNumPredicate = ((match->GetActualTime_ms() + team->GetID() * 20) % 40) == 0; // .. 1 .. x .. 2 .. x .. 1 .. x .. 2 ..
-
-		} else if (actionDistance < 5.0f) {
+		} 
+		else if (actionDistance < 5.0f) 
+		{
 			frameNumPredicate = ((match->GetActualTime_ms() + team->GetID() * 20) % 50) == 0; // .. 1 .. x .. 2 .. x .. x ..
-
-		} else if (actionDistance < 10.0f) {
+		} 
+		else if (actionDistance < 10.0f) 
+		{
 			frameNumPredicate = ((match->GetActualTime_ms() + team->GetID() * 40) % 80) == 0; // .. 1 .. x .. x .. x .. 2 .. x .. x .. x ..
-
 		}
 
 		if (!frameNumPredicate) 
@@ -223,12 +240,14 @@ void Humanoid::Process()
 			CastPlayer()->RequestCommand(commandQueue);
 		}
 
+		// DebugLog(*CastPlayer(), "-------------------------------------------");
 		// iterate through the command queue and pick the first that is applicable
 		bool found = false;
 		bool preferPassAndShot = false; // pass/shot and such; in that case we want trap/ballcontrol anims to be less prefered
 		for (unsigned int i = 0; i < commandQueue.size(); i++) 
 		{
 			const PlayerCommand &command = commandQueue.at(i);
+			// DebugLog(*CastPlayer(), ">" + enum_string("e_FunctionType", command.desiredFunctionType));
 			if (command.desiredFunctionType == e_FunctionType_ShortPass ||
 					command.desiredFunctionType == e_FunctionType_LongPass ||
 					command.desiredFunctionType == e_FunctionType_HighPass ||
@@ -271,8 +290,9 @@ void Humanoid::Process()
 		{
 			startPos = spatialState.position;
 			startAngle = spatialState.angle;
-
 			CalculatePredictedSituation(nextStartPos, nextStartAngle);
+			// if (CastPlayer()->GetDebug()) 
+			// 	SetGreenDebugPilon(nextStartPos);
 
 			animApplyBuffer.anim = currentAnim->anim;
 			animApplyBuffer.smooth = animSmoothing;
@@ -294,8 +314,8 @@ void Humanoid::Process()
 			}
 
 			// if (player->GetDebug()) {
-			//	 SetRedDebugPilon(spatialState.position + currentAnim->originatingCommand.desiredDirection * 3.0f);
-			//	 SetYellowDebugPilon(currentAnim->originatingCommand.desiredLookAt);
+			// 	 SetRedDebugPilon(spatialState.position + currentAnim->originatingCommand.desiredDirection * 3.0f);
+			// 	 SetYellowDebugPilon(currentAnim->originatingCommand.desiredLookAt);
 			// }
 
 			if (CastPlayer()->GetDebug() && Verbose()) 
@@ -320,6 +340,7 @@ void Humanoid::Process()
 
 			// decaying difficulty
 			float animDiff = atof(currentAnim->anim->GetVariable("animdifficultyfactor").c_str());
+			// DebugLog(*CastPlayer(), "anim=  " + to_string(currentAnim->anim->GetName()) + "    touchFrame=" + to_string(currentAnim->touchFrame));
 			if (animDiff > decayingDifficultyFactor) 
 				decayingDifficultyFactor = animDiff;
 			//if (player->GetDebug()) printf("difficulty: %f\n", decayingDifficultyFactor);
@@ -400,14 +421,14 @@ void Humanoid::Process()
 		team->SetLastTouchPlayer(CastPlayer(), GetTouchTypeForBodyPart(currentAnim->anim->GetVariable("touch_bodypart")));//, e_TouchType_Accidental);
 		CastPlayer()->UpdatePossessionStats(false);
 	}
-	// ---------------------- / EXPERIMENTAL ------------------------------------------------
 
-	if (currentAnim->touchFrame == currentAnim->frameNum) 
+	// ---------------------- / EXPERIMENTAL ------------------------------------------------
+	if (currentAnim->touchFrame == currentAnim->frameNum)
 	{
 		Vector3 desiredBallPosition;
 		boost::static_pointer_cast<FootballAnimationExtension>(currentAnim->anim->GetExtension("football"))->GetTouchPos(currentAnim->touchFrame, desiredBallPosition);
 		float desiredBallHeight = desiredBallPosition.coords[2];
-
+		// DebugLog(*CastPlayer(), "desiredBallPosition=" + vec_string(desiredBallPosition));
 		float touchableDistance = 0.4f;
 
 		float fullBallDistance = (match->GetBall()->Predict(0) - (currentAnim->touchPos + currentAnim->positionOffset)).GetLength();
@@ -439,11 +460,13 @@ void Humanoid::Process()
 
 		if (fullBallDistance < touchableDistance && fabs(desiredBallHeight - match->GetBall()->Predict(0).coords[2]) < 1.0f) 
 		{
+			// DebugLog(*CastPlayer(), enum_string("e_FunctionType", currentAnim->functionType));
 			radian nextBodyAngle = startAngle + currentAnim->anim->GetOutgoingAngle() + currentAnim->anim->GetOutgoingBodyAngle() + currentAnim->rotationSmuggle.end;
 			
 			if (currentAnim->functionType == e_FunctionType_Trap 
 				|| (currentAnim->functionType == e_FunctionType_BallControl && CastPlayer()->HasPossession() == false)) 
 			{
+				
 				//printf("trap!\n");
 				radian xRot = 0;
 				radian yRot = 0;
@@ -473,7 +496,8 @@ void Humanoid::Process()
 				}
 
 				touchVec = touchVec * (1.0f - bumpyRideBias) + currentBallVec * bumpyRideBias;
-				if (player->GetDebug() && bumpyRideBias > 0.01f) printf("bumpyridebias (ballcontrol): %f\n", bumpyRideBias);
+				if (player->GetDebug() && bumpyRideBias > 0.01f) 
+					printf("bumpyridebias (ballcontrol): %f\n", bumpyRideBias);
 
 				match->GetBall()->Touch(touchVec);
 				match->GetBall()->SetRotation(xRot, yRot, 0, 0.6f * (1.0f - bumpyRideBias)); // 1.0
@@ -543,11 +567,13 @@ void Humanoid::Process()
 
 					// add a little curve for aesthetics & realism
 					radian bodyTouchAngle = spatialState.bodyDirectionVec.GetAngle2D(touchVec) / pi;
-					if (fabs(bodyTouchAngle) > 0.5f) bodyTouchAngle = (1.0f - fabs(bodyTouchAngle)) * signSide(bodyTouchAngle);
+					if (fabs(bodyTouchAngle) > 0.5f) 
+						bodyTouchAngle = (1.0f - fabs(bodyTouchAngle)) * signSide(bodyTouchAngle);
 					bodyTouchAngle *= 2.0f;
 					//printf("bodyTouchAngle: %f\n", bodyTouchAngle);
 					radian amount = bodyTouchAngle * 0.25f;
-					if (currentAnim->functionType == e_FunctionType_HighPass) amount *= 0.2f;
+					if (currentAnim->functionType == e_FunctionType_HighPass) 
+						amount *= 0.2f;
 					touchVec.Rotate2D(amount * (0.4f + 0.6f * NormalizedClamp(touchVec.GetLength(), 0.0f, 70.0f)));
 					zcurve = amount * -340;//-600;
 
@@ -631,17 +657,22 @@ void Humanoid::Process()
 			else if (currentAnim->functionType == e_FunctionType_Deflect) 
 			{
 				bool canRetain = true; // can we grab hold of the ball?
-				if (currentAnim->anim->GetVariable("outgoing_retain_state").compare("") == 0) canRetain = false; // not the right anim, hopeless!
-				if (match->GetBallRetainer() != 0) canRetain = false; // somebody is already holding the ball :( (dafuq, this should not happen, right?)
+				if (currentAnim->anim->GetVariable("outgoing_retain_state").compare("") == 0) 
+					canRetain = false; // not the right anim, hopeless!
+				if (match->GetBallRetainer() != 0) 
+					canRetain = false; // somebody is already holding the ball :( (dafuq, this should not happen, right?)
 
 				float veloDifficulty = NormalizedClamp((match->GetBall()->GetMovement() - player->GetMovement()).GetLength(), 0.0f, 40.0f);
 				float reactionDifficulty = 0.0f;
 				Player *lastTouchPlayer = match->GetTeam(abs(team->GetID() - 1))->GetLastTouchPlayer();
-				if (lastTouchPlayer) {
+				if (lastTouchPlayer) 
+				{
 					reactionDifficulty = pow(lastTouchPlayer->GetLastTouchBias(1200 - player->GetStat("physical_reaction") * 400), 0.6f);
 				}
-				if ((1.0f - veloDifficulty) * (1.0f - reactionDifficulty) < 0.3f) canRetain = false; // too hard!
-				if (Verbose()) printf("deflect: velodiff: %f, reactiondiff: %f, total diff inv: %f\n", veloDifficulty, reactionDifficulty, (1.0f - veloDifficulty) * (1.0f - reactionDifficulty));
+				if ((1.0f - veloDifficulty) * (1.0f - reactionDifficulty) < 0.3f) 
+					canRetain = false; // too hard!
+				if (Verbose()) 
+					printf("deflect: velodiff: %f, reactiondiff: %f, total diff inv: %f\n", veloDifficulty, reactionDifficulty, (1.0f - veloDifficulty) * (1.0f - reactionDifficulty));
 
 				if (canRetain) 
 				{
@@ -710,7 +741,6 @@ void Humanoid::Process()
 	// as for finishing, finish with frameBias = 1.0, even if the last frame is 'spiritually' the one-to-last, since the first frame of the next anim is actually 'same-tempered' as the current anim's last frame.
 	// however, it works best to have all values 'done' at this one-to-last frame, so the next anim can read out these correct (new starting) values.
 	float frameBias = (currentAnim->frameNum + 1) / (float)(currentAnim->anim->GetEffectiveFrameCount() + 1);
-
 	if (currentAnim->touchFrame != -1 && currentAnim->frameNum <= currentAnim->touchFrame)
 	{
 		// linear version *outdated*
@@ -725,7 +755,6 @@ void Humanoid::Process()
 		value = value * 0.1f + 0.9f;
 		spatialState.actionSmuggleMovement = (currentAnim->actionSmuggle / (float)(currentAnim->touchFrame + 1)) * value * 100.0f;
 		currentAnim->actionSmuggleOffset += spatialState.actionSmuggleMovement / 100.0f;
-
 	} 
 	else 
 	{
@@ -780,17 +809,22 @@ void Humanoid::Process()
 																			 currentAnim->rotationSmuggle.end	 * endFrameBias;
 
 	// ballretainer should not get out of 16 meter box
-	if (match->GetBallRetainer() == player && CastPlayer()->GetFormationEntry().role == e_PlayerRole_GK && (match->IsInSetPiece() == false && match->IsInPlay() == true)) {
-		if (match->GetBall()->Predict(0).coords[1] > 20.05f) {
+	if (match->GetBallRetainer() == player && CastPlayer()->GetFormationEntry().role == e_PlayerRole_GK && (match->IsInSetPiece() == false && match->IsInPlay() == true)) 
+	{
+		if (match->GetBall()->Predict(0).coords[1] > 20.05f) 
+		{
 			OffsetPosition(Vector3(0, clamp(20.05f - match->GetBall()->Predict(0).coords[1], -0.5f, 0.5f), 0) * 0.3f);
 		}
-		if (match->GetBall()->Predict(0).coords[1] < -20.05f) {
+		if (match->GetBall()->Predict(0).coords[1] < -20.05f) 
+		{
 			OffsetPosition(Vector3(0, clamp(-20.05f - match->GetBall()->Predict(0).coords[1], -0.5f, 0.5f), 0) * 0.3f);
 		}
-		if (match->GetBall()->Predict(0).coords[0] * -team->GetSide() > -pitchHalfW + 16.4f) {
+		if (match->GetBall()->Predict(0).coords[0] * -team->GetSide() > -pitchHalfW + 16.4f) 
+		{
 			OffsetPosition(Vector3(clamp((-pitchHalfW + 16.4f) - match->GetBall()->Predict(0).coords[0] * -team->GetSide(), -0.5f, 0.5f), 0, 0) * -team->GetSide() * 0.3f);
 		}
-		if (match->GetBall()->Predict(0).coords[0] * -team->GetSide() < -pitchHalfW + 0.1f) {
+		if (match->GetBall()->Predict(0).coords[0] * -team->GetSide() < -pitchHalfW + 0.1f) 
+		{
 			OffsetPosition(Vector3(clamp((-pitchHalfW + 0.1f) - match->GetBall()->Predict(0).coords[0] * -team->GetSide(), -0.5f, 0.5f), 0, 0) * -team->GetSide() * 0.4f);
 		}
 	}
@@ -1127,7 +1161,7 @@ void Humanoid::SelectRetainAnim()
 	query.properties.Set("outgoing_retain_state", "right_elbow");
 
 	DataSet dataSet;
-	anims->CrudeSelection(dataSet, query);
+	anims->CrudeSelection(dataSet, query, *CastPlayer());
 
 	assert(dataSet.size() != 0);
 
@@ -1193,7 +1227,6 @@ float Humanoid::GetHasteFactor(bool considerOpponentProximity) const
 
 bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInterruptAnim, bool preferPassAndShot) 
 { 
-	DebugLog(*CastPlayer(), "=========SelectAnim: FunctionType=" + to_string(command.desiredFunctionType) + " InterruptAnim=" + to_string(localInterruptAnim));
 	// returns false on no applicable anim found
 	assert(command.desiredDirection.coords[2] == 0.0f);
 
@@ -1458,7 +1491,7 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 		query.incomingVelocity = e_Velocity_Idle; // standing up anims always start out idle
 
 	DataSet dataSet;
-	anims->CrudeSelection(dataSet, query);
+	anims->CrudeSelection(dataSet, query, *CastPlayer());
 	//if (command.desiredFunctionType == e_FunctionType_Special) printf("size: %i\n", dataSet.size());
 	if (dataSet.size() == 0) 
 	{
@@ -1764,11 +1797,10 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 	while (iter != dataSet.end()) 
 	{
 		Animation *anim = anims->GetAnim(*iter);
-		if (player->GetDebug()) 
-			Log(e_Notice, "Humanoid", "Humanoid", "animname: " + to_string(anim->GetName()));
+		// if (player->GetDebug()) 
+		// 	Log(e_Notice, "Humanoid", "Humanoid", "animname: " + to_string(anim->GetName()));
 		iter++;
 	}
-	
 
 	int selectedAnimID = -1;
 	std::vector<Vector3> positions_tmp;
@@ -1779,7 +1811,7 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 	Vector3 actionSmuggle_tmp;
 	radian rotationSmuggle_tmp = 0;
 
-	if (dataSet.size() == 0 && command.desiredFunctionType == e_FunctionType_Movement) 
+	if (dataSet.size() == 0 && command.desiredFunctionType == e_FunctionType_Movement)
 	{
 		if (Verbose()) 
 			printf("no movement animations left (humanoid)\n");
@@ -1791,8 +1823,8 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 
 	if (command.desiredFunctionType == e_FunctionType_Movement ||
 			command.desiredFunctionType == e_FunctionType_Trip ||
-			command.desiredFunctionType == e_FunctionType_Special) {
-
+			command.desiredFunctionType == e_FunctionType_Special) 
+	{
 		selectedAnimID = *dataSet.begin();
 		Animation *nextAnim = anims->GetAnim(selectedAnimID);
 		Vector3 desiredMovement = command.desiredDirection * command.desiredVelocityFloat;
@@ -1885,9 +1917,15 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 		}
 		*/
 
+		std::string prevAnimName = previousAnim->anim->GetName();
+		int prevAnimFrame = previousAnim->frameNum;
 		*previousAnim = *currentAnim;
 
 		currentAnim->anim = anims->GetAnim(selectedAnimID);
+		// DebugLog(*CastPlayer(), "!!!!!! ");
+		// DebugLog(*CastPlayer(), to_string(currentAnim->anim->GetName()) + "    (last: " + to_string(prevAnimName) + "  " + to_string(prevAnimFrame) + ")");
+		// DebugLog(*CastPlayer(), "!!!!!!");
+		// DebugLog(*CastPlayer(), "");
 		currentAnim->id = selectedAnimID;
 		currentAnim->functionType = command.desiredFunctionType;//StringToFunctionType(currentAnim->anim->GetVariable("type"));
 		currentAnim->frameNum = 0;
@@ -1941,7 +1979,6 @@ bool Humanoid::SelectAnim(const PlayerCommand &command, e_InterruptAnim localInt
 			assert(currentAnim->actionSmuggleSustain.coords[2] == 0.0f);
 		}
 */
-
 		return true;
 	}
 

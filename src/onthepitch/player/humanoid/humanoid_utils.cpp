@@ -17,7 +17,8 @@
 #include "../../AIsupport/AIfunctions.hpp"
 #include "../playerbase.hpp"
 
-e_TouchType GetTouchTypeForBodyPart(const std::string &bodypartname) {
+e_TouchType GetTouchTypeForBodyPart(const std::string &bodypartname) 
+{
 	if (bodypartname.find("foot") != std::string::npos ||
 			bodypartname.find("lowerleg") != std::string::npos)
 		return e_TouchType_Intentional_Kicked;
@@ -25,11 +26,10 @@ e_TouchType GetTouchTypeForBodyPart(const std::string &bodypartname) {
 		return e_TouchType_Intentional_Nonkicked;
 }
 
-unsigned int CalculateTimeNeededToChangeMovement_ms(const Vector3 &currentMovement, const Vector3 &desiredMovement) {
-
+unsigned int CalculateTimeNeededToChangeMovement_ms(const Vector3 &currentMovement, const Vector3 &desiredMovement) 
+{
 	// this function is quick 'n dirty, just how i like it
 	// just don't expect exact results
-
 	int time_ms = NormalizedClamp((desiredMovement - currentMovement).GetLength(), idleVelocity, sprintVelocity * 2.0f) * 1000;
 
 	float currentVeloFactor = 1.0f - NormalizedClamp(currentMovement.GetLength(), idleVelocity, sprintVelocity);
@@ -38,8 +38,8 @@ unsigned int CalculateTimeNeededToChangeMovement_ms(const Vector3 &currentMoveme
 	return time_ms;
 }
 
-float CalculateBiasForFastCornering(const Vector3 &currentMovement, const Vector3 &desiredMovement, float veloPow, float bias) {
-
+float CalculateBiasForFastCornering(const Vector3 &currentMovement, const Vector3 &desiredMovement, float veloPow, float bias) 
+{
 	radian angle = desiredMovement.GetNormalized(currentMovement).GetAngle2D(currentMovement);
 	// wolfram alpha: sin(x - 0.5 * pi) * 0.5 + 0.5 | from x = 0.0 to pi
 	float currentMovementBias = sin(fabs(angle) - 0.5f * pi) * 0.5f + 0.5f; // this one is better for anim selection, else 135 anim is never used (since 135 @ idle is worse than 90 @ dribble then - with this one, 90 @ idle will be preferred (which will allow 135 @ idle as well))
@@ -53,8 +53,8 @@ float CalculateBiasForFastCornering(const Vector3 &currentMovement, const Vector
 	return totalBrakeBias;
 }
 
-Vector3 CalculateMovementAtFrame(const std::vector<Vector3> &positions, unsigned int frameNum, unsigned int smoothFrames) {
-
+Vector3 CalculateMovementAtFrame(const std::vector<Vector3> &positions, unsigned int frameNum, unsigned int smoothFrames) 
+{
 /*
 	// simple version for debugging purposes
 	unsigned int adaptedFrameNum = std::min(std::max(frameNum, (unsigned int)1), (unsigned int)positions.size() - 1);
@@ -64,23 +64,29 @@ Vector3 CalculateMovementAtFrame(const std::vector<Vector3> &positions, unsigned
 	assert(frameNum < positions.size());
 
 	// special case: want the exit movement to be unsmoothed, for we don't want the wrong quantized velocity and such
-	if (frameNum == positions.size() - 1) {
+	if (frameNum == positions.size() - 1) 
+	{
 		return (positions.at(positions.size() - 1) - positions.at(positions.size() - 2)).Get2D() * 100.0f;
 	}
 	// special case: if we want the movement at frame 0, we can't get -1 to 0, we need to get 0 to 1 instead
-	if (frameNum == 0) {
+	if (frameNum == 0) 
+	{
 		return (positions.at(1) - positions.at(0)).Get2D() * 100.0f;
 	}
 
 	Vector3 totalMovement;
 	unsigned int count = 0;
-	for (int frame = (signed int)(frameNum - smoothFrames); frame <= (signed int)(frameNum + smoothFrames); frame++) {
-		if (frame > 0 && frame < (signed int)positions.size()) { // was: frame > 1 (i think that was a bug)
+	for (int frame = (signed int)(frameNum - smoothFrames); frame <= (signed int)(frameNum + smoothFrames); frame++) 
+	{
+		if (frame > 0 && frame < (signed int)positions.size()) 
+		{ 
+			// was: frame > 1 (i think that was a bug)
 			totalMovement += (positions.at(frame) - positions.at(frame - 1)).Get2D() * 100.0f;
 			count++;
 		}
 	}
-	if (count > 0) {
+	if (count > 0) 
+	{
 		totalMovement /= (float)count;
 	}
 
@@ -88,36 +94,43 @@ Vector3 CalculateMovementAtFrame(const std::vector<Vector3> &positions, unsigned
 }
 
 // offset where ball should usually be touched
-Vector3 GetFrontOfFootOffsetRel(float velocity, radian bodyAngleRel, float height) {
-
+Vector3 GetFrontOfFootOffsetRel(float velocity, radian bodyAngleRel, float height) 
+{
 	float fullDistanceFactor = 1.0f;
 	float distance = 0.34f + velocity * defaultTouchOffset_ms * 0.001f * fullDistanceFactor; // must be > 0 (for upcoming dotproduct)
 
 	Vector3 ffo = Vector3(0, -distance * 0.8f, 0);
 
 	radian bodyAngle = bodyAngleRel;
-	if (velocity < idleDribbleSwitch) bodyAngle = 0;
+	if (velocity < idleDribbleSwitch) 
+		bodyAngle = 0;
 	Vector3 angled = Vector3(0, -distance * 0.2f, 0).GetRotated2D(bodyAngle);
 
 	return (ffo + angled) * (1.0f - clamp((height - 0.11f) / 4.0f, 0.0f, 0.5f));
 }
 
-bool NeedDefendingMovement(int mySide, const Vector3 &position, const Vector3 &target) {
+bool NeedDefendingMovement(int mySide, const Vector3 &position, const Vector3 &target) 
+{
 	// only move if absolutely necessary
 	float howDeepIsTarget = std::max((target.coords[0] - position.coords[0]) * -mySide, 0.0f);
 	float howWideIsTarget = fabs(target.coords[1] - position.coords[1]);
 	howDeepIsTarget -= 0.5f; // some buffer to account for reaction time
-	if (howWideIsTarget > howDeepIsTarget * 0.8f) {
+	if (howWideIsTarget > howDeepIsTarget * 0.8f) 
+	{
 		return true;
-	} else {
+	} 
+	else 
+	{
 		return false;
 	}
 }
 
-float StretchSprintTo(const float &inputVelocity, float inputSpaceMaxVelocity, float targetMaxVelocity) {
+float StretchSprintTo(const float &inputVelocity, float inputSpaceMaxVelocity, float targetMaxVelocity) 
+{
 	assert(targetMaxVelocity > walkSprintSwitch);
 
-	if (inputVelocity < walkSprintSwitch) return inputVelocity;
+	if (inputVelocity < walkSprintSwitch) 
+		return inputVelocity;
 
 	float howMuchSprintage = inputVelocity - walkSprintSwitch;
 
@@ -131,8 +144,8 @@ float StretchSprintTo(const float &inputVelocity, float inputSpaceMaxVelocity, f
 	return walkSprintSwitch + resultSprintage;
 }
 
-void GetDifficultyFactors(Match *match, Player *player, const Vector3 &positionOffset, float &distanceFactor, float &heightFactor, float &ballMovementFactor) {
-
+void GetDifficultyFactors(Match *match, Player *player, const Vector3 &positionOffset, float &distanceFactor, float &heightFactor, float &ballMovementFactor) 
+{
 	Ball *ball = match->GetBall();
 
 	distanceFactor = 0.0f; // how far ball bounces off feet
@@ -145,7 +158,8 @@ void GetDifficultyFactors(Match *match, Player *player, const Vector3 &positionO
 	// balls farther away from body are harder
 	float fartherAwayPenalty = pow(NormalizedClamp(((player->GetPosition() + player->GetDirectionVec() * 0.2f) - ball->Predict(0).Get2D()).GetLength(), 0.7f, 1.3f), 2.0f) * 2.0f;
 
-	if (Verbose()) printf("distanceFactor: positionoffset: %f, ballbodyvelodiff: %f, fartheraway: %f, ", positionOffsetPenalty, ballBodyVeloPenalty, fartherAwayPenalty);
+	if (Verbose()) 
+		printf("distanceFactor: positionoffset: %f, ballbodyvelodiff: %f, fartheraway: %f, ", positionOffsetPenalty, ballBodyVeloPenalty, fartherAwayPenalty);
 	distanceFactor += positionOffsetPenalty * 2.0f;
 	distanceFactor += ballBodyVeloPenalty;
 	distanceFactor += fartherAwayPenalty * 4.0f;
@@ -155,11 +169,14 @@ void GetDifficultyFactors(Match *match, Player *player, const Vector3 &positionO
 	heightFactor += fartherAwayPenalty;
 
 	// make intercepting passes harder
-	if (match->GetLastTouchTeamID() != player->GetTeam()->GetID()) {
+	if (match->GetLastTouchTeamID() != player->GetTeam()->GetID()) 
+	{
 		Player *lastTouchPlayer = match->GetTeam(abs(player->GetTeam()->GetID() - 1))->GetLastTouchPlayer();
-		if (lastTouchPlayer) {
+		if (lastTouchPlayer) 
+		{
 			float lastTouchBiasPenalty = pow(lastTouchPlayer->GetLastTouchBias(1000 - player->GetStat("physical_reaction") * 500), 0.6f) * 5.0f;
-			if (Verbose()) printf("lastTouchBiasPenalty: %f, ", lastTouchBiasPenalty);
+			if (Verbose()) 
+				printf("lastTouchBiasPenalty: %f, ", lastTouchBiasPenalty);
 			distanceFactor += lastTouchBiasPenalty;
 			heightFactor += lastTouchBiasPenalty;
 			ballMovementFactor += lastTouchBiasPenalty * 0.1f;
@@ -174,11 +191,12 @@ void GetDifficultyFactors(Match *match, Player *player, const Vector3 &positionO
 	distanceFactor = clamp(distanceFactor, 0.0f, 1.0f);
 	heightFactor = clamp(heightFactor, 0.0f, 1.0f);
 	ballMovementFactor = clamp(ballMovementFactor, 0.0f, 1.0f);
-	if (Verbose()) printf("skill multiplier: %f.. makes for result: distancefactor: %f; heightfactor: %f; ballmovementfactor: %f\n", skillPenaltyMultiplier, distanceFactor, heightFactor, ballMovementFactor);
+	if (Verbose()) 
+		printf("skill multiplier: %f.. makes for result: distancefactor: %f; heightfactor: %f; ballmovementfactor: %f\n", skillPenaltyMultiplier, distanceFactor, heightFactor, ballMovementFactor);
 }
 
-Vector3 GetBallControlVector(Ball *ball, Player *player, const Vector3 &nextStartPos, radian nextStartAngle, radian nextBodyAngle, const Vector3 &outgoingMovement, const Anim *currentAnim, int frameNum, const SpatialState &spatialState, const Vector3 &positionOffset, radian &xRot, radian &yRot, float ffoOffset) {
-
+Vector3 GetBallControlVector(Ball *ball, Player *player, const Vector3 &nextStartPos, radian nextStartAngle, radian nextBodyAngle, const Vector3 &outgoingMovement, const Anim *currentAnim, int frameNum, const SpatialState &spatialState, const Vector3 &positionOffset, radian &xRot, radian &yRot, float ffoOffset) 
+{
 	// part of the resulting direction is physics, the other part is anim/controller. so originatingBias is only applied on the (1.0 - physicsBias) part of the result
 	float physicsBias = 0.7f;
 	if (Verbose()) 

@@ -45,8 +45,8 @@ void FillTemporalHumanoidNodes(boost::intrusive_ptr<Node> targetNode, std::vecto
 	}
 }
 
-HumanoidBase::HumanoidBase(PlayerBase *player, Match *match, boost::intrusive_ptr<Node> humanoidSourceNode, boost::intrusive_ptr<Node> fullbodySourceNode, std::map<Vector3, Vector3> &colorCoords, boost::shared_ptr<AnimCollection> animCollection, boost::intrusive_ptr<Node> fullbodyTargetNode, boost::intrusive_ptr < Resource<Surface> > kit, int bodyUpdatePhaseOffset) : fullbodyTargetNode(fullbodyTargetNode), match(match), player(player), anims(animCollection), buf_bodyUpdatePhaseOffset(bodyUpdatePhaseOffset) {
-
+HumanoidBase::HumanoidBase(PlayerBase *player, Match *match, boost::intrusive_ptr<Node> humanoidSourceNode, boost::intrusive_ptr<Node> fullbodySourceNode, std::map<Vector3, Vector3> &colorCoords, boost::shared_ptr<AnimCollection> animCollection, boost::intrusive_ptr<Node> fullbodyTargetNode, boost::intrusive_ptr < Resource<Surface> > kit, int bodyUpdatePhaseOffset) : fullbodyTargetNode(fullbodyTargetNode), match(match), player(player), anims(animCollection), buf_bodyUpdatePhaseOffset(bodyUpdatePhaseOffset) 
+{
 	interruptAnim = e_InterruptAnim_None;
 	reQueueDelayFrames = 0;
 
@@ -210,6 +210,7 @@ HumanoidBase::~HumanoidBase()
 
 void HumanoidBase::PrepareFullbodyModel(std::map<Vector3, Vector3> &colorCoords) 
 {
+	// Log(e_Notice, "HumanoidBase", "HumanoidBase", "------------- HumanoidBase::PrepareFullbodyModel");
 	if (Verbose()) 
 		printf("prepare full body model.. ");
 
@@ -351,7 +352,8 @@ void HumanoidBase::PrepareFullbodyModel(std::map<Vector3, Vector3> &colorCoords)
 						printf("offending jointID: %i (coord %i) (vertexpos %f, %f, %f)\n", weightedBones[c].jointID, c, vertexPos.coords[0], vertexPos.coords[1], vertexPos.coords[2]);
 					assert(weightedBones[c].weight != 0.f);
 				}
-				if (weightedBones[c].weight > 0.01f) {
+				if (weightedBones[c].weight > 0.01f) 
+				{
 					weightedBones[c].weight /= totalWeight;
 					weightedVertex.bones.push_back(weightedBones[c]);
 				}
@@ -362,7 +364,6 @@ void HumanoidBase::PrepareFullbodyModel(std::map<Vector3, Vector3> &colorCoords)
 
 		uniqueFullbodyMesh.push_back(uniqueMesh);
 		uniqueIndicesVec.push_back(uniqueIndices);
-
 
 		// update geometry object so that it uses indices & shared vertices
 		assert(materializedTriangleMeshes.at(subgeom).verticesDataSize / GetTriangleMeshElementCount() == elementOffset);
@@ -376,7 +377,6 @@ void HumanoidBase::PrepareFullbodyModel(std::map<Vector3, Vector3> &colorCoords)
 		{
 			materializedTriangleMeshes.at(subgeom).indices.push_back(uniqueIndices[v / 3]);
 		}
-
 /*
 		printf("\n");
 		printf("optimized: ");
@@ -391,7 +391,6 @@ void HumanoidBase::PrepareFullbodyModel(std::map<Vector3, Vector3> &colorCoords)
 
 	fullbodyGeometryData->resourceMutex.unlock();
 	boost::static_pointer_cast<Geometry>(fullbodyNode->GetObject("fullbody"))->OnUpdateGeometryData();
-
 	for (unsigned int i = 0; i < joints.size(); i++) 
 	{
 		joints.at(i).orientation = jointsVec[i]->GetDerivedRotation().GetInverse().GetNormalized();
@@ -401,13 +400,13 @@ void HumanoidBase::PrepareFullbodyModel(std::map<Vector3, Vector3> &colorCoords)
 	straightAnim->Load("media/animations/straight.anim.util");
 	animApplyBuffer.anim = straightAnim;
 	animApplyBuffer.anim->Apply(nodeMap, animApplyBuffer.frameNum, 0, animApplyBuffer.smooth, animApplyBuffer.smoothFactor, animApplyBuffer.position, animApplyBuffer.orientation, animApplyBuffer.offsets, 0, false, true);
-
 	for (unsigned int i = 0; i < joints.size(); i++) 
 	{
 		joints.at(i).position = jointsVec[i]->GetDerivedPosition();// * zMultiplier;
 	}
 
-	if (Verbose()) printf("6\n");
+	if (Verbose()) 
+		printf("6\n");
 
 	UpdateFullbodyModel(true);
 	boost::static_pointer_cast<Geometry>(fullbodyNode->GetObject("fullbody"))->OnUpdateGeometryData(false);
@@ -446,6 +445,7 @@ void HumanoidBase::UpdateFullbodyNodes()
 		hairStyle->RecursiveUpdateSpatialData(e_SpatialDataType_Both);
 	}
 	*/
+	
 	hairStyle->SetRotation(joints[2].orientation, false);
 	hairStyle->SetPosition(joints[2].position * zMultiplier + fullbodyOffset, false);
 	hairStyle->RecursiveUpdateSpatialData(e_SpatialDataType_Both);
@@ -529,7 +529,6 @@ void HumanoidBase::UpdateFullbodyModel(bool updateSrc)
 					resultBitangent = origBitangent;
 					resultBitangent.Rotate(joints[weightedVertices[v].bones[0].jointID].orientation);
 				}
-
 			} 
 			else 
 			{
@@ -800,7 +799,10 @@ void HumanoidBase::Put()
 	// the apply function doesn't know better than that it is displaying snapshot times, so continue this hoax into the timeDiff_ms value. then,
 	// the temporalsmoother will convert it to 'realtime' once again
 	unsigned long timeDiff_ms = fetchedbuf_animApplyBuffer.snapshotTime_ms - fetchedbuf_previousSnapshotTime_ms;
+
 	//printf("diff: %lu\n", timeDiff_ms);
+	// DebugLog(*player, "-------- timeDiff_ms=" + to_string(timeDiff_ms));
+
 	timeDiff_ms = clamp(timeDiff_ms, 10, 50);
 	fetchedbuf_previousSnapshotTime_ms = fetchedbuf_animApplyBuffer.snapshotTime_ms;
 
@@ -934,7 +936,7 @@ int HumanoidBase::GetIdleMovementAnimID()
 	query.outgoingVelocity = e_Velocity_Idle;
 
 	DataSet dataSet;
-	anims->CrudeSelection(dataSet, query);
+	anims->CrudeSelection(dataSet, query, *player);
 	if (Verbose()) if (dataSet.size() == 0) printf("no animations to begin with\n");
 
 	int desiredIdleLevel = 1;
@@ -1501,7 +1503,7 @@ bool HumanoidBase::SelectAnim(const PlayerCommand &command, e_InterruptAnim loca
 		query.incomingVelocity = e_Velocity_Idle; // standing up anims always start out idle
 
 	DataSet dataSet;
-	anims->CrudeSelection(dataSet, query);
+	anims->CrudeSelection(dataSet, query, *player);
 	if (dataSet.size() == 0) 
 	{
 		if (command.desiredFunctionType == e_FunctionType_Movement) 
@@ -1652,6 +1654,7 @@ bool HumanoidBase::SelectAnim(const PlayerCommand &command, e_InterruptAnim loca
 	// make it so
 	if (selectedAnimID != -1) 
 	{
+		DebugLog(*player, "=========SelectAnim2: selectedAnimID=" + to_string(selectedAnimID));
 		/*
 		if (command.desiredFunctionType != e_FunctionType_Movement) {
 			if (player->GetDebug()) {
@@ -1697,7 +1700,7 @@ bool HumanoidBase::SelectAnim(const PlayerCommand &command, e_InterruptAnim loca
 
 void HumanoidBase::CalculatePredictedSituation(Vector3 &predictedPos, radian &predictedAngle) 
 {
-	if (currentAnim->positions.size() > (unsigned int)currentAnim->frameNum) 
+	if (currentAnim->positions.size() > (unsigned int)currentAnim->frameNum)
 	{
 		assert(currentAnim->positions.size() > (unsigned int)currentAnim->anim->GetEffectiveFrameCount());
 		predictedPos = spatialState.position + currentAnim->positions.at(currentAnim->anim->GetEffectiveFrameCount()) + currentAnim->actionSmuggle + currentAnim->actionSmuggleSustain + currentAnim->movementSmuggle;
@@ -2712,7 +2715,6 @@ radian HumanoidBase::ForceIntoAllowedBodyDirectionAngle(radian angle) const
 
 Vector3 HumanoidBase::ForceIntoPreferredDirectionVec(const Vector3 &src) const 
 {
-
 	float bestDot = -1.0f;
 	int bestIndex = 0;
 	for (unsigned int i = 0; i < preferredDirectionVecs.size(); i++) 

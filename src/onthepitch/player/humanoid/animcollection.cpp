@@ -511,8 +511,37 @@ const std::vector < Animation* > &AnimCollection::GetAnimations() const
 	return animations;
 }
 
-void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery &query) 
+void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery &query, const PlayerBase& player) 
 {
+	// DebugLog(player, "========= CrudeSelection =========");
+	// if (query.byFunctionType == true) {
+	// 	DebugLog(player, "[byFunctionType]  functionType=" + enum_string("e_FunctionType", query.functionType));
+	// }
+	// if (query.heedForcedFoot == true) {
+	// 	DebugLog(player, "[heedForcedFoot]  strongFoot=" + to_string(query.strongFoot));
+	// }
+	// if (query.bySide == true) {
+	// 	DebugLog(player, "[bySide] true");
+	// }
+	// else{
+	// 	DebugLog(player, "[bySide] false");
+	// }
+	// if (query.byIncomingVelocity == true) {
+	// 	DebugLog(player, "[byIncomingVelocity]   incomingVelocity=" + to_string(query.incomingVelocity));
+	// }
+	// if (query.byOutgoingVelocity == true) {
+	// 	DebugLog(player, "[byOutgoingVelocity]   outgoingVelocity=" + to_string(query.outgoingVelocity));
+	// }
+	// if (query.byIncomingBodyDirection == true) {
+	// 	DebugLog(player, "[byIncomingBodyDirection]   incomingBodyDirection=" + vec_string(query.incomingBodyDirection));
+	// }
+	// if (query.byIncomingBallDirection == true) {
+	// 	DebugLog(player, "[byIncomingBallDirection]   incomingBallDirection=" + vec_string(query.incomingBallDirection));
+	// }
+	// if (query.byOutgoingBallDirection == true) {
+	// 	DebugLog(player, "[byOutgoingBallDirection]   outgoingBallDirection=" + vec_string(query.outgoingBallDirection));
+	// }
+
 	// makes a crude selection to later refine
 	int animSize = animations.size();
 	for (int i = 0; i < animSize; i++) 
@@ -544,7 +573,6 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 			if (query.byIncomingVelocity == true) 
 			{
 				e_Velocity animIncomingVelocity = FloatToEnumVelocity(animations.at(i)->GetIncomingVelocity());
-
 				if (query.incomingVelocity_Strict == false) 
 				{
 					selectAnim = true;
@@ -899,8 +927,69 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 			}
 		}
 
-		if (selectAnim) 
+		if (selectAnim)
+		{
 			dataSet.push_back(i);
+		} 
+	}
+
+	if(dataSet.size() > 0)
+	{
+		DebugLog(player, "======================= CrudeSelection =======================");
+		if (query.byFunctionType == true) {
+			DebugLog(player, "[byFunctionType]  " + enum_string("e_FunctionType", query.functionType));
+		}
+		if (query.heedForcedFoot == true) {
+			DebugLog(player, "[heedForcedFoot]  " + to_string(query.strongFoot));
+		}
+		if (query.bySide == true) {
+			DebugLog(player, "[bySide] true");
+		}
+		else{
+			DebugLog(player, "[bySide] false");
+		}
+		if (query.byIncomingVelocity == true) {
+			DebugLog(player, "[byIncomingVelocity]  " + to_string(query.incomingVelocity));
+		}
+		if (query.byOutgoingVelocity == true) {
+			DebugLog(player, "[byOutgoingVelocity]  " + to_string(query.outgoingVelocity));
+		}
+		if (query.byIncomingBodyDirection == true) {
+			DebugLog(player, "[byIncomingBodyDirection]  " + vec_string(query.incomingBodyDirection));
+		}
+		if (query.byIncomingBallDirection == true) {
+			DebugLog(player, "[byIncomingBallDirection]  " + vec_string(query.incomingBallDirection));
+		}
+		if (query.byOutgoingBallDirection == true) {
+			DebugLog(player, "[byOutgoingBallDirection]  " + vec_string(query.outgoingBallDirection));
+		}
+
+		DataSet::iterator iter = dataSet.begin();
+		while (iter != dataSet.end()) 
+		{
+			Animation *anim = this->GetAnim(*iter);
+			// if (player->GetDebug()) 
+			// 	Log(e_Notice, "Humanoid", "Humanoid", "animname: " + to_string(anim->GetName()));
+			std::string animName = anim->GetName();
+			if("media/animations\\ballcontrol\\walk/000.anim" == animName)
+			{
+				std::vector<NodeAnimation*> nodeAnimations = anim->GetNodeAnimations();
+				DebugLog(player, animName + "   " + to_string(nodeAnimations.at(0)->animation.size()));
+				if (nodeAnimations.at(0)->animation.size() > 1) 
+				{
+					int frame_a = (++nodeAnimations.at(0)->animation.begin())->first;
+					int frame_b = nodeAnimations.at(0)->animation.begin()->first;
+					DebugLog(player, "frame_a= " + to_string(frame_a) + "  frame_b= " + to_string(frame_b));
+					Vector3 pos_a = (++nodeAnimations.at(0)->animation.begin())->second.position;
+					Vector3 pos_b = nodeAnimations.at(0)->animation.begin()->second.position;
+					DebugLog(player, "pos_a= " + vec_string(pos_a) + "  pos_b=" + vec_string(pos_b));
+					Vector3 result = (pos_a - pos_b) / (frame_a - frame_b) * 100;
+					DebugLog(player, "result= " + vec_string(result));
+				} 
+			}
+			
+			iter++;
+		}
 	}
 }
 

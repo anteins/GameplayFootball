@@ -563,12 +563,27 @@ float CalculateStat(float baseStat, float profileStat, float age, e_DevelopmentC
 	return agedProfileStat;
 }
 
-std::string vec_string(const Vector3& vec){
+std::string vec_string(const Vector3& vec)
+{
 	return "(" + to_string(vec.coords[0]) + ", " + to_string(vec.coords[1]) + ", " + to_string(vec.coords[2]) + ")";
 }
 
-void DebugLog(Player& player, const std::string& message){
-	if(player.GetDebug()){
+std::string enum_string(const std::string& enumClassName, const int enum_idx)
+{
+	if(enumClassName == "e_FunctionType")
+	{
+		std::string enumName = e_FunctionType_StringMap[enum_idx];
+		return enumName;
+	}
+
+	return to_string(enum_idx);
+}
+
+
+void DebugLog(const PlayerBase& player, const std::string& message)
+{
+	if(player.GetDebug())
+	{
 		Log(e_Notice, "PlayerDebug", "PlayerDebug", message);
 	}
 }

@@ -186,29 +186,38 @@ void Referee::Process() {
 
 		CheckFoul();
 
-	} else { // not in play, maybe something needs to happen?
-
-		if (!match->IsInPlay() && !match->IsInSetPiece() && buffer.active == true) {
-
-			if (buffer.stopTime + 300 == match->GetActualTime_ms() && buffer.endPhase == false && buffer.desiredSetPiece != e_SetPiece_KickOff) {
+	} else 
+	{ 
+		// not in play, maybe something needs to happen?
+		if (!match->IsInPlay() && !match->IsInSetPiece() && buffer.active == true) 
+		{
+			if (buffer.stopTime + 300 == match->GetActualTime_ms() && buffer.endPhase == false && buffer.desiredSetPiece != e_SetPiece_KickOff) 
+			{
 				whistle[1]->SetGain(0.3 * GetConfiguration()->GetReal("audio_volume", 0.5));
 				whistle[1]->Poke(e_SystemType_Audio);
 			}
 
-			if (buffer.prepareTime == match->GetActualTime_ms()) {
-
-				if (buffer.endPhase == true) {
-					if (match->GetMatchPhase() == e_MatchPhase_PreMatch) {
+			if (buffer.prepareTime == match->GetActualTime_ms()) 
+			{
+				if (buffer.endPhase == true) 
+				{
+					if (match->GetMatchPhase() == e_MatchPhase_PreMatch) 
+					{
 						match->SetMatchPhase(e_MatchPhase_1stHalf);
-					} else {
+					} 
+					else 
+					{
 						// game over conditions
-						if (match->GetMatchPhase() == e_MatchPhase_1stExtraTime) {
-							if (match->GetScore(0) != match->GetScore(1)) {
+						if (match->GetMatchPhase() == e_MatchPhase_1stExtraTime) 
+						{
+							if (match->GetScore(0) != match->GetScore(1)) 
+							{
 								match->GameOver();
 								return;
 							}
 						}
-						if (match->GetMatchPhase() == e_MatchPhase_Penalties) {
+						if (match->GetMatchPhase() == e_MatchPhase_Penalties) 
+						{
 							match->GameOver();
 							return;
 						}
@@ -220,7 +229,8 @@ void Referee::Process() {
 				PrepareSetPiece(buffer.desiredSetPiece);
 			}
 
-			if (buffer.startTime == match->GetActualTime_ms()) {
+			if (buffer.startTime == match->GetActualTime_ms()) 
+			{
 				// blow whistle and wait for set piece taker to touch the ball
 				whistle[1]->SetGain(0.3 * GetConfiguration()->GetReal("audio_volume", 0.5));
 				whistle[1]->Poke(e_SystemType_Audio);
@@ -230,9 +240,11 @@ void Referee::Process() {
 		}
 	}
 
-	if (match->IsInSetPiece()) {
+	if (match->IsInSetPiece()) 
+	{
 		// check if set piece has been taken
-		if (buffer.taker->TouchAnim() && !buffer.taker->TouchPending()) {
+		if (buffer.taker->TouchAnim() && !buffer.taker->TouchPending()) 
+		{
 			buffer.active = false;
 			match->StopSetPiece();
 			match->GetTeam(0)->GetController()->PrepareSetPiece(e_SetPiece_None);
@@ -241,18 +253,20 @@ void Referee::Process() {
 			foul.foulPlayer = 0;
 			foul.foulType = 0;
 
-			if (match->GetMatchPhase() == e_MatchPhase_PreMatch) {
+			if (match->GetMatchPhase() == e_MatchPhase_PreMatch) 
+			{
 				match->SetMatchPhase(e_MatchPhase_1stHalf);
 			}
 		}
 	}
 
-	if (afterSetPieceRelaxTime_ms > 0) afterSetPieceRelaxTime_ms -= 10;
+	if (afterSetPieceRelaxTime_ms > 0) 
+		afterSetPieceRelaxTime_ms -= 10;
 }
 
-void Referee::PrepareSetPiece(e_SetPiece setPiece) {
+void Referee::PrepareSetPiece(e_SetPiece setPiece) 
+{
 	// position players for set piece situation
-
 	match->ResetSituation(buffer.restartPos);
 
 	match->GetTeam(0)->GetController()->PrepareSetPiece(setPiece, buffer.teamID);
@@ -261,25 +275,33 @@ void Referee::PrepareSetPiece(e_SetPiece setPiece) {
 	buffer.taker = match->GetTeam(buffer.teamID)->GetController()->GetPieceTaker();
 }
 
-void Referee::AlterSetPiecePrepareTime(unsigned long newTime_ms) {
-	if (buffer.active) {
+void Referee::AlterSetPiecePrepareTime(unsigned long newTime_ms) 
+{
+	if (buffer.active) 
+	{
 		buffer.prepareTime = newTime_ms;
 		buffer.startTime = buffer.prepareTime + 2000;
 	}
 }
 
-void Referee::BallTouched() {
-
+void Referee::BallTouched() 
+{
 	// check for offside player receiving the ball
-
 	int lastTouchTeamID = match->GetLastTouchTeamID();
-	if (lastTouchTeamID == -1) return; // shouldn't happen really ;)
-	if (match->IsInPlay() && !match->IsInSetPiece() && buffer.active == false && match->GetTeam(abs(lastTouchTeamID - 1))->GetActivePlayerCount() > 1) { // disable if only 1 player: that's debug mode with only keeper
+	if (lastTouchTeamID == -1) 
+		return; // shouldn't happen really ;)
+
+	if (match->IsInPlay() && !match->IsInSetPiece() && buffer.active == false && match->GetTeam(abs(lastTouchTeamID - 1))->GetActivePlayerCount() > 1) 
+	{ 
+		// disable if only 1 player: that's debug mode with only keeper
 		std::map<Player*, Vector3>::iterator playerIter = offsidePlayers.begin();
-		while (playerIter != offsidePlayers.end()) {
-			if (match->GetTeam(lastTouchTeamID)->GetLastTouchPlayer() == playerIter->first) {
+		while (playerIter != offsidePlayers.end()) 
+		{
+			if (match->GetTeam(lastTouchTeamID)->GetLastTouchPlayer() == playerIter->first) 
+			{
 				foul.advantage = false;
-				if (!CheckFoul()) {
+				if (!CheckFoul()) 
+				{
 					// uooooga uooooga offside!
 					match->StopPlay();
 					buffer.desiredSetPiece = e_SetPiece_FreeKick;
@@ -301,15 +323,19 @@ void Referee::BallTouched() {
 
 	if (match->IsInPlay() &&
 			(buffer.active == false ||
-			 (buffer.active == true && buffer.desiredSetPiece != e_SetPiece_ThrowIn))) {
+			 (buffer.active == true && buffer.desiredSetPiece != e_SetPiece_ThrowIn))) 
+	{
 		// check for offside players at moment of touch
 		float offside = AI_GetOffsideLine(match, match->GetMentalImage(0), abs(lastTouchTeamID - 1));
 		std::vector<Player*> players;
 		Team *team = match->GetTeam(lastTouchTeamID);
 		match->GetTeam(lastTouchTeamID)->GetActivePlayers(players);
-		for (unsigned int i = 0; i < players.size(); i++) {
-			if (players.at(i) != team->GetLastTouchPlayer()) {
-				if (players.at(i)->GetPosition().coords[0] * team->GetSide() < offside * team->GetSide() - 0.20/*relax*/) {
+		for (unsigned int i = 0; i < players.size(); i++) 
+		{
+			if (players.at(i) != team->GetLastTouchPlayer()) 
+			{
+				if (players.at(i)->GetPosition().coords[0] * team->GetSide() < offside * team->GetSide() - 0.20/*relax*/) 
+				{
 					offsidePlayers.insert(std::pair<Player*, Vector3>(players.at(i), players.at(i)->GetPosition()));
 				}
 			}
@@ -318,15 +344,18 @@ void Referee::BallTouched() {
 
 }
 
-void Referee::TripNotice(Player *tripee, Player *tripper, int tackleType) {
-
+void Referee::TripNotice(Player *tripee, Player *tripper, int tackleType) 
+{
 	if (buffer.active) return;
 
-	if (tackleType == 2) { // standing tackle
+	if (tackleType == 2) 
+	{ 
+		// standing tackle
 		if (tripee->GetTeam()->GetFadingTeamPossessionAmount() > 1.1 &&
 				(tripper->GetCurrentFunctionType() == e_FunctionType_Interfere || tripper->GetCurrentFunctionType() == e_FunctionType_Sliding) &&
 				(tripee->GetPosition() - match->GetBall()->Predict(0).Get2D()).GetLength() < 2.0 &&
-				tripper->GetTeam()->GetID() != tripee->GetTeam()->GetID()) {
+				tripper->GetTeam()->GetID() != tripee->GetTeam()->GetID()) 
+		{
 			// uooooga uooooga foul!
 			foul.foulType = 1;
 			foul.advantage = true;
@@ -337,21 +366,25 @@ void Referee::TripNotice(Player *tripee, Player *tripper, int tackleType) {
 			foul.hasBeenProcessed = false;
 			if (!IsReleaseVersion()) match->SpamMessage("advantage", 2000);
 		}
-
-	} else if (tackleType == 3 && (tripper != foul.foulPlayer || foul.foulType == 0)) { // sliding tackle
-
+	} 
+	else if (tackleType == 3 && (tripper != foul.foulPlayer || foul.foulType == 0)) 
+	{ 
+		// sliding tackle
 		if (match->GetActualTime_ms() - tripper->GetLastTouchTime_ms() > 600 &&
 				tripper->GetCurrentFunctionType() == e_FunctionType_Sliding &&
-				tripper->GetTeam()->GetID() != tripee->GetTeam()->GetID() && (match->GetBall()->Predict(0) - tripee->GetPosition()).GetLength() < 8.0) {
+				tripper->GetTeam()->GetID() != tripee->GetTeam()->GetID() && (match->GetBall()->Predict(0) - tripee->GetPosition()).GetLength() < 8.0) 
+		{
 			float severity = 1.0;
-			if (tripper->TouchAnim()) {
+			if (tripper->TouchAnim()) 
+			{
 				severity = pow(clamp(fabs(tripper->GetTouchFrame() - tripper->GetCurrentFrame()) / tripper->GetTouchFrame(), 0.0, 1.0), 0.7) * 0.5;
 				severity += NormalizedClamp((match->GetBall()->Predict(0) - tripper->GetTouchPos()).GetLength(), 0.0, 2.0) * 0.5;
 			}
 			// from behind?
 			severity += (tripee->GetPosition() - tripper->GetPosition()).GetNormalized(0).GetDotProduct(tripee->GetDirectionVec()) * 0.5 + 0.5;
 
-			if (severity > 1.0) {
+			if (severity > 1.0) 
+			{
 				// uooooga uooooga foul!
 				//printf("sliding! %lu ms ago\n", match->GetActualTime_ms() - tripper->GetLastTouchTime_ms());
 				foul.foulType = 1;
@@ -361,11 +394,15 @@ void Referee::TripNotice(Player *tripee, Player *tripper, int tackleType) {
 				foul.foulTime = match->GetActualTime_ms();
 				foul.foulPosition = tripee->GetPosition();
 				foul.hasBeenProcessed = false;
-				if (severity > 1.4) foul.foulType = 2;
-				if (severity > 2.0) {
+				if (severity > 1.4) 
+					foul.foulType = 2;
+				if (severity > 2.0) 
+				{
 					foul.foulType = 3;
 					foul.advantage = false;
-				} else {
+				} 
+				else 
+				{
 					if (!IsReleaseVersion()) match->SpamMessage("advantage", 3000);
 				}
 			}
@@ -374,26 +411,36 @@ void Referee::TripNotice(Player *tripee, Player *tripper, int tackleType) {
 	}
 }
 
-bool Referee::CheckFoul() {
-
+bool Referee::CheckFoul() 
+{
 	bool penalty = false;
-	if (foul.foulType != 0) {
+	if (foul.foulType != 0) 
+	{
 		if (fabs(foul.foulPosition.coords[1]) < 20.15 - lineHalfW && foul.foulPosition.coords[0] * -foul.foulVictim->GetTeam()->GetSide() > pitchHalfW - 16.5 + lineHalfW) penalty = true;
 	}
 
-	if (foul.advantage) {
-		if (penalty) {
+	if (foul.advantage) 
+	{
+		if (penalty) 
+		{
 			foul.advantage = false;
-		} else {
-			if (match->GetActualTime_ms() - 600 > foul.foulTime) {
-				if (match->GetActualTime_ms() - 3000 > foul.foulTime) {
+		} 
+		else 
+		{
+			if (match->GetActualTime_ms() - 600 > foul.foulTime) 
+			{
+				if (match->GetActualTime_ms() - 3000 > foul.foulTime) 
+				{
 					// cancel foul, advantage took long enough
 					// todo: yellow cards need to be remembered though ;)
 					foul.foulPlayer = 0;
 					foul.foulType = 0;
-				} else {
+				} 
+				else 
+				{
 					// calculate if there's advantage still
-					if (foul.foulVictim->GetTeam()->GetFadingTeamPossessionAmount() < 1.0) {
+					if (foul.foulVictim->GetTeam()->GetFadingTeamPossessionAmount() < 1.0) 
+					{
 						foul.advantage = false;
 					}
 				}
@@ -401,17 +448,20 @@ bool Referee::CheckFoul() {
 		}
 	}
 
-	if (foul.foulType != 0 && foul.advantage == false && !foul.hasBeenProcessed) {
-
+	if (foul.foulType != 0 && foul.advantage == false && !foul.hasBeenProcessed) 
+	{
 		match->StopPlay();
-		if (!penalty) {
+		if (!penalty) 
+		{
 			buffer.desiredSetPiece = e_SetPiece_FreeKick;
 			buffer.stopTime = match->GetActualTime_ms();
 			buffer.prepareTime = match->GetActualTime_ms() + 2000;
 			if (foul.foulType >= 2) buffer.prepareTime += 10000;
 			buffer.startTime = buffer.prepareTime + 2000;
 			buffer.restartPos = foul.foulPosition;
-		} else {
+		} 
+		else 
+		{
 			buffer.desiredSetPiece = e_SetPiece_Penalty;
 			buffer.stopTime = match->GetActualTime_ms();
 			buffer.prepareTime = match->GetActualTime_ms() + 2000;
@@ -422,11 +472,13 @@ bool Referee::CheckFoul() {
 		buffer.teamID = foul.foulVictim->GetTeam()->GetID();
 		buffer.active = true;
 		std::string spamMessage = "foul!";
-		if (foul.foulType == 2) {
+		if (foul.foulType == 2) 
+		{
 			spamMessage.append(" yellow card");
 			foul.foulPlayer->GiveYellowCard(match->GetActualTime_ms() + 6000); // need to find out proper moment
 		}
-		if (foul.foulType == 3) {
+		if (foul.foulType == 3) 
+		{
 			spamMessage.append(" red card!!!");
 			foul.foulPlayer->GiveRedCard(match->GetActualTime_ms() + 6000); // need to find out proper moment
 		}

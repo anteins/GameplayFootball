@@ -13,7 +13,7 @@
 
 using namespace blunted;
 
-class Player;
+class PlayerBase;
 
 float GetQuantizedDirectionBias();
 void QuantizeDirection(Vector3 &inputDirection, float bias = 1.0f);
@@ -103,7 +103,9 @@ template <> Quaternion TemporalSmoother<Quaternion>::MixData(const Quaternion &d
 
 std::string vec_string(const Vector3& vec);
 
-void DebugLog(Player& player, const std::string& message);
+std::string enum_string(const std::string& enumClassName, const int enum_idx);
+
+void DebugLog(const PlayerBase& player, const std::string& message);
 //
 // 将64位浮点数转换为32位整数
 // 小数部分将四舍五入到偶数

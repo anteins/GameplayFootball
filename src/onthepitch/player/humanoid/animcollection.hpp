@@ -199,7 +199,7 @@ class AnimCollection
 
 		const std::vector < Animation* > &GetAnimations() const;
 
-		void CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery &query);
+		void CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery &query, const PlayerBase& player);
 
 		inline Animation* GetAnim(int index) {
 			return animations.at(index);

@@ -205,7 +205,8 @@ void TeamAIController::Process()
 				float neededRating = 0.5f;
 				// from a certain distance, running is not very useful (can't pass that far)
 				Player *runner = SelectAttackingRunPlayer(team);
-				if (runner) {
+				if (runner) 
+				{
 					float distance = (runner->GetPosition() - team->GetDesignatedTeamPossessionPlayer()->GetPosition()).GetLength();
 					float distanceRating = pow(1.0f - NormalizedClamp(distance, 0, 40), 0.5f);
 
@@ -214,7 +215,8 @@ void TeamAIController::Process()
 					Vector3 spot = runner->GetPosition() * Vector3(1.0f, 0.8f, 0.0f) + Vector3(team->GetSide() * 10.0f, 0, 0);
 					AI_GetClosestPlayers(team->GetMatch()->GetTeam(abs(team->GetID() - 1)), spot, false, opponents, 4);
 					float oppDensityRating = 1.0f;
-					for (unsigned int i = 0; i < opponents.size(); i++) {
+					for (unsigned int i = 0; i < opponents.size(); i++) 
+					{
 						float oppDistance = (opponents.at(i)->GetPosition() - spot).GetLength();
 						float oppDistanceRatingInv = pow(curve(1.0f - NormalizedClamp(oppDistance, 0, 15), 1.0f), 0.5f);
 						oppDensityRating -= oppDistanceRatingInv * 0.3f; // subtractive!
@@ -224,7 +226,8 @@ void TeamAIController::Process()
 					if (runConditionsRating >= neededRating) 
 					{
 						ApplyAttackingRun();
-						if (Verbose()) printf("!!! tactics induced run !!!\n");
+						if (Verbose()) 
+							printf("!!! tactics induced run !!!\n");
 					}
 				}
 			}

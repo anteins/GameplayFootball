@@ -65,7 +65,8 @@ Ball::Ball(Match *match) : match(match)
 	CalculatePrediction();
 }
 
-Ball::~Ball() {
+Ball::~Ball() 
+{
 	match->GetDynamicNode()->DeleteNode(ballNode);
 	scene3D->DeleteObject(sound);
 	scene3D->DeleteObject(goalpostsound);
@@ -78,7 +79,8 @@ void Ball::GetPredictionArray(Vector3 *target)
 	memcpy(target, predictions, sizeof(Vector3) * ballPredictionSize_ms / 10);
 }
 
-Vector3 Ball::GetMovement() {
+Vector3 Ball::GetMovement() 
+{
 	// meters / sec
 	return momentum;
 }
@@ -88,9 +90,10 @@ void Ball::Touch(const Vector3 &target)
 	if (positionBuffer.coords[2] < 0.11f) 
 		positionBuffer.coords[2] = 0.11f;
 
+    // Log(e_Notice, "Ball", "Ball", "========================== Ball::Touch ==========================");
+    // Log(e_Notice, "Ball", "Ball", "Momentum=" + vec_string(target));
+
 	SetMomentum(target);
-	Log(e_Notice, "Ball", "Ball", "========================== Ball::Touch ==========================");
-	Log(e_Notice, "Ball", "Ball", "Momentum=" + vec_string(target));
 	// recalculate prediction
 	CalculatePrediction(true);
 	match->UpdateLatestMentalImageBallPredictions();
@@ -99,7 +102,8 @@ void Ball::Touch(const Vector3 &target)
 	match->GetTeam(1)->UpdatePossessionStats();
 }
 
-void Ball::SetPosition(const Vector3 &target) {
+void Ball::SetPosition(const Vector3 &target) 
+{
 	positionBuffer.Set(target);
 	momentum.Set(0);
 	SetRotation(0, 0, 0, 1.0);
@@ -108,12 +112,15 @@ void Ball::SetPosition(const Vector3 &target) {
 	previousPosition = positionBuffer;
 }
 
-void Ball::SetMomentum(const Vector3 &target) {
+void Ball::SetMomentum(const Vector3 &target) 
+{
 	momentum.Set(target);
 	CalculatePrediction();
 }
 
-void Ball::SetRotation(radian x, radian y, radian z, float bias) { // radians per second for each axis
+void Ball::SetRotation(radian x, radian y, radian z, float bias) 
+{ 
+    // radians per second for each axis
 	Quaternion rotX;
 	rotX.SetAngleAxis(clamp(x * 0.001f, -pi * 0.49f, pi * 0.49f), Vector3(-1, 0, 0));
 	Quaternion rotY;
@@ -127,7 +134,9 @@ void Ball::SetRotation(radian x, radian y, radian z, float bias) { // radians pe
 	CalculatePrediction();
 }
 
-void Ball::SetRotation(const Vector3 &rot, float bias) { // radians per second for each axis
+void Ball::SetRotation(const Vector3 &rot, float bias) 
+{ 
+    // radians per second for each axis
 	SetRotation(rot.coords[0], rot.coords[1], rot.coords[2], bias);
 }
 
@@ -161,7 +170,6 @@ BallSpatialInfo Ball::CalculatePrediction(bool debug)
 
 	int dt = 0;
 	RoundToInt64(dt, timeStep * 1000.0f);
-	
 	for (unsigned int predictTime_ms = dt; predictTime_ms < ballPredictionSize_ms; predictTime_ms += dt) 
 	{
 		float frictionFactor = 0.0f;
@@ -200,7 +208,6 @@ BallSpatialInfo Ball::CalculatePrediction(bool debug)
 			float adaptedFriction = (friction * grassInfluenceBias);
 
 			// v(t) = v(0) * (k ^ t)
-
 			Vector3 xy = momentumPredict.Get2D();
 			float velo = xy.GetLength();
 
@@ -369,7 +376,6 @@ BallSpatialInfo Ball::CalculatePrediction(bool debug)
 					ballTouchesNet = true;
 			}
 
-
 			// top netting
 //			if (((nextPos.coords[2] > 2.5 - 0.11 && ballIsInGoal)/*( ||
 //					 (nextPos.coords[2] < 2.5 + 0.11 && !ballIsInGoal) todo disabled: too hard to code :p */) &&
@@ -516,7 +522,8 @@ BallSpatialInfo Ball::CalculatePrediction(bool debug)
 	return BallSpatialInfo(newMomentum, newRotation_ms);
 }
 
-Vector3 Ball::GetAveragePosition(unsigned int duration_ms) const {
+Vector3 Ball::GetAveragePosition(unsigned int duration_ms) const 
+{
 	std::list<Vector3>::const_reverse_iterator iter = ballPosHistory.rbegin();
 	unsigned int total = 0;
 	Vector3 averageVec;
@@ -533,7 +540,8 @@ Vector3 Ball::GetAveragePosition(unsigned int duration_ms) const {
 	return averageVec;
 }
 
-void Ball::TriggerBallTouchSound(float gain) {
+void Ball::TriggerBallTouchSound(float gain) 
+{
 	float finalGain = gain * 0.6f * GetConfiguration()->GetReal("audio_volume", 0.5f);
 	if (finalGain > 0.01f) {
 		sound->SetPitch(0.9f + random(0.0f, 0.2f));

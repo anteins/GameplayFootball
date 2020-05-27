@@ -120,7 +120,7 @@ void HumanController::RequestCommand(PlayerCommandQueue &commandQueue)
 				command.touchInfo.forcedTargetPlayer = AI_GetClosestPlayer(team, desiredTargetPosition, false, CastPlayer());
 
 				AI_GetPass(CastPlayer(), command.desiredFunctionType, command.touchInfo.inputDirection, command.touchInfo.inputPower, command.touchInfo.autoDirectionBias, command.touchInfo.autoPowerBias, command.touchInfo.desiredDirection, command.touchInfo.desiredPower, command.touchInfo.targetPlayer, command.touchInfo.forcedTargetPlayer);
-
+				// DebugLog(*CastPlayer(), "============= get desiredPower=" + to_string(command.touchInfo.desiredPower));
 				commandQueue.push_back(command);
 			} 
 			else if (actionButton == e_ButtonFunction_ShortPass) 
@@ -136,7 +136,6 @@ void HumanController::RequestCommand(PlayerCommandQueue &commandQueue)
 				command.touchInfo.autoDirectionBias = GetConfiguration()->GetReal("gameplay_shortpass_autodirection", _default_ShortPass_AutoDirection);
 				command.touchInfo.autoPowerBias = GetConfiguration()->GetReal("gameplay_shortpass_autopower", _default_ShortPass_AutoPower);
 				AI_GetPass(CastPlayer(), command.desiredFunctionType, command.touchInfo.inputDirection, command.touchInfo.inputPower, command.touchInfo.autoDirectionBias, command.touchInfo.autoPowerBias, command.touchInfo.desiredDirection, command.touchInfo.desiredPower, command.touchInfo.targetPlayer);
-
 				commandQueue.push_back(command);
 			} 
 			else if (actionButton == e_ButtonFunction_LongPass) 
@@ -249,7 +248,8 @@ void HumanController::RequestCommand(PlayerCommandQueue &commandQueue)
 		// special adapted input for ballcontrol and trap, when we have shoot/pass buffers
 		Vector3 inputDirectionSave2 = inputDirection;
 		float inputVelocitySave2 = inputVelocityFloat;
-		if (actionMode == 2) {
+		if (actionMode == 2) 
+		{
 			float dot = CastPlayer()->GetDirectionVec().GetDotProduct(inputDirection) * 0.5f + 0.5f; // todo: test
 			if (CastPlayer()->GetEnumVelocity() != e_Velocity_Idle) {
 				inputDirection = (CastPlayer()->GetDirectionVec() * 1.0f + inputDirection * 0.0f).GetNormalized(inputDirection); // want inputdirection to be biggest, so we won't stubbornly fail to do 180s
@@ -337,7 +337,7 @@ void HumanController::Process()
 	_GetHidInput(currentDirection, dud);
 	radian angle = fabs(currentDirection.GetAngle2D(previousDirection));
 	previousDirection = currentDirection;
-
+	// DebugLog(*CastPlayer(), "HumanController::Process -- currentDirection= " + vec_string(currentDirection));
 	// only set steadydirection if angle is small (= human probably reaching his intended direction)
 	// or very large (= maybe the stick has been in deadzone space; humans can't move this fast)
 	if (enableSteadyDirectionSystem) 
@@ -356,10 +356,17 @@ void HumanController::Process()
 
 	_CalculateSituation();
 
+	// if(match->IsInSetPiece()){
+	// 	DebugLog(*CastPlayer(), "match->IsInSetPiece");
+	// }
+	// else{
+	// 	DebugLog(*CastPlayer(), "!match->IsInSetPiece");
+	// }
+	// DebugLog(*CastPlayer(), "actionMode=" + to_string(actionMode));
+	
 	// action?
 	if (actionMode == 0 && (!match->IsInSetPiece() || team->GetController()->GetPieceTaker() == player)) 
 	{
-
 		// todo: clean this up
 
 		// what is the context: do we want defend buttons or pass/shot buttons?
@@ -397,54 +404,65 @@ void HumanController::Process()
 				allowKeeperRush = false;
 			}
 
-			if (hid->GetButton(e_ButtonFunction_Pressure) && !hid->GetPreviousButtonState(e_ButtonFunction_Pressure) && allowPressure) {
+			if (hid->GetButton(e_ButtonFunction_Pressure) && !hid->GetPreviousButtonState(e_ButtonFunction_Pressure) && allowPressure) 
+			{
 				actionMode = 1;
 				actionButton = e_ButtonFunction_Pressure;
 			}
 
-			if (hid->GetButton(e_ButtonFunction_Sliding) && !hid->GetPreviousButtonState(e_ButtonFunction_Sliding) && allowSliding) { // we don't want high passes to turn into slidings
+			if (hid->GetButton(e_ButtonFunction_Sliding) && !hid->GetPreviousButtonState(e_ButtonFunction_Sliding) && allowSliding) 
+			{ 
+				// we don't want high passes to turn into slidings
 				actionMode = 1;
 				actionButton = e_ButtonFunction_Sliding;
 			}
 
-			if (hid->GetButton(e_ButtonFunction_TeamPressure) && !hid->GetPreviousButtonState(e_ButtonFunction_TeamPressure) && allowTeamPressure) {
+			if (hid->GetButton(e_ButtonFunction_TeamPressure) && !hid->GetPreviousButtonState(e_ButtonFunction_TeamPressure) && allowTeamPressure) 
+			{
 				actionMode = 1;
 				actionButton = e_ButtonFunction_TeamPressure;
 			}
 
-			if (hid->GetButton(e_ButtonFunction_KeeperRush) && !hid->GetPreviousButtonState(e_ButtonFunction_KeeperRush) && allowKeeperRush) {
+			if (hid->GetButton(e_ButtonFunction_KeeperRush) && !hid->GetPreviousButtonState(e_ButtonFunction_KeeperRush) && allowKeeperRush) 
+			{
 				actionMode = 1;
 				actionButton = e_ButtonFunction_KeeperRush;
 			}
 
-		} else 
+		} 
+		else 
 		{
 			bool allowShortPass = true;
 			bool allowLongPass = true;
 			bool allowHighPass = true;
 			bool allowShot = true;
 
-			if (team->GetController()->GetPieceTaker() == player && team->GetController()->GetSetPieceType() == e_SetPiece_ThrowIn) {
+			if (team->GetController()->GetPieceTaker() == player && team->GetController()->GetSetPieceType() == e_SetPiece_ThrowIn) 
+			{
 				allowHighPass = false;
 				allowShot = false;
 			}
 
-			if (hid->GetButton(e_ButtonFunction_ShortPass) && !hid->GetPreviousButtonState(e_ButtonFunction_ShortPass) && allowShortPass) {
+			if (hid->GetButton(e_ButtonFunction_ShortPass) && !hid->GetPreviousButtonState(e_ButtonFunction_ShortPass) && allowShortPass) 
+			{
 				actionMode = 2;
 				actionButton = e_ButtonFunction_ShortPass;
 			}
 
-			if (hid->GetButton(e_ButtonFunction_LongPass) && !hid->GetPreviousButtonState(e_ButtonFunction_LongPass) && allowLongPass) {
+			if (hid->GetButton(e_ButtonFunction_LongPass) && !hid->GetPreviousButtonState(e_ButtonFunction_LongPass) && allowLongPass) 
+			{
 				actionMode = 2;
 				actionButton = e_ButtonFunction_LongPass;
 			}
 
-			if (hid->GetButton(e_ButtonFunction_HighPass) && !hid->GetPreviousButtonState(e_ButtonFunction_HighPass) && allowHighPass) {
+			if (hid->GetButton(e_ButtonFunction_HighPass) && !hid->GetPreviousButtonState(e_ButtonFunction_HighPass) && allowHighPass) 
+			{
 				actionMode = 2;
 				actionButton = e_ButtonFunction_HighPass;
 			}
 
-			if (hid->GetButton(e_ButtonFunction_Shot) && !hid->GetPreviousButtonState(e_ButtonFunction_Shot) && allowShot) {
+			if (hid->GetButton(e_ButtonFunction_Shot) && !hid->GetPreviousButtonState(e_ButtonFunction_Shot) && allowShot) 
+			{
 				actionMode = 2;
 				actionButton = e_ButtonFunction_Shot;
 			}

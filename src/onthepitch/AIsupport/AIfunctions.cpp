@@ -505,7 +505,8 @@ TimeNeeded AI_GetTimeNeededForDistance_ms(const Vector3 &playerPos, const Vector
 
 	float initialDist = (playerPos - targetPos).GetLength();
 	unsigned int defaultOptimizedTime_ms = int(round((targetPos - (playerPos + playerMovement * 0.2f)).GetLength() / (maxVelocity * 0.75f) * 1000));
-	if (initialDist > optimizeDist) {
+	if (initialDist > optimizeDist) 
+	{
 		result.usual_ms = defaultOptimizedTime_ms;
 		result.optimistic_ms = result.usual_ms - 200;
 		return result;
@@ -519,10 +520,13 @@ TimeNeeded AI_GetTimeNeededForDistance_ms(const Vector3 &playerPos, const Vector
 	Vector3 currentMovement = playerMovement;
 
 	float ffo = 0.1f; // in front of foot offset (ideal ball position)
-	if (currentMovement.GetLength() > idleDribbleSwitch) {
+	if (currentMovement.GetLength() > idleDribbleSwitch) 
+	{
 		currentPos += currentMovement.GetNormalized() * ffo;
 		currentPos += currentMovement * 0.01f;
-	} else {
+	} 
+	else 
+	{
 		currentPos += (targetPos - playerPos).GetNormalized(0) * ffo;
 	}
 
@@ -536,7 +540,9 @@ TimeNeeded AI_GetTimeNeededForDistance_ms(const Vector3 &playerPos, const Vector
 
 	float adaptedMaxVelocity = maxVelocity * 0.94f; // don't use full maxvelocity, since the last part of that velo is very hard to attain (due to exponential air resistance)
 
-	while (1 + 2 == 3) { // =]
+	while (1 + 2 == 3) 
+	{ 
+		// =]
 
 		// too unstable! timeStep_ms = clamp(int(round(previousDistance * 30)) - 20, 10, 40); // variable timestep may not be 100% correct, so don't overdo it
 		// round to 10s
@@ -548,22 +554,23 @@ TimeNeeded AI_GetTimeNeededForDistance_ms(const Vector3 &playerPos, const Vector
 		//bias = 0.01f + fastpow(bias, 1.0f) * 0.99f; // higher exp == slower
 		//bias = 0.1f + bias * 0.9f;
 
-		if (bias >= 1.0f) {
-
+		if (bias >= 1.0f) 
+		{
 			// we can now simply calculate the time needed
 			float remainingDistance_usual = clamp((targetPos - currentPos).GetLength() - radius_usual, 0.0f, 100000.0f);
 			result.usual_ms = currentTime_ms + (remainingDistance_usual / adaptedMaxVelocity) * 1000;
 			resultingRadius_usual = radius_usual + remainingDistance_usual;
 
-			if (!foundOptimisticTime) {
+			if (!foundOptimisticTime) 
+			{
 				float remainingDistance_optimistic = clamp((targetPos - currentPos).GetLength() - radius_optimistic, 0.0f, 100000.0f);
 				result.optimistic_ms = currentTime_ms + (remainingDistance_optimistic / adaptedMaxVelocity) * 1000;
 			}
 
 			break;
 
-		} else {
-
+		} else 
+		{
 			// manual copy: this function is called a lot, so if we use the Vector3::operator*, it's creating a lot of temp vars.
 			// currentMovement = playerMovement * (1.0f - bias);
 			currentMovement.coords[0] = playerMovement.coords[0] * (1.0f - bias);
@@ -580,11 +587,13 @@ TimeNeeded AI_GetTimeNeededForDistance_ms(const Vector3 &playerPos, const Vector
 			float targetDistance = (targetPos - currentPos).GetLength();
 			//if (currentTime_ms > 1000 && currentTime_ms % 100 == 0) printf("currentTime_ms: %i, targetDistance: %f, currentMovementLength: %f, bias: %f, radius: %f, changeTime_ms: %i\n", currentTime_ms, targetDistance, currentMovement.GetLength(), bias, radius, changeTime_ms);
 			//if (debug) if (maxTime_ms != -1 && currentTime_ms == (unsigned int)maxTime_ms) printf("CANNOT GO FURTHER: %i\n", currentTime_ms);
-			if ((targetDistance < radius_optimistic || (maxTime_ms != -1 && currentTime_ms > (unsigned int)maxTime_ms)) && !foundOptimisticTime) {
+			if ((targetDistance < radius_optimistic || (maxTime_ms != -1 && currentTime_ms > (unsigned int)maxTime_ms)) && !foundOptimisticTime) 
+			{
 				result.optimistic_ms = currentTime_ms;
 				foundOptimisticTime = true;
 			}
-			if (targetDistance < radius_usual || (maxTime_ms != -1 && currentTime_ms > (unsigned int)maxTime_ms)) {
+			if (targetDistance < radius_usual || (maxTime_ms != -1 && currentTime_ms > (unsigned int)maxTime_ms)) 
+			{
 				//currentTime_ms += int(round(((targetPos - currentPos).GetLength() / radius) * 40.0));
 				//if (debug) printf("ACTUALLY FOUND AT: %i\n", currentTime_ms);
 				resultingRadius_usual = radius_usual;
@@ -597,14 +606,16 @@ TimeNeeded AI_GetTimeNeededForDistance_ms(const Vector3 &playerPos, const Vector
 		currentTime_ms += timeStep_ms;
 	}
 
-	if (maxTime_ms != -1 && currentTime_ms > (unsigned int)maxTime_ms) {
+	if (maxTime_ms != -1 && currentTime_ms > (unsigned int)maxTime_ms) 
+	{
 		result.usual_ms = std::max(defaultOptimizedTime_ms, (currentTime_ms + 100) * 2);
 		if (!foundOptimisticTime) result.optimistic_ms = result.usual_ms;
 		return result;
 	}
 
 	// very, very close! just take distance as time, so we can still compare to other players properly
-	if (result.usual_ms == 0) {
+	if (result.usual_ms == 0) 
+	{
 		result.usual_ms = int(round(clamp((targetPos - playerPos).GetLength() / resultingRadius_usual, 0.0f, 1.0f) * 10));
 		result.optimistic_ms = result.usual_ms;
 	}
@@ -616,8 +627,8 @@ TimeNeeded AI_GetTimeNeededForDistance_ms(const Vector3 &playerPos, const Vector
 	*/
 }
 
-unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, Player *player, const Vector3 &desiredDirection, float desiredVelocityFloat, Vector3 &bestDirection, float &bestVelocityFloat, Vector3 &bestLookAt, float haste) {
-
+unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, Player *player, const Vector3 &desiredDirection, float desiredVelocityFloat, Vector3 &bestDirection, float &bestVelocityFloat, Vector3 &bestLookAt, float haste) 
+{
 	Vector3 playerPos = player->GetPosition();
 
 	float movementWeight = 1.0f;
@@ -627,17 +638,13 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 
 	Vector3 adaptedDesiredDirection = desiredDirection;
 
-
 	// precalc shortest distance to ball 'line' for perpendicularity rating (so we have a minimum value there)
-
 	Line ballLine(mentalImage->GetBallPrediction(0).Get2D(), mentalImage->GetBallPrediction(1000).Get2D());
 	float u = 0;
 	float playerBallLineShortestDistance = ballLine.GetDistanceToPoint(playerPos, u);
 	Vector3 playerBallShortestTargetPos = ballLine.GetVertex(0) + (ballLine.GetVertex(1) - ballLine.GetVertex(0)) * u;
 
-
 	// quantize input 8- or 16-way in relation to 'ball direction space'
-
 	Vector3 ballSpaceDirection = (mentalImage->GetBallPrediction(0).Get2D() - mentalImage->GetBallPrediction(1000).Get2D()).GetNormalized(adaptedDesiredDirection);
 	radian toBallSpaceAngle = ballSpaceDirection.GetAngle2D();
 	Vector3 adaptedDesiredDirectionBallSpace = adaptedDesiredDirection.GetRotated2D(-toBallSpaceAngle);
@@ -656,8 +663,6 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 	adaptedDesiredDirection = adaptedDesiredDirectionBallSpace.GetRotated2D(toBallSpaceAngle);
 
 	//printf("ball angle: %f, result angle: %f\n", ballSpaceDirection.GetAngle2D(), adaptedDesiredDirection.GetAngle2D());
-
-
 	Vector3 desiredMovement = adaptedDesiredDirection * desiredVelocityFloat;
 
 /*
@@ -675,7 +680,8 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 	perpendicularWeight = desiredVsPerpendicularBias;
 */
 
-	if (haste > 0.0f) {
+	if (haste > 0.0f) 
+	{
 		movementWeight = 0.0f;
 		timeWeight = 1.0f;
 		perpendicularWeight = 0.0f;
@@ -687,8 +693,10 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 		*/
 	}
 
-	struct PossibleChoice {
-		PossibleChoice() {
+	struct PossibleChoice 
+	{
+		PossibleChoice() 
+		{
 			rating = -10000.0f;
 			time_ms = -10;
 			timeNeeded_ms = -10;
@@ -699,14 +707,14 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 	};
 
 	//if (player->GetDebug()) SetBlueDebugPilon(playerPos + desiredMovement);
-
 	PossibleChoice bestChoice;
 
 	unsigned int startTime_ms = clamp(player->GetTimeNeededToGetToBall_ms(), 40, ballPredictionSize_ms - 10);
 	// we can't start optimized at a later moment, because that would mean we'd aim outside the pitch to start with
 	Vector3 ballPrediction = mentalImage->GetBallPrediction(startTime_ms);
 	if (fabs(ballPrediction.coords[0]) > pitchHalfW - 0.2f ||
-			fabs(ballPrediction.coords[1]) > pitchHalfH - 0.2f) {
+			fabs(ballPrediction.coords[1]) > pitchHalfH - 0.2f) 
+	{
 		startTime_ms = 80;
 	}
 
@@ -720,14 +728,13 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 	Vector3 ballDirectionRough = ballMovementRough.GetNormalized(adaptedDesiredDirection);
 
 	unsigned int timeStep = 1;
-
-	for (unsigned int time_ms = startTime_ms; time_ms < ballPredictionSize_ms; time_ms += 10 * timeStep) {
-
+	for (unsigned int time_ms = startTime_ms; time_ms < ballPredictionSize_ms; time_ms += 10 * timeStep) 
+	{
 		bool forced = false;
-
 		Vector3 targetPos = mentalImage->GetBallPrediction(time_ms);
 		if (fabs(targetPos.coords[0]) > pitchHalfW - 0.2f ||
-				fabs(targetPos.coords[1]) > pitchHalfH - 0.2f) {
+				fabs(targetPos.coords[1]) > pitchHalfH - 0.2f) 
+		{
 			forced = true;
 		}
 		if (!forced) if (targetPos.coords[2] >= 1.0f) continue; // unattainable
@@ -739,8 +746,8 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 		timeStep = std::min(std::max(int(round((signed int)(timeNeeded_ms - time_ms) * 0.05f)) - 5, 1), 10); // if ball is going to be too far away anyway, optimize by skipping 'frames'
 		//printf("timestep: %u, %u, %u\n", timeStep, timeNeeded_ms, time_ms);
 
-		if (timeNeeded_ms <= time_ms) {
-
+		if (timeNeeded_ms <= time_ms) 
+		{
 			// ball will ideally be slightly in front of us, simulate this.
 			//targetPos -= (targetPos - playerPos).GetNormalizedMax(1.0f) * 0.25f;
 			// todo: for this to work, it would have to only remove distance perpendicular to ballmovement
@@ -762,9 +769,7 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 			if (dot > 0.0f) forced = true; // too shallow angle, just go to ball already
 			//if (fabs(angle) <= 0.21f * pi) forced = true;
 
-
 			// --- heed desired direction
-
 			float targetDistance = (targetPos - playerPos).GetLength();
 			float targetVelocity = clamp(targetDistance * distanceToVelocityMultiplier, idleVelocity, sprintVelocity);
 			Vector3 targetMovement = (targetPos - playerPos).GetNormalized(0) * targetVelocity;
@@ -772,21 +777,16 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 			float directionRating = 1.0f - NormalizedClamp(fabs(adaptedDesiredDirection.GetAngle2D(targetMovement.GetNormalized(adaptedDesiredDirection))), 0.0f, 0.5f * pi); // > 0.5f * pi will often only get us farther from where we want to go to
 			movementRating = movementRating * 0.4f + directionRating * 0.6f; // directionrating omits velocity and therefore has another quality
 
-
 			// --- less time is better?
-
 			float timeRating = 1.0f - NormalizedClamp(time_ms, 0, 5000);
 
-
 			// --- rate perpendicularity targetmovement to ballmovement vector
-
 			float perpendicularRating = 1.0f - NormalizedClamp((playerBallShortestTargetPos - targetPos).GetLength(), 0, 2.0f * sprintVelocity);
 
-
 			// --- rate similarity to player's previous preferred target
-
 			float previousTargetRating = 0.0f;
-			if (previousDesiredTargetTime_ms >= timeNeededToGetToBall_ms) {
+			if (previousDesiredTargetTime_ms >= timeNeededToGetToBall_ms) 
+			{
 				previousTargetRating = 1.0f - abs(previousDesiredTargetTime_ms - timeNeededToGetToBall_ms) / 500.0f;
 			}
 
@@ -795,7 +795,8 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 										 perpendicularRating * perpendicularWeight +
 										 previousTargetRating * previousTargetWeight;
 
-			if (rating > bestChoice.rating || (forced && bestChoice.time_ms == -10)) {
+			if (rating > bestChoice.rating || (forced && bestChoice.time_ms == -10)) 
+			{
 				bestChoice.rating = rating;
 				bestChoice.time_ms = time_ms;
 				bestChoice.timeNeeded_ms = timeNeeded_ms;
@@ -803,8 +804,11 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 
 		} // timeNeeded_ms <= time_ms
 
-		if (forced) {
-			if (bestChoice.time_ms == -10) { // this happens if timeNeeded_ms > time_ms
+		if (forced) 
+		{
+			if (bestChoice.time_ms == -10) 
+			{ 
+				// this happens if timeNeeded_ms > time_ms
 				bestChoice.time_ms = time_ms;
 				bestChoice.timeNeeded_ms = time_ms; // just fake it - get as close as possible
 			}
@@ -812,7 +816,8 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 		}
 	}
 
-	if (bestChoice.time_ms == -10) {
+	if (bestChoice.time_ms == -10) 
+	{
 		bestChoice.time_ms = ballPredictionSize_ms - 10;
 		bestChoice.timeNeeded_ms = ballPredictionSize_ms - 10;
 	}
@@ -821,13 +826,10 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 	float distance = (targetPos - playerPos).GetLength();
 	bestDirection = (targetPos - playerPos).GetNormalized(player->GetDirectionVec());
 
-
 	// velocity
-
 	float bestVelocityRelaxed = clamp(distance * ((bestChoice.timeNeeded_ms + defaultTouchOffset_ms) / (float)bestChoice.time_ms) * distanceToVelocityMultiplier, idleVelocity, sprintVelocity);
 	float bestVelocityTimeBased = clamp((bestChoice.timeNeeded_ms / (float)bestChoice.time_ms) * player->GetMaxVelocity(), idleVelocity, sprintVelocity);
 	float bestVelocityASAP = clamp(distance * distanceToVelocityMultiplier, idleVelocity, sprintVelocity);
-
 
 	// simple version
 	bestVelocityFloat = bestVelocityTimeBased;// bestVelocityRelaxed;
@@ -837,20 +839,24 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 	// stick to current velo, to prevent switching back and forth
 	if (bestChoice.time_ms > 250) bestVelocityFloat = bestVelocityFloat * 0.97f + player->GetFloatVelocity() * 0.03f;
 
-
 	// lookat dir
-
 	Vector3 lookAtBall = (mentalImage->GetBallPrediction(20).Get2D() - playerPos).GetNormalized(adaptedDesiredDirection);
 	Vector3 lookAtDirection = bestDirection;
 	Vector3 lookAtDesiredDir;
 	// if we're close to target, allow looking in desired direction more. if we are farther away, we don't want to walk backwards yet, it makes no sense.
-	if (bestChoice.time_ms < 100) {
+	if (bestChoice.time_ms < 100) 
+	{
 		// these were desiredDirection first, instead of adapted
 		lookAtDesiredDir = adaptedDesiredDirection;
-	} else {
-		if (FloatToEnumVelocity(bestVelocityFloat) != e_Velocity_Idle) {
+	} 
+	else 
+	{
+		if (FloatToEnumVelocity(bestVelocityFloat) != e_Velocity_Idle) 
+		{
 			lookAtDesiredDir = adaptedDesiredDirection.GetClamped2D(lookAtBall, lookAtDirection);
-		} else {
+		} 
+		else 
+		{
 			lookAtDesiredDir = adaptedDesiredDirection;
 		}
 	}
@@ -874,7 +880,8 @@ unsigned int AI_GetBallControlMovement(const MentalImage *mentalImage, Player *p
 	float manualDirectionStartDistanceThreshold = 0.2f;
 	float manualDirectionEndDistanceThreshold = 0.4f;
 	float autoDirectionBias = 1.0f;
-	if (toBallDistance < manualDirectionEndDistanceThreshold) {
+	if (toBallDistance < manualDirectionEndDistanceThreshold) 
+	{
 		autoDirectionBias = pow(NormalizedClamp(toBallDistance, manualDirectionStartDistanceThreshold, manualDirectionEndDistanceThreshold), 0.5f);
 	}
 
@@ -894,9 +901,13 @@ unsigned int AI_GetBallControlMovement(const MentalImage *mentalImage, Player *p
 	bestVelocityFloat = toBallVelocity;
 
 	//bestVelocityFloat = bestVelocityFloat * 0.5f + RangeVelocity(bestVelocityFloat) * 0.5f; // quantization is the root of all happiness
-	if (bestVelocityFloat < dribbleVelocity) { // don't quantize low velos
+	if (bestVelocityFloat < dribbleVelocity) 
+	{ 
+		// don't quantize low velos
 		//bestVelocityFloat = idleVelocity;
-	} else {
+	} 
+	else 
+	{
 		float clampedDesiredVelocityFloat = clamp(desiredVelocityFloat, bestVelocityFloat, bestVelocityFloat + 8.0f);
 		bestVelocityFloat = clampedDesiredVelocityFloat;
 		if (RangeVelocity(bestVelocityFloat) < bestVelocityFloat) bestVelocityFloat = bestVelocityFloat * 0.9f + RangeVelocity(bestVelocityFloat) * 0.1f;
@@ -908,7 +919,8 @@ unsigned int AI_GetBallControlMovement(const MentalImage *mentalImage, Player *p
 	return player->GetTimeNeededToGetToBall_ms();
 }
 
-bool AI_HasPossession(Ball *ball, Player *player) {
+bool AI_HasPossession(Ball *ball, Player *player) 
+{
 	Vector3 playerMovement = player->GetMovement();
 
 	// premature optimization ;)
@@ -930,7 +942,8 @@ bool AI_HasPossession(Ball *ball, Player *player) {
 	if (distanceOK && movementOK) return true; else return false;
 }
 
-float AI_GetTeamPossessionFactor(Match *match, Team *team) {
+float AI_GetTeamPossessionFactor(Match *match, Team *team) 
+{
 	int t1 = team->GetTimeNeededToGetToBall_ms();
 	int t2 = match->GetTeam(abs(team->GetID() - 1))->GetTimeNeededToGetToBall_ms();
 	signed int amount = t2 - t1;
@@ -941,17 +954,22 @@ float AI_GetTeamPossessionFactor(Match *match, Team *team) {
 	return factor;
 }
 
-Player *AI_GetClosestPlayer(Team *team, const Vector3 &position, bool onlyAIControlled, Player *except) {
+Player *AI_GetClosestPlayer(Team *team, const Vector3 &position, bool onlyAIControlled, Player *except) 
+{
 	const std::vector<Player*> &players = team->GetAllPlayers();
 
 	float closestDistance = 10000;
 	Player *closestPlayer = 0;
 
-	for (unsigned int i = 0; i < players.size(); i++) {
-		if (players.at(i)->IsActive() && players.at(i) != except) {
+	for (unsigned int i = 0; i < players.size(); i++) 
+	{
+		if (players.at(i)->IsActive() && players.at(i) != except) 
+		{
 			float distance = (players.at(i)->GetPosition() - position).GetLength();
-			if (distance < closestDistance) {
-				if (!onlyAIControlled || !team->IsHumanControlled(players.at(i)->GetID())) {
+			if (distance < closestDistance) 
+			{
+				if (!onlyAIControlled || !team->IsHumanControlled(players.at(i)->GetID())) 
+				{
 					closestDistance = distance;
 					closestPlayer = players.at(i);
 				}
@@ -962,7 +980,8 @@ Player *AI_GetClosestPlayer(Team *team, const Vector3 &position, bool onlyAICont
 	return closestPlayer;
 }
 
-void AI_GetClosestPlayers(Team *team, const Vector3 &position, bool onlyAIControlled, std::vector<Player*> &result, unsigned int playerCount) {
+void AI_GetClosestPlayers(Team *team, const Vector3 &position, bool onlyAIControlled, std::vector<Player*> &result, unsigned int playerCount) 
+{
 	const std::vector<Player*> &players = team->GetAllPlayers();
 	std::multimap<float, Player*> tmpResult;
 
@@ -971,11 +990,14 @@ void AI_GetClosestPlayers(Team *team, const Vector3 &position, bool onlyAIContro
 
 	//printf("total players: %i\n", players.size());
 
-	for (unsigned int i = 0; i < players.size(); i++) {
-		if (players.at(i)->IsActive()) {
+	for (unsigned int i = 0; i < players.size(); i++) 
+	{
+		if (players.at(i)->IsActive()) 
+		{
 			float distance = (players.at(i)->GetPosition() - position).GetLength();
 			if ((!onlyAIControlled) ||
-					( onlyAIControlled && !team->IsHumanControlled(players.at(i)->GetID()))) {
+					( onlyAIControlled && !team->IsHumanControlled(players.at(i)->GetID()))) 
+			{
 				tmpResult.insert(std::pair<float, Player*>(distance, players.at(i)));
 			}
 		}
@@ -984,19 +1006,18 @@ void AI_GetClosestPlayers(Team *team, const Vector3 &position, bool onlyAIContro
 	//printf("tmp players: %i\n", tmpResult.size());
 
 	std::map<float, Player*>::iterator iter = tmpResult.begin();
-	for (unsigned int i = 0; i < playerCount && iter != tmpResult.end(); i++) {
+	for (unsigned int i = 0; i < playerCount && iter != tmpResult.end(); i++) 
+	{
 		result.push_back(iter->second);
 		iter++;
 	}
 
 	//printf("result: %i\n", result.size());
-
 }
 
-Player *AI_GetBestSwitchTargetPlayer(Match *match, Team *team, const Vector3 &desiredMovement) {
-
+Player *AI_GetBestSwitchTargetPlayer(Match *match, Team *team, const Vector3 &desiredMovement) 
+{
 	// find most interesting position on pitch
-
 	Vector3 actionPosition = match->GetDesignatedPossessionPlayer()->GetPosition() * 0.5f +
 													 match->GetBall()->Predict(100).Get2D() * 0.5f;
 
@@ -1037,20 +1058,22 @@ Player *AI_GetBestSwitchTargetPlayer(Match *match, Team *team, const Vector3 &de
 
 	if (teamPlayers.size() == 0) return 0;
 
-
 	// in case of defending, we ideally need someone who is closer to our goal than the opponent
-
 	int bestPlayerIndex = 0; // closest player - sorted first in teamplayers array
 	float tooLateDistance = 1.0f;
 
 	Player *designated = match->GetDesignatedPossessionPlayer();
-	if (designated->GetTeamID() != team->GetID()) {
+	if (designated->GetTeamID() != team->GetID()) 
+	{
 		Player *opp = designated;
 		Vector3 goalPos = Vector3(team->GetSide() * pitchHalfW, 0.0f, 0.0f);
 		float oppGoalDist = (goalPos - (opp->GetPosition() + opp->GetMovement() * 0.5f)).GetLength();
-		for (unsigned int i = 0; i < teamPlayers.size(); i++) {
+		for (unsigned int i = 0; i < teamPlayers.size(); i++) 
+		{
 			float mateGoalDist = (goalPos - (teamPlayers.at(i)->GetPosition() + teamPlayers.at(i)->GetMovement() * 0.5f)).GetLength();
-			if (mateGoalDist < oppGoalDist + tooLateDistance + clamp(oppGoalDist * 0.1f, 0.0f, 3.0f)) { // doesn't matter much when opp is still far away from goal
+			if (mateGoalDist < oppGoalDist + tooLateDistance + clamp(oppGoalDist * 0.1f, 0.0f, 3.0f)) 
+			{ 
+				// doesn't matter much when opp is still far away from goal
 				bestPlayerIndex = i;
 				break;
 			}
@@ -1060,11 +1083,13 @@ Player *AI_GetBestSwitchTargetPlayer(Match *match, Team *team, const Vector3 &de
 	return teamPlayers.at(bestPlayerIndex);
 }
 
-void AI_GetAutoPass(e_FunctionType passType, const Vector3 &vector, Vector3 &resultingDirection, float &resultingPower) {
+void AI_GetAutoPass(e_FunctionType passType, const Vector3 &vector, Vector3 &resultingDirection, float &resultingPower) 
+{
 	float heightOffset = 0.11f;
 	float powerFactor = 1.8f;//1.6f
 	float distanceExp = 1.4f;
-	if (passType == e_FunctionType_HighPass) {
+	if (passType == e_FunctionType_HighPass) 
+	{
 		heightOffset = 0.45f - NormalizedClamp(vector.GetLength(), 0.0f, 60.0f) * 0.15f;// 0.37f;
 		powerFactor = 1.15f;//1.75
 		distanceExp = 1.4f;//1.6
@@ -1073,14 +1098,15 @@ void AI_GetAutoPass(e_FunctionType passType, const Vector3 &vector, Vector3 &res
 	resultingPower = pow(NormalizedClamp(vector.GetLength(), 0.0f, 60.0f), distanceExp) * powerFactor;
 }
 
-void AI_GetPass(Player *player, e_FunctionType passType, const Vector3 &inputDirection, float inputPower, float autoDirectionBias, float autoPowerBias, Vector3 &resultingDirection, float &resultingPower, Player *&targetPlayer, Player *forcedTargetPlayer) {
-
+void AI_GetPass(Player *player, e_FunctionType passType, const Vector3 &inputDirection, float inputPower, float autoDirectionBias, float autoPowerBias, Vector3 &resultingDirection, float &resultingPower, Player *&targetPlayer, Player *forcedTargetPlayer) 
+{
 	// cheat for digital input
-
 	bool fullAutoDirection = false;
 	bool fullAutoPower = false;
-	if (player->GetExternalController()) {
-		if (static_cast<HumanController*>(player->GetExternalController())->GetHIDevice()->GetDeviceType() == e_HIDeviceType_Keyboard) {
+	if (player->GetExternalController()) 
+	{
+		if (static_cast<HumanController*>(player->GetExternalController())->GetHIDevice()->GetDeviceType() == e_HIDeviceType_Keyboard) 
+		{
 			fullAutoDirection = true;
 		}
 	}
@@ -1090,11 +1116,10 @@ void AI_GetPass(Player *player, e_FunctionType passType, const Vector3 &inputDir
 
 	assert(forcedTargetPlayer != player);
 
-
 	// find out what player we intend to play to
-
 	Vector playerPos = player->GetPosition() + player->GetMovement().GetNormalized(0) * 0.2f; // + ffo. don't need movement for future stuff, since getpass is recalled at moment of passing, for refinement
-	if (player->TouchAnim()) {
+	if (player->TouchAnim()) 
+	{
 		playerPos = player->GetTouchPos().Get2D();
 	}
 	Vector3 manualTarget = playerPos + inputDirection * clamp(inputPower * 60.0f, 1.0f, 100.0f);
@@ -1103,7 +1128,8 @@ void AI_GetPass(Player *player, e_FunctionType passType, const Vector3 &inputDir
 	std::vector<Player*> players;
 	player->GetTeam()->GetActivePlayers(players);
 
-	if (players.size() < 2) {
+	if (players.size() < 2) 
+	{
 		resultingDirection = player->GetDirectionVec();
 		resultingPower = 1.0f;
 		targetPlayer = player;
@@ -1116,8 +1142,8 @@ void AI_GetPass(Player *player, e_FunctionType passType, const Vector3 &inputDir
 	Player *bestTargetPlayer = player;
 	Vector3 autoTarget = manualTarget;
 
-	if (forcedTargetPlayer) {
-
+	if (forcedTargetPlayer) 
+	{
 		bestTargetPlayer = forcedTargetPlayer;
 
 		float passDuration = 0.3f + (forcedTargetPlayer->GetPosition() - playerPos).GetLength() * 0.05f; // educated guess
@@ -1125,15 +1151,15 @@ void AI_GetPass(Player *player, e_FunctionType passType, const Vector3 &inputDir
 
 		autoTarget = forcedTargetPlayer->GetPosition() +
 								 forcedTargetPlayer->GetMovement() * passDuration; // correct for pass duration
-
-	} else {
-
+	} 
+	else 
+	{
 		float bestRating = 10000;
 		autoTarget = playerPos;
-
-		for (int i = 0; i < (signed int)players.size(); i++) {
-			if (players.at(i) != player/* && players.at(i)->IsActive()*/) {
-
+		for (int i = 0; i < (signed int)players.size(); i++) 
+		{
+			if (players.at(i) != player/* && players.at(i)->IsActive()*/) 
+			{
 				float passDuration = 0.3f + (players.at(i)->GetPosition() - playerPos).GetLength() * 0.05f; // educated guess
 				passDuration = pow(clamp(passDuration, 0.0f, 1.0f), 0.7f) * 0.7f; // after this time, the player is supposed to have been able to stop
 
@@ -1149,7 +1175,6 @@ void AI_GetPass(Player *player, e_FunctionType passType, const Vector3 &inputDir
 				}
 			}
 		}
-
 	}
 
 	targetPlayer = bestTargetPlayer;
@@ -1163,25 +1188,31 @@ void AI_GetPass(Player *player, e_FunctionType passType, const Vector3 &inputDir
 	Vector3 autoTargetRel = autoTarget - playerPos;
 	Vector3 manualTargetRel = manualTarget - playerPos;
 
-	if (forcedTargetPlayer || (fullAutoDirection && fullAutoPower)) {
+	if (forcedTargetPlayer || (fullAutoDirection && fullAutoPower)) 
+	{
 		adaptedAutoDirectionBias = 1.0;
 		adaptedAutoPowerBias = 1.0;
-	} else {
+	} 
+	else 
+	{
 		// only help when at least somewhat close to target
 		float maxAllowedDistance = 50.0f;
 		float distanceFactor = 1.0 - pow(clamp((autoTargetRel - manualTargetRel).GetLength() / maxAllowedDistance, 0.0f, 1.0f), 1.5f);
 		// extra help with power on close targets (because people can only physicaly press the pass button so short)
 		float proximityBonus = pow(1.0f - NormalizedClamp((playerPos - autoTarget).GetLength(), 0.0f, 12.0f), 0.5f);
 
-		if (fullAutoDirection) {
+		if (fullAutoDirection) 
+		{
 			adaptedAutoDirectionBias = 1.0f;
 		} else {
 			adaptedAutoDirectionBias *= distanceFactor;
 			adaptedAutoDirectionBias = pow(adaptedAutoDirectionBias, 1.0f - proximityBonus * 0.9f);
 		}
-		if (fullAutoPower) {
+		if (fullAutoPower) 
+		{
 			adaptedAutoPowerBias = 1.0f;
-		} else {
+		} else 
+		{
 			adaptedAutoPowerBias *= distanceFactor;
 			adaptedAutoPowerBias = clamp(adaptedAutoPowerBias * (1.0 + proximityBonus), 0.0f, 1.0f);
 		}
@@ -1189,7 +1220,8 @@ void AI_GetPass(Player *player, e_FunctionType passType, const Vector3 &inputDir
 	}
 
 	Vector3 offset;
-	if (passType == e_FunctionType_LongPass) {
+	if (passType == e_FunctionType_LongPass) 
+	{
 		float targetDistance = autoTargetRel.GetLength()	 * adaptedAutoDirectionBias +
 													 manualTargetRel.GetLength() * (1.0f - adaptedAutoDirectionBias);
 		offset = Vector3(-player->GetTeam()->GetSide() * targetDistance * 0.2f, 0, 0);
@@ -1204,8 +1236,8 @@ void AI_GetPass(Player *player, e_FunctionType passType, const Vector3 &inputDir
 	AI_GetAutoPass(passType, resultingTargetRel, resultingDirection, resultingPower);
 }
 
-Vector3 AI_GetShotDirection(Player *player, const Vector3 &inputDirection, float autoDirectionBias) {
-
+Vector3 AI_GetShotDirection(Player *player, const Vector3 &inputDirection, float autoDirectionBias) 
+{
 	Vector3 manualDirection = inputDirection;
 
 	Vector3 goalPos = Vector3(player->GetTeam()->GetSide() * -pitchHalfW, 0, 0);
@@ -1225,7 +1257,8 @@ Vector3 AI_GetShotDirection(Player *player, const Vector3 &inputDirection, float
 }
 
 // get the offensiveness of a role
-float AI_GetMindSet(e_PlayerRole role) {
+float AI_GetMindSet(e_PlayerRole role) 
+{
 	float mindSet = 0.5;
 
 	if (role == e_PlayerRole_GK) mindSet = 0.0;

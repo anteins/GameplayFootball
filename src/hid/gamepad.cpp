@@ -58,32 +58,52 @@ void HIDGamepad::LoadConfig() {
 		controllerMapping[i] = GetConfiguration()->GetInt(("input_gamepad_" + GetIdentifier() + "_" + int_to_str(i)).c_str(), defaultButton);
 	}
 
-	for (int i = 0; i < e_ButtonFunction_Size; i++) {
+	for (int i = 0; i < e_ButtonFunction_Size; i++) 
+	{
 		int defaultMapping = 0;
-		if			(i == e_ButtonFunction_Up) defaultMapping = e_ControllerButton_Up;
-		else if (i == e_ButtonFunction_Right) defaultMapping = e_ControllerButton_Right;
-		else if (i == e_ButtonFunction_Down) defaultMapping = e_ControllerButton_Down;
-		else if (i == e_ButtonFunction_Left) defaultMapping = e_ControllerButton_Left;
-		else if (i == e_ButtonFunction_LongPass) defaultMapping = e_ControllerButton_Y;
-		else if (i == e_ButtonFunction_HighPass) defaultMapping = e_ControllerButton_B;
-		else if (i == e_ButtonFunction_ShortPass) defaultMapping = e_ControllerButton_A;
-		else if (i == e_ButtonFunction_Shot) defaultMapping = e_ControllerButton_X;
-		else if (i == e_ButtonFunction_KeeperRush) defaultMapping = e_ControllerButton_Y;
-		else if (i == e_ButtonFunction_Sliding) defaultMapping = e_ControllerButton_B;
-		else if (i == e_ButtonFunction_Pressure) defaultMapping = e_ControllerButton_A;
-		else if (i == e_ButtonFunction_TeamPressure) defaultMapping = e_ControllerButton_X;
-		else if (i == e_ButtonFunction_Switch) defaultMapping = e_ControllerButton_L1;
-		else if (i == e_ButtonFunction_Special) defaultMapping = e_ControllerButton_L2;
-		else if (i == e_ButtonFunction_Sprint) defaultMapping = e_ControllerButton_R1;
-		else if (i == e_ButtonFunction_Dribble) defaultMapping = e_ControllerButton_R2;
-		else if (i == e_ButtonFunction_Start) defaultMapping = e_ControllerButton_Start;
-		else if (i == e_ButtonFunction_Select) defaultMapping = e_ControllerButton_Select;
+		if (i == e_ButtonFunction_Up) 
+			defaultMapping = e_ControllerButton_Up;
+		else if (i == e_ButtonFunction_Right) 
+			defaultMapping = e_ControllerButton_Right;
+		else if (i == e_ButtonFunction_Down) 
+			defaultMapping = e_ControllerButton_Down;
+		else if (i == e_ButtonFunction_Left) 
+			defaultMapping = e_ControllerButton_Left;
+		else if (i == e_ButtonFunction_LongPass) 
+			defaultMapping = e_ControllerButton_Y;
+		else if (i == e_ButtonFunction_HighPass) 
+			defaultMapping = e_ControllerButton_B;
+		else if (i == e_ButtonFunction_ShortPass) 
+			defaultMapping = e_ControllerButton_A;
+		else if (i == e_ButtonFunction_Shot) 
+			defaultMapping = e_ControllerButton_X;
+		else if (i == e_ButtonFunction_KeeperRush) 
+			defaultMapping = e_ControllerButton_Y;
+		else if (i == e_ButtonFunction_Sliding) 
+			defaultMapping = e_ControllerButton_B;
+		else if (i == e_ButtonFunction_Pressure) 
+			defaultMapping = e_ControllerButton_A;
+		else if (i == e_ButtonFunction_TeamPressure) 
+			defaultMapping = e_ControllerButton_X;
+		else if (i == e_ButtonFunction_Switch) 
+			defaultMapping = e_ControllerButton_L1;
+		else if (i == e_ButtonFunction_Special) 
+			defaultMapping = e_ControllerButton_L2;
+		else if (i == e_ButtonFunction_Sprint) 
+			defaultMapping = e_ControllerButton_R1;
+		else if (i == e_ButtonFunction_Dribble) 
+			defaultMapping = e_ControllerButton_R2;
+		else if (i == e_ButtonFunction_Start) 
+			defaultMapping = e_ControllerButton_Start;
+		else if (i == e_ButtonFunction_Select) 
+			defaultMapping = e_ControllerButton_Select;
 
 		functionMapping[i] = (e_ControllerButton)GetConfiguration()->GetInt(("input_gamepad_" + GetIdentifier() + "_mapping_" + int_to_str(i)).c_str(), defaultMapping);
 	}
 }
 
-void HIDGamepad::SaveConfig() {
+void HIDGamepad::SaveConfig() 
+{
 	boost::mutex::scoped_lock blah(mutex);
 	for (int i = 0; i < e_ControllerButton_Size; i++) {
 		GetConfiguration()->Set(("input_gamepad_" + GetIdentifier() + "_" + int_to_str(i)).c_str(), controllerMapping[i]);
@@ -94,15 +114,20 @@ void HIDGamepad::SaveConfig() {
 	GetConfiguration()->SaveFile(GetConfigFilename());
 }
 
-void HIDGamepad::Process() {
+void HIDGamepad::Process() 
+{
 	boost::mutex::scoped_lock blah(mutex);
 	//printf("gamepad ID #%i\n", gamepadID);
-	for (int i = 0; i < e_ControllerButton_Size; i++) {
+	for (int i = 0; i < e_ControllerButton_Size; i++) 
+	{
 		previousControllerButtonState[i] = controllerButtonState[i];
 		signed int buttonID = controllerMapping[i];
-		if (buttonID >= 0) { // button
+		if (buttonID >= 0) 
+		{ // button
 			controllerButtonState[i] = UserEventManager::GetInstance().GetJoyButtonState(gamepadID, buttonID) ? 1.0 : 0.0;
-		} else { // axis
+		} 
+		else 
+		{ // axis
 			// decode
 			int axisID = -buttonID - 1;
 			signed int sign = ((axisID % 2) * 2) - 1;

@@ -11,8 +11,8 @@
 
 class Player;
 
-class HumanController : public PlayerController {
-
+class HumanController : public PlayerController 
+{
 	public:
 		HumanController(Match *match, IHIDevice *hid);
 		virtual ~HumanController();

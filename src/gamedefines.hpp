@@ -110,6 +110,24 @@ enum e_FunctionType
 	e_FunctionType_Sliding,
 	e_FunctionType_Special
 };
+static const std::string e_FunctionType_StringMap[]
+{
+    "e_FunctionType_None",
+    "e_FunctionType_Movement",
+    "e_FunctionType_BallControl",
+    "e_FunctionType_Trap",
+    "e_FunctionType_ShortPass",
+    "e_FunctionType_LongPass",
+    "e_FunctionType_HighPass",
+    "e_FunctionType_Header",
+    "e_FunctionType_Shot",
+    "e_FunctionType_Deflect",
+    "e_FunctionType_Catch",
+    "e_FunctionType_Interfere",
+    "e_FunctionType_Trip",
+    "e_FunctionType_Sliding",
+    "e_FunctionType_Special"
+};
 
 enum e_TouchType 
 {

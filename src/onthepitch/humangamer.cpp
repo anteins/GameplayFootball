@@ -13,7 +13,8 @@
 
 #include "../main.hpp"
 
-HumanGamer::HumanGamer(Team *team, IHIDevice *hid, e_PlayerColor color) : team(team), hid(hid), playerColor(color) {
+HumanGamer::HumanGamer(Team *team, IHIDevice *hid, e_PlayerColor color) : team(team), hid(hid), playerColor(color) 
+{
 	controller = new HumanController(team->GetMatch(), hid);
 
 	std::vector<Player*> activePlayers;
@@ -22,41 +23,58 @@ HumanGamer::HumanGamer(Team *team, IHIDevice *hid, e_PlayerColor color) : team(t
 	SetSelectedPlayerID(-1);
 }
 
-HumanGamer::~HumanGamer() {
-	if (Verbose()) printf("exiting humangamer.. ");
+HumanGamer::~HumanGamer() 
+{
+	if (Verbose()) 
+		printf("exiting humangamer.. ");
 	delete controller;
 	// todo: team is being destructed at this point, cannot use its methods
 	//Player *currentPlayer = team->GetPlayer(selectedPlayerID);
-	if (selectedPlayer) {
+	if (selectedPlayer) 
+	{
 		selectedPlayer->SetExternalController(0);
 		selectedPlayer->SetDebug(false);
 	}
-	if (Verbose()) printf("done\n");
+	if (Verbose()) 
+		printf("done\n");
 }
 
-int HumanGamer::GetSelectedPlayerID() const {
-	if (selectedPlayer) return selectedPlayer->GetID(); else return -1;
+int HumanGamer::GetSelectedPlayerID() const 
+{
+	if (selectedPlayer) 
+		return selectedPlayer->GetID(); 
+	else 
+		return -1;
 }
 
-void HumanGamer::SetSelectedPlayerID(int id) {
-	if (selectedPlayer) {
-		if (selectedPlayer->GetID() == id) return;
+void HumanGamer::SetSelectedPlayerID(int id) 
+{
+	if (selectedPlayer) 
+	{
+		if (selectedPlayer->GetID() == id) 
+			return;
 		selectedPlayer->SetExternalController(0);
 		selectedPlayer->SetDebug(false);
 	}
-	if (id != -1) {
+	if (id != -1) 
+	{
 		selectedPlayer = team->GetPlayer(id);
 		selectedPlayer->SetExternalController(controller);
-		if (team->GetID() == 0) {
+		if (team->GetID() == 0) 
+		{
 			selectedPlayer->SetDebug(true);
 		}
-	} else {
+	} 
+	else 
+	{
 		selectedPlayer = 0;
 	}
 }
 
-void HumanGamer::PreparePutBuffers() {
+void HumanGamer::PreparePutBuffers() 
+{
 }
 
-void HumanGamer::Put() {
+void HumanGamer::Put() 
+{
 }

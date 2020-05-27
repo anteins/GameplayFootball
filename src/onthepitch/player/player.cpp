@@ -75,7 +75,13 @@ Team *Player::GetTeam()
 	return team;
 }
 
-void Player::Activate(boost::intrusive_ptr<Node> humanoidSourceNode, boost::intrusive_ptr<Node> fullbodySourceNode, std::map<Vector3, Vector3> &colorCoords, boost::intrusive_ptr < Resource<Surface> > kit, boost::shared_ptr<AnimCollection> animCollection) {
+void Player::Activate(
+	boost::intrusive_ptr<Node> humanoidSourceNode, 
+	boost::intrusive_ptr<Node> fullbodySourceNode, 
+	std::map<Vector3, Vector3> &colorCoords, 
+	boost::intrusive_ptr < Resource<Surface> > kit, 
+	boost::shared_ptr<AnimCollection> animCollection) 
+{
 	assert(!isActive);
 
 	isActive = true;
@@ -170,7 +176,7 @@ float Player::GetAverageVelocity(float timePeriod_sec)
 
 void Player::UpdatePossessionStats(bool onInterval) 
 {
-	if (!onInterval) 
+	if (!onInterval)
 		return;
 
 	timeNeededToGetToBall_previous_ms = timeNeededToGetToBall_ms; // todo: this will fail to function as intended when this function is ran multiple times consecutively
@@ -332,8 +338,14 @@ void Player::Process()
 	{
 		desiredTimeToBall_ms = std::max(desiredTimeToBall_ms - 10, 0);
 
-		if (externalController) 
-			externalController->Process(); else CastController()->Process();
+		if (externalController)
+		{
+			externalController->Process(); 
+		}
+		else
+		{
+			CastController()->Process();
+		}
 
 		if (match->IsInPlay()) 
 		{
@@ -584,7 +596,6 @@ float Player::GetStaminaStat() const
 float Player::GetStat(const char *name) const 
 {
 	//if (team->GetHumanGamerCount() != 0) return 1.0f;
-
 	float multiplier = 1.0f;
 	//if (team->GetID() == 0) multiplier = 0.5f; else multiplier = 1.0f;
 	if (team->GetHumanGamerCount() == 0) 
