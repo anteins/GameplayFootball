@@ -213,7 +213,6 @@ void HumanController::RequestCommand(PlayerCommandQueue &commandQueue)
 			{
 				team->GetController()->ApplyKeeperRush();
 			}
-
 		} 
 		else 
 		{

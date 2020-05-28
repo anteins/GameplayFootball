@@ -177,7 +177,8 @@ HumanoidBase::HumanoidBase(PlayerBase *player, Match *match, boost::intrusive_pt
 
 HumanoidBase::~HumanoidBase() 
 {
-	if (Verbose()) printf("exiting humanoidbase.. ");
+	if (Verbose()) 
+		printf("exiting humanoidbase.. ");
 	// printf("\n\nfullbodytargetnode:\n");
 	// fullbodyTargetNode->PrintTree();
 	// printf("\nhumanoidnode:\n");
@@ -682,7 +683,6 @@ void HumanoidBase::Process()
 		{
 			startPos = spatialState.position;
 			startAngle = spatialState.angle;
-
 			CalculatePredictedSituation(nextStartPos, nextStartAngle);
 
 			animApplyBuffer.anim = currentAnim->anim;
@@ -1172,8 +1172,8 @@ bool HumanoidBase::_HighOrBouncyBall() const
 }
 
 // ALERT: set sorting predicates before calling this function
-void HumanoidBase::_KeepBestDirectionAnims(DataSet &dataSet, const PlayerCommand &command, bool strict, radian allowedAngle, int allowedVelocitySteps, int forcedQuadrantID) {
-
+void HumanoidBase::_KeepBestDirectionAnims(DataSet &dataSet, const PlayerCommand &command, bool strict, radian allowedAngle, int allowedVelocitySteps, int forcedQuadrantID) 
+{
 	assert(dataSet.size() != 0);
 
 	int bestQuadrantID = forcedQuadrantID;
@@ -1285,7 +1285,6 @@ void HumanoidBase::_KeepBestBodyDirectionAnims(DataSet &dataSet, const PlayerCom
 	radian bestOutgoingAngle = ForceIntoPreferredDirectionAngle(bestAnim->GetOutgoingAngle());
 	radian bestLookAngle = bestOutgoingBodyAngle + bestOutgoingAngle;
 
-
 	DataSet::iterator iter = dataSet.begin();
 	iter++;
 	while (iter != dataSet.end()) 
@@ -1311,7 +1310,6 @@ void HumanoidBase::_KeepBestBodyDirectionAnims(DataSet &dataSet, const PlayerCom
 			//if (player->GetDebug() && bestAnim->GetAnimType().compare("ballcontrol") == 0) printf("deleting %s (%f, %f (%f), %f)\n", anim->GetName().c_str(), animOutgoingBodyAngle, animOutgoingAngle, anim->GetOutgoingAngle(), animLookAngle);
 			iter = dataSet.erase(iter);
 		}
-
 	}
 
 	//if (player->GetDebug() && bestAnim->GetAnimType().compare("ballcontrol") == 0) printf("\n");
@@ -1530,7 +1528,8 @@ bool HumanoidBase::SelectAnim(const PlayerCommand &command, e_InterruptAnim loca
 		if (command.desiredFunctionType == e_FunctionType_Movement) 
 		{
 			_KeepBestDirectionAnims(dataSet, command);
-			if (command.useDesiredLookAt) _KeepBestBodyDirectionAnims(dataSet, command);
+			if (command.useDesiredLookAt) 
+				_KeepBestBodyDirectionAnims(dataSet, command);
 		}
 		else 
 		{ 
@@ -1593,7 +1592,6 @@ bool HumanoidBase::SelectAnim(const PlayerCommand &command, e_InterruptAnim loca
 		std::stable_sort(dataSet.begin(), dataSet.end(), boost::bind(&HumanoidBase::CompareBaseanimSimilarity, this, _1, _2));
 		#endif
 	}
-
 
 	// process result
 	int selectedAnimID = -1;
@@ -1702,6 +1700,7 @@ void HumanoidBase::CalculatePredictedSituation(Vector3 &predictedPos, radian &pr
 {
 	if (currentAnim->positions.size() > (unsigned int)currentAnim->frameNum)
 	{
+		DebugLog(*player, "CalculatePredictedSituation " + currentAnim->anim->GetName() + "  positions.size=" + to_string(currentAnim->positions.size()) + "  EffectiveFrameCount=" + to_string(currentAnim->anim->GetEffectiveFrameCount()) );
 		assert(currentAnim->positions.size() > (unsigned int)currentAnim->anim->GetEffectiveFrameCount());
 		predictedPos = spatialState.position + currentAnim->positions.at(currentAnim->anim->GetEffectiveFrameCount()) + currentAnim->actionSmuggle + currentAnim->actionSmuggleSustain + currentAnim->movementSmuggle;
 	} 

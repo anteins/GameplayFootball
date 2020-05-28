@@ -84,10 +84,14 @@ IController *PlayerBase::GetController()
 
 void PlayerBase::RequestCommand(PlayerCommandQueue &commandQueue) 
 {
-	if (externalController) 
+	if (externalController)
+	{
 		externalController->RequestCommand(commandQueue);
-	else 
+	}
+	else
+	{
 		controller->RequestCommand(commandQueue);
+	}
 }
 
 void PlayerBase::SetExternalController(IController *externalController) 
@@ -107,61 +111,84 @@ void PlayerBase::SetExternalController(IController *externalController)
 	}
 }
 
-void PlayerBase::SetDebug(bool state) {
+void PlayerBase::SetDebug(bool state) 
+{
 	debug = state;
 }
 
-bool PlayerBase::GetDebug() const {
+bool PlayerBase::GetDebug() const 
+{
 	if (IsReleaseVersion()) return false; else return debug;
 }
 
-void PlayerBase::Process() {
-	if (isActive) {
-		if (externalController) externalController->Process(); else controller->Process();
+void PlayerBase::Process() 
+{
+	if (isActive) 
+	{
+		if (externalController) 
+			externalController->Process(); 
+		else 
+			controller->Process();
+
 		humanoid->Process();
-	} else {
-		if (humanoid) humanoid->Hide();
+	} 
+	else 
+	{
+		if (humanoid) 
+			humanoid->Hide();
 	}
 	//if (debug) printf("::%f velo\n", GetMovement().GetLength());
 }
 
-void PlayerBase::PreparePutBuffers(unsigned long snapshotTime_ms) {
+void PlayerBase::PreparePutBuffers(unsigned long snapshotTime_ms) 
+{
 	humanoid->PreparePutBuffers(snapshotTime_ms);
 }
 
-void PlayerBase::FetchPutBuffers(unsigned long putTime_ms) {
+void PlayerBase::FetchPutBuffers(unsigned long putTime_ms) 
+{
 	humanoid->FetchPutBuffers(putTime_ms);
 }
 
-void PlayerBase::Put() {
+void PlayerBase::Put() 
+{
 	humanoid->Put();
 }
 
-float PlayerBase::GetStat(const char *name) const {
+float PlayerBase::GetStat(const char *name) const 
+{
 	return playerData->GetStat(name);
 }
 
-float PlayerBase::GetMaxVelocity() const {
+float PlayerBase::GetMaxVelocity() const 
+{
 	// see humanoidbase's physics function
 	return sprintVelocity * GetVelocityMultiplier();
 }
 
-float PlayerBase::GetVelocityMultiplier() const {
+float PlayerBase::GetVelocityMultiplier() const 
+{
 	// see humanoid_utils' physics function
 	return 0.9f + GetStat("physical_velocity") * 0.1f;
 }
 
-float PlayerBase::GetLastTouchBias(int decay_ms, unsigned long time_ms) {
+float PlayerBase::GetLastTouchBias(int decay_ms, unsigned long time_ms) 
+{
 	unsigned long adaptedTime_ms = time_ms;
-	if (time_ms == 0) adaptedTime_ms = match->GetActualTime_ms();
-	if (decay_ms > 0) return 1.0f - clamp((adaptedTime_ms - GetLastTouchTime_ms()) / (float)decay_ms, 0.0f, 1.0f);
+	if (time_ms == 0) 
+		adaptedTime_ms = match->GetActualTime_ms();
+	if (decay_ms > 0) 
+		return 1.0f - clamp((adaptedTime_ms - GetLastTouchTime_ms()) / (float)decay_ms, 0.0f, 1.0f);
 	return 0.0f;
 }
 
-void PlayerBase::ResetSituation(const Vector3 &focusPos) {
+void PlayerBase::ResetSituation(const Vector3 &focusPos) 
+{
 	positionHistoryPerSecond.clear();
 	lastTouchTime_ms = 0;
 	lastTouchType = e_TouchType_None;
-	if (IsActive()) humanoid->ResetSituation(focusPos);
-	if (GetController()) GetController()->Reset();
+	if (IsActive()) 
+		humanoid->ResetSituation(focusPos);
+	if (GetController()) 
+		GetController()->Reset();
 }

@@ -29,8 +29,8 @@
 const unsigned int replaySize_ms = 10000;
 const unsigned int camPosSize = 150;//180; //130
 
-Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) : matchData(matchData), controllers(controllers) {
-
+Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) : matchData(matchData), controllers(controllers) 
+{
 	Log(e_Notice, "Match", "Match", "Starting Match");
 
 	_positionLogging = false;
@@ -67,16 +67,12 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 	dynamicNode->AddObject(GetSmallDebugCircle2());
 	dynamicNode->AddObject(GetLargeDebugCircle());
 
-
 	// ball
-
 	Log(e_Notice, "Match", "Match", "Creating a ball");
 
 	ball = new Ball(this);
 
-
 	// animation database
-
 	Log(e_Notice, "Match", "Match", "Loading player animations");
 
 	anims = boost::shared_ptr<AnimCollection>(new AnimCollection(GetScene3D()));
@@ -100,12 +96,11 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 			//position.Print();
 		}
 		//printf("\n");
+		Log(e_Notice, "Match", "Match", "insert animPositionCache!");
 		animPositionCache.insert(std::pair < Animation*, std::vector<Vector3> >(someAnim, positions));
 	}
 
-
 	// full body model template
-
 	Log(e_Notice, "Match", "Match", "Loading fullbody object");
 
 	ObjectLoader loader;
@@ -582,16 +577,18 @@ void Match::RandomizeAdboards(boost::intrusive_ptr<Node> stadiumNode) {
 
 }
 
-void Match::UpdateControllerSetup() {
-
+void Match::UpdateControllerSetup() 
+{
 	// remove current gamers
 	teams[0]->DeleteHumanGamers();
 	teams[1]->DeleteHumanGamers();
 
 	// add new
 	const std::vector<SideSelection> sides = menuTask->GetControllerSetup();
-	for (unsigned int i = 0; i < sides.size(); i++) {
-		if (sides.at(i).side != 0) {
+	for (unsigned int i = 0; i < sides.size(); i++) 
+	{
+		if (sides.at(i).side != 0) 
+		{
 			int teamID = int(round(sides.at(i).side * 0.5 + 0.5));
 			teams[teamID]->AddHumanGamer(controllers.at(sides.at(i).controllerID), (e_PlayerColor)i); // todo: proper color
 			//printf("team id %i, %i\n", teamID, sides.at(i).controllerID);
@@ -607,10 +604,14 @@ void Match::SpamMessage(const std::string &msg, int time_ms) {
 	messageCaptionRemoveTime_ms = actualTime_ms + time_ms;
 }
 
-Player *Match::GetPlayer(int playerID) {
-	for (int t = 0; t < 2; t++) {
-		for (unsigned int p = 0; p < teams[t]->GetAllPlayers().size(); p++) {
-			if (teams[t]->GetAllPlayers().at(p)->GetID() == playerID) {
+Player *Match::GetPlayer(int playerID) 
+{
+	for (int t = 0; t < 2; t++) 
+	{
+		for (unsigned int p = 0; p < teams[t]->GetAllPlayers().size(); p++) 
+		{
+			if (teams[t]->GetAllPlayers().at(p)->GetID() == playerID) 
+			{
 				return teams[t]->GetAllPlayers().at(p);
 			}
 		}
@@ -620,19 +621,23 @@ Player *Match::GetPlayer(int playerID) {
 	return 0;
 }
 
-void Match::GetAllTeamPlayers(int teamID, std::vector<Player*> &players) {
+void Match::GetAllTeamPlayers(int teamID, std::vector<Player*> &players) 
+{
 	teams[teamID]->GetAllPlayers(players);
 }
 
-void Match::GetActiveTeamPlayers(int teamID, std::vector<Player*> &players) {
+void Match::GetActiveTeamPlayers(int teamID, std::vector<Player*> &players) 
+{
 	teams[teamID]->GetActivePlayers(players);
 }
 
-void Match::GetOfficialPlayers(std::vector<PlayerBase*> &players) {
+void Match::GetOfficialPlayers(std::vector<PlayerBase*> &players) 
+{
 	officials->GetPlayers(players);
 }
 
-const MentalImage *Match::GetMentalImage(int history_ms) {
+const MentalImage *Match::GetMentalImage(int history_ms) 
+{
 	int index = int(round((float)history_ms / 10.0));
 	if (index >= (signed int)mentalImages.size()) index = mentalImages.size() - 1;
 	if (index < 0) index = 0;
@@ -642,21 +647,26 @@ const MentalImage *Match::GetMentalImage(int history_ms) {
 	return mentalImages.at(index);
 }
 
-void Match::UpdateLatestMentalImageBallPredictions() {
-	if (mentalImages.size() > 0) mentalImages.at(0)->UpdateBallPredictions();
+void Match::UpdateLatestMentalImageBallPredictions() 
+{
+	if (mentalImages.size() > 0) 
+		mentalImages.at(0)->UpdateBallPredictions();
 }
 
-void Match::ResetSituation(const Vector3 &focusPos) {
+void Match::ResetSituation(const Vector3 &focusPos) 
+{
 	camPos.clear();
 	SetBallRetainer(0);
 	SetGoalScored(false);
-	for (unsigned int i = 0; i < mentalImages.size(); i++) {
+	for (unsigned int i = 0; i < mentalImages.size(); i++) 
+	{
 		delete mentalImages[i];
 	}
 	mentalImages.clear();
 	goalScored = false;
 	ballIsInGoal = false;
-	for (unsigned int i = 0; i < e_TouchType_SIZE; i++) {
+	for (unsigned int i = 0; i < e_TouchType_SIZE; i++) 
+	{
 		lastTouchTeamIDs[i] = -1;
 	}
 	lastTouchTeamID = -1;
@@ -682,7 +692,8 @@ void Match::ResetSituation(const Vector3 &focusPos) {
 */
 }
 
-void Match::SetMatchPhase(e_MatchPhase newMatchPhase) {
+void Match::SetMatchPhase(e_MatchPhase newMatchPhase) 
+{
 	matchPhase = newMatchPhase;
 	if (matchPhase == e_MatchPhase_1stHalf)					 matchTime_ms = 0;
 	else if (matchPhase == e_MatchPhase_2ndHalf)			matchTime_ms = 2700000;
@@ -690,37 +701,42 @@ void Match::SetMatchPhase(e_MatchPhase newMatchPhase) {
 	else if (matchPhase == e_MatchPhase_2ndExtraTime) matchTime_ms = 6300000;
 	else if (matchPhase == e_MatchPhase_Penalties)		matchTime_ms = 7200000;
 
-	if (matchPhase == e_MatchPhase_2ndHalf) {
+	if (matchPhase == e_MatchPhase_2ndHalf) 
+	{
 		teams[0]->RelaxFatigue(0.05f);
 		teams[1]->RelaxFatigue(0.05f);
 	}
 }
 
-signed int Match::GetBestPossessionTeamID() {
+signed int Match::GetBestPossessionTeamID() 
+{
 	return bestPossessionTeamID;
 }
 
-void Match::GameOver() {
+void Match::GameOver() 
+{
 	gameOver = true;
 }
 
-void Match::GetCameraParams(float &zoom, float &height, float &fov, float &angleFactor) {
+void Match::GetCameraParams(float &zoom, float &height, float &fov, float &angleFactor) 
+{
 	zoom = cameraUserZoom;
 	height = cameraUserHeight;
 	fov = cameraUserFOV;
 	angleFactor = cameraUserAngleFactor;
 }
 
-void Match::SetCameraParams(float zoom, float height, float fov, float angleFactor) {
+void Match::SetCameraParams(float zoom, float height, float fov, float angleFactor) 
+{
 	cameraUserZoom = zoom;
 	cameraUserHeight = height;
 	cameraUserFOV = fov;
 	cameraUserAngleFactor = angleFactor;
 }
 
-void Match::UpdateIngameCamera() {
+void Match::UpdateIngameCamera() 
+{
 	// camera
-
 	float fov;
 	float zoom;
 	float height;
@@ -746,14 +762,16 @@ void Match::UpdateIngameCamera() {
 	Vector3 shudder = Vector3(random(-0.1f, 0.1f), random(-0.1f, 0.1f), 0) * (ball->GetMovement().GetLength() * 0.8f + 6.0f);
 	shudder *= 0.2f;
 	camPos.push_back(ballPos + shudder * ((float)camPos.size() / (float)camPosSize));
-	if (camPos.size() > camPosSize) camPos.pop_front();
+	if (camPos.size() > camPosSize) 
+		camPos.pop_front();
 
 	Vector3 average;
 	std::deque<Vector3>::iterator camIter = camPos.begin();
 	float count = 0;
 	float indexSize = camPos.size();
 	int index = 0;
-	while (camIter != camPos.end()) {
+	while (camIter != camPos.end())
+	{
 		float weight = sin((index / indexSize - 0.3f) * 1.4f * pi) * 0.5f + 0.5f; // healthy mix of latest & middle | wa: sin((x / 100 - 0.3) * 1.4 * pi) * 0.5 + 0.5 | from x = 0 to 100
 		weight *= pow(1.0f - index / indexSize, 0.3f); // sharp cutoff @ latest (because cameraperson can't 'foresee' the current moment that fast) | wa: (1.0 - x / 100) ^ 0.3 * (<prev formula>) | from x = 0 to 100
 		average += (*camIter) * weight;
@@ -763,19 +781,15 @@ void Match::UpdateIngameCamera() {
 	}
 
 	average /= count;
-
 	radian angleFac = 1.0f - cameraUserAngleFactor * 0.4f; // 0.0 == 90 degrees max, 1.0 == sideline view
 
 	// normal cam
-
 	int camMethod = 1; // 1 == wide, 2 == birds-eye, 3 == tele
-
-	if (!IsGoalScored() || (IsGoalScored() && goalScoredTimer < 1000)) {
-
-		if (camMethod == 1) {
-
+	if (!IsGoalScored() || (IsGoalScored() && goalScoredTimer < 1000)) 
+	{
+		if (camMethod == 1) 
+		{
 			// wide cam
-
 			zoom = (0.6f + zoom * 1.0f) * (1.0f / fov);
 			height = 4.0f + height * 10;
 
@@ -787,22 +801,18 @@ void Match::UpdateIngameCamera() {
 			cameraFOV = (fov * 28.0f) - (cameraNodePosition.coords[1] / 30.0f);
 			cameraNearCap = cameraNodePosition.coords[2];
 			cameraFarCap = 200;
-
-		} else if (camMethod == 2) {
-
+		} else if (camMethod == 2) 
+		{
 			// birds-eye cam
-
 			cameraOrientation = QUATERNION_IDENTITY;
 			cameraNodeOrientation = QUATERNION_IDENTITY;
 			cameraNodePosition = average * Vector3(1, 1, 0) + Vector3(0, 0, 50 + zoom * 20.0);
 			cameraFOV = 28;
 			cameraNearCap = 40 + height - 5;
 			cameraFarCap = 250;//65 + height * 1.2; doesn't work wtf?
-
-		} else if (camMethod == 3) {
-
+		} else if (camMethod == 3) 
+		{
 			// tele cam
-
 			zoom = (0.6f + zoom * 1.0f) * (1.0f / fov);
 
 			cameraOrientation.SetAngleAxis(0.3f * pi * height + 0.4f * pi * (1.0 - height), Vector3(1, 0, 0));
@@ -814,13 +824,12 @@ void Match::UpdateIngameCamera() {
 			cameraFarCap = 300;
 
 		}
-
-	} else {
-
+	} else 
+	{
 		// scorer cam
-
 		Vector3 targetPos = ball->Predict(0).Get2D();
-		if (lastGoalScorer) {
+		if (lastGoalScorer) 
+		{
 			targetPos = lastGoalScorer->GetPosition();
 		}
 
@@ -833,16 +842,15 @@ void Match::UpdateIngameCamera() {
 		cameraNearCap = 1;
 		cameraFarCap = 220;
 
-		if (goalScoredTimer == 6000) {
+		if (goalScoredTimer == 6000) 
+		{
 			pause = true;
 			sig_OnExtendedReplayMoment(this);
 		}
 	}
 }
 
-
 // THE SPICE
-
 void Match::Get() 
 {
 }

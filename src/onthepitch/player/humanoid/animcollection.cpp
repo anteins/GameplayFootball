@@ -48,7 +48,7 @@ AnimCollection::AnimCollection(boost::shared_ptr<Scene3D> scene3D) : scene3D(sce
 	defString[11] = "longpass";
 	defString[12] = "shot";
 	defString[13] = "sliding";
-	defString[14] = "movement";
+	defString[14] = "movement"; // 举例：e_FunctionType_Movement
 	defString[15] = "special";
 	defString[16] = "ballcontrol";
 	defString[17] = "highpass";
@@ -84,26 +84,25 @@ AnimCollection::AnimCollection(boost::shared_ptr<Scene3D> scene3D) : scene3D(sce
 
 		for (int angleID = 0; angleID < 11; angleID++) 
 		{
-
 			radian angle;
 			if (angleID == 0)	
 				angle = pi / 180.0f * 0.0f;
 			else if (angleID == 1)	
-				angle = pi / 180.0f *	 20.0f;
+				angle = pi / 180.0f * 20.0f;
 			else if (angleID == 2)	
-				angle = pi / 180.0f *	 45.0f;
+				angle = pi / 180.0f * 45.0f;
 			else if (angleID == 3)	
-				angle = pi / 180.0f *	 90.0f;
+				angle = pi / 180.0f * 90.0f;
 			else if (angleID == 4)	
-				angle = pi / 180.0f *	135.0f;
+				angle = pi / 180.0f * 135.0f;
 			else if (angleID == 5)	
-				angle = pi / 180.0f *	179.0f;
+				angle = pi / 180.0f * 179.0f;
 			else if (angleID == 6)	
-				angle = pi / 180.0f *	-20.0f;
+				angle = pi / 180.0f * -20.0f;
 			else if (angleID == 7)	
-				angle = pi / 180.0f *	-45.0f;
+				angle = pi / 180.0f * -45.0f;
 			else if (angleID == 8)	
-				angle = pi / 180.0f *	-90.0f;
+				angle = pi / 180.0f * -90.0f;
 			else if (angleID == 9)	
 				angle = pi / 180.0f * -135.0f;
 			//else if (angleID == 10) angle = pi / 180.0f * -179.0f;
@@ -184,14 +183,14 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 	const int frameCount = 25;
 	const float margin = 0.01f;
 
-	for (unsigned int t1 = 0; t1 < templates.size(); t1++) {
-		for (unsigned int t2 = 0; t2 < templates.size(); t2++) {
-
+	for (unsigned int t1 = 0; t1 < templates.size(); t1++) 
+	{
+		for (unsigned int t2 = 0; t2 < templates.size(); t2++) 
+		{
 			Animation *anim1 = templates.at(t1);
 			Animation *anim2 = templates.at(t2);
-
-			for (unsigned int direction = 0; direction < 9; direction++) {
-
+			for (unsigned int direction = 0; direction < 9; direction++) 
+			{
 				radian angle = GetAngle(direction);
 				float incomingVelocityT1 = anim1->GetIncomingVelocity();
 				float outgoingVelocityT2 = anim2->GetOutgoingVelocity();
@@ -206,7 +205,8 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 
 				// max acceleration
 				int veloIDDiff = outgoingVeloID - incomingVeloID;
-				if (veloIDDiff > 1) legalAnim = false;
+				if (veloIDDiff > 1) 
+					legalAnim = false;
 
 				// max deceleration
 				// use dot product to make sure "running 180 degrees" isn't considered "keeping the same velocity" and therefore legal.
@@ -250,7 +250,6 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 */
 
 				float animSpeedFactor = 1.0f;
-
 				if (legalAnim == true) 
 				{
 					Animation *gen = new Animation(*templates.at(t1));
@@ -364,9 +363,7 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 					//gen->Save("media/animations/debug_luxury/autogen v" + int_to_str(GetVelocityID(FloatToEnumVelocity(incomingVelocityT1))) + " b" + int_to_str(round(incomingBodyAngleT1 / pi * 180)) + " _to_ v" + int_to_str(GetVelocityID(FloatToEnumVelocity(outgoingVelocityT2))) + " b" + int_to_str(round(outgoingBodyAngleT2 / pi * 180)) + " a" + int_to_str(angle / pi * 180) + ".anim");
 
 					autoAnims.push_back(gen);
-
 				} // == legalAnim
-
 			}
 		}
 	}
@@ -513,35 +510,6 @@ const std::vector < Animation* > &AnimCollection::GetAnimations() const
 
 void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery &query, const PlayerBase& player) 
 {
-	// DebugLog(player, "========= CrudeSelection =========");
-	// if (query.byFunctionType == true) {
-	// 	DebugLog(player, "[byFunctionType]  functionType=" + enum_string("e_FunctionType", query.functionType));
-	// }
-	// if (query.heedForcedFoot == true) {
-	// 	DebugLog(player, "[heedForcedFoot]  strongFoot=" + to_string(query.strongFoot));
-	// }
-	// if (query.bySide == true) {
-	// 	DebugLog(player, "[bySide] true");
-	// }
-	// else{
-	// 	DebugLog(player, "[bySide] false");
-	// }
-	// if (query.byIncomingVelocity == true) {
-	// 	DebugLog(player, "[byIncomingVelocity]   incomingVelocity=" + to_string(query.incomingVelocity));
-	// }
-	// if (query.byOutgoingVelocity == true) {
-	// 	DebugLog(player, "[byOutgoingVelocity]   outgoingVelocity=" + to_string(query.outgoingVelocity));
-	// }
-	// if (query.byIncomingBodyDirection == true) {
-	// 	DebugLog(player, "[byIncomingBodyDirection]   incomingBodyDirection=" + vec_string(query.incomingBodyDirection));
-	// }
-	// if (query.byIncomingBallDirection == true) {
-	// 	DebugLog(player, "[byIncomingBallDirection]   incomingBallDirection=" + vec_string(query.incomingBallDirection));
-	// }
-	// if (query.byOutgoingBallDirection == true) {
-	// 	DebugLog(player, "[byOutgoingBallDirection]   outgoingBallDirection=" + vec_string(query.outgoingBallDirection));
-	// }
-
 	// makes a crude selection to later refine
 	int animSize = animations.size();
 	for (int i = 0; i < animSize; i++) 
@@ -558,14 +526,6 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 					selectAnim = false;
 			}
 		}
-/*
-		// select by FOOT
-		if (selectAnim) {
-			if (query.byFoot == true) {
-				if (animations.at(i)->GetCurrentFoot() != query.foot && FloatToEnumVelocity(animations.at(i)->GetIncomingVelocity()) != e_Velocity_Idle) selectAnim = false;
-			}
-		}
-*/
 
 		// select by INCOMING VELOCITY
 		if (selectAnim)
@@ -573,7 +533,14 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 			if (query.byIncomingVelocity == true) 
 			{
 				e_Velocity animIncomingVelocity = FloatToEnumVelocity(animations.at(i)->GetIncomingVelocity());
-				if (query.incomingVelocity_Strict == false) 
+
+				if(query.incomingVelocity_Strict == true)
+				{
+					// strict
+					if (animIncomingVelocity != query.incomingVelocity) 
+						selectAnim = false;
+				}
+				else
 				{
 					selectAnim = true;
 					if (query.incomingVelocity_NoDribbleToIdle) 
@@ -615,12 +582,6 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 					}
 
 				} 
-				else 
-				{
-					// strict
-					if (animIncomingVelocity != query.incomingVelocity) 
-						selectAnim = false;
-				}
 
 				// test: disallow idle -> moving and other way around
 				//e_Velocity animOutgoingVelocity = FloatToEnumVelocity(animations.at(i)->GetOutgoingVelocity());
@@ -672,8 +633,10 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 					e_Side fenceToAnimOutgoingSide = (fenceToOutgoingAngle > 0) ? e_Side_Left : e_Side_Right;
 
 					// passes through fence! n000!
-					if (animIncomingToFenceSide	== animSide && fenceToAnimOutgoingSide == animSide && fabs(animIncomingToFenceAngle + fenceToOutgoingAngle) < pi) selectAnim = false;
-					if (queryIncomingToFenceSide == animSide && fenceToAnimOutgoingSide == animSide && fabs(queryIncomingToFenceSide + fenceToOutgoingAngle) < pi) selectAnim = false;
+					if (animIncomingToFenceSide	== animSide && fenceToAnimOutgoingSide == animSide && fabs(animIncomingToFenceAngle + fenceToOutgoingAngle) < pi) 
+						selectAnim = false;
+					if (queryIncomingToFenceSide == animSide && fenceToAnimOutgoingSide == animSide && fabs(queryIncomingToFenceSide + fenceToOutgoingAngle) < pi) 
+						selectAnim = false;
 				}
 			}
 		}
@@ -933,64 +896,68 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 		} 
 	}
 
-	if(dataSet.size() > 0)
-	{
-		DebugLog(player, "======================= CrudeSelection =======================");
-		if (query.byFunctionType == true) {
-			DebugLog(player, "[byFunctionType]  " + enum_string("e_FunctionType", query.functionType));
-		}
-		if (query.heedForcedFoot == true) {
-			DebugLog(player, "[heedForcedFoot]  " + to_string(query.strongFoot));
-		}
-		if (query.bySide == true) {
-			DebugLog(player, "[bySide] true");
-		}
-		else{
-			DebugLog(player, "[bySide] false");
-		}
-		if (query.byIncomingVelocity == true) {
-			DebugLog(player, "[byIncomingVelocity]  " + to_string(query.incomingVelocity));
-		}
-		if (query.byOutgoingVelocity == true) {
-			DebugLog(player, "[byOutgoingVelocity]  " + to_string(query.outgoingVelocity));
-		}
-		if (query.byIncomingBodyDirection == true) {
-			DebugLog(player, "[byIncomingBodyDirection]  " + vec_string(query.incomingBodyDirection));
-		}
-		if (query.byIncomingBallDirection == true) {
-			DebugLog(player, "[byIncomingBallDirection]  " + vec_string(query.incomingBallDirection));
-		}
-		if (query.byOutgoingBallDirection == true) {
-			DebugLog(player, "[byOutgoingBallDirection]  " + vec_string(query.outgoingBallDirection));
-		}
+	// NeteaseLog
+	// if(dataSet.size() > 0)
+	// {
+	// 	DebugLog(player, "======================= CrudeSelection =======================");
+	// 	if (query.byFunctionType == true) {
+	// 		DebugLog(player, "[byFunctionType]  " + enum_string("e_FunctionType", query.functionType));
+	// 	}
+	// 	if (query.heedForcedFoot == true) {
+	// 		DebugLog(player, "[heedForcedFoot]  " + to_string(query.strongFoot));
+	// 	}
+	// 	if (query.bySide == true) {
+	// 		DebugLog(player, "[bySide] true");
+	// 	}
+	// 	else{
+	// 		DebugLog(player, "[bySide] false");
+	// 	}
+	// 	if (query.byIncomingVelocity == true) {
+	// 		DebugLog(player, "[byIncomingVelocity]  " + to_string(query.incomingVelocity));
+	// 	}
+	// 	if (query.byOutgoingVelocity == true) {
+	// 		DebugLog(player, "[byOutgoingVelocity]  " + to_string(query.outgoingVelocity));
+	// 	}
+	// 	if (query.byIncomingBodyDirection == true) {
+	// 		DebugLog(player, "[byIncomingBodyDirection]  " + vec_string(query.incomingBodyDirection));
+	// 	}
+	// 	if (query.byIncomingBallDirection == true) {
+	// 		DebugLog(player, "[byIncomingBallDirection]  " + vec_string(query.incomingBallDirection));
+	// 	}
+	// 	if (query.byOutgoingBallDirection == true) {
+	// 		DebugLog(player, "[byOutgoingBallDirection]  " + vec_string(query.outgoingBallDirection));
+	// 	}
 
-		DataSet::iterator iter = dataSet.begin();
-		while (iter != dataSet.end()) 
-		{
-			Animation *anim = this->GetAnim(*iter);
-			// if (player->GetDebug()) 
-			// 	Log(e_Notice, "Humanoid", "Humanoid", "animname: " + to_string(anim->GetName()));
-			std::string animName = anim->GetName();
-			if("media/animations\\ballcontrol\\walk/000.anim" == animName)
-			{
-				std::vector<NodeAnimation*> nodeAnimations = anim->GetNodeAnimations();
-				DebugLog(player, animName + "   " + to_string(nodeAnimations.at(0)->animation.size()));
-				if (nodeAnimations.at(0)->animation.size() > 1) 
-				{
-					int frame_a = (++nodeAnimations.at(0)->animation.begin())->first;
-					int frame_b = nodeAnimations.at(0)->animation.begin()->first;
-					DebugLog(player, "frame_a= " + to_string(frame_a) + "  frame_b= " + to_string(frame_b));
-					Vector3 pos_a = (++nodeAnimations.at(0)->animation.begin())->second.position;
-					Vector3 pos_b = nodeAnimations.at(0)->animation.begin()->second.position;
-					DebugLog(player, "pos_a= " + vec_string(pos_a) + "  pos_b=" + vec_string(pos_b));
-					Vector3 result = (pos_a - pos_b) / (frame_a - frame_b) * 100;
-					DebugLog(player, "result= " + vec_string(result));
-				} 
-			}
+	// 	DataSet::iterator iter = dataSet.begin();
+	// 	DebugLog(player, "selected:");
+	// 	while (iter != dataSet.end()) 
+	// 	{
+	// 		Animation *anim = this->GetAnim(*iter);
+	// 		// DebugLog(player, "  " + anim->GetName());
+	// 		// if (player->GetDebug()) 
+	// 		// 	Log(e_Notice, "Humanoid", "Humanoid", "animname: " + to_string(anim->GetName()));
+	// 		// std::string animName = anim->GetName();
+	// 		// if("media/animations\\ballcontrol\\walk/000.anim" == animName)
+	// 		// {
+	// 		// 	std::vector<NodeAnimation*> nodeAnimations = anim->GetNodeAnimations();
+	// 		// 	DebugLog(player, animName + "   " + to_string(nodeAnimations.at(0)->animation.size()));
+	// 		// 	if (nodeAnimations.at(0)->animation.size() > 1) 
+	// 		// 	{
+	// 		// 		int frame_a = (++nodeAnimations.at(0)->animation.begin())->first;
+	// 		// 		int frame_b = nodeAnimations.at(0)->animation.begin()->first;
+	// 		// 		DebugLog(player, "frame_a= " + to_string(frame_a) + "  frame_b= " + to_string(frame_b));
+	// 		// 		Vector3 pos_a = (++nodeAnimations.at(0)->animation.begin())->second.position;
+	// 		// 		Vector3 pos_b = nodeAnimations.at(0)->animation.begin()->second.position;
+	// 		// 		DebugLog(player, "pos_a= " + vec_string(pos_a) + "  pos_b=" + vec_string(pos_b));
+	// 		// 		Vector3 result = (pos_a - pos_b) / (frame_a - frame_b) * 100;
+	// 		// 		DebugLog(player, "result= " + vec_string(result));
+	// 		// 		DebugLog(player, "result.Length= " + to_string(result.GetLength()));
+	// 		// 	} 
+	// 		// }
 			
-			iter++;
-		}
-	}
+	// 		iter++;
+	// 	}
+	// }
 }
 
 int AnimCollection::GetQuadrantID(Animation *animation, const Vector3 &movement, radian angle) const 
@@ -1366,55 +1333,68 @@ inline bool AnimCollection::_CheckFunctionType(const std::string &functionType, 
 	switch (queryFunctionType) 
 	{
 		case e_FunctionType_Movement:
-			if (functionType == defString[e_DefString_Movement]) rightType = true;
+			if (functionType == defString[e_DefString_Movement]) 
+				rightType = true;
 			break;
 
 		case e_FunctionType_BallControl:
-			if (functionType == defString[e_DefString_BallControl]) rightType = true;
+			if (functionType == defString[e_DefString_BallControl]) 
+				rightType = true;
 			break;
 
 		case e_FunctionType_Trap:
-			if (functionType == defString[e_DefString_Trap]) rightType = true;
+			if (functionType == defString[e_DefString_Trap]) 
+				rightType = true;
 			break;
 
 		case e_FunctionType_ShortPass:
-			if (functionType == defString[e_DefString_ShortPass]) rightType = true;
+			if (functionType == defString[e_DefString_ShortPass]) 
+				rightType = true;
 			break;
 
 		case e_FunctionType_LongPass:
-			if (functionType == defString[e_DefString_LongPass]) rightType = true;
+			if (functionType == defString[e_DefString_LongPass]) 
+				rightType = true;
 			break;
 
 		case e_FunctionType_HighPass:
-			if (functionType == defString[e_DefString_HighPass]) rightType = true;
+			if (functionType == defString[e_DefString_HighPass]) 
+				rightType = true;
 			break;
 
 		case e_FunctionType_Shot:
-			if (functionType == defString[e_DefString_Shot]) rightType = true;
+			if (functionType == defString[e_DefString_Shot]) 
+				rightType = true;
 			break;
 
 		case e_FunctionType_Deflect:
-			if (functionType == defString[e_DefString_Deflect]) rightType = true;
+			if (functionType == defString[e_DefString_Deflect]) 
+				rightType = true;
 			break;
 
 		case e_FunctionType_Catch:
-			if (functionType == defString[e_DefString_Catch]) rightType = true;
+			if (functionType == defString[e_DefString_Catch]) 
+				rightType = true;
 			break;
 
 		case e_FunctionType_Interfere:
-			if (functionType == defString[e_DefString_Interfere]) rightType = true;
+			if (functionType == defString[e_DefString_Interfere]) 
+				rightType = true;
 			break;
 
 		case e_FunctionType_Trip:
-			if (functionType == defString[e_DefString_Trip]) rightType = true;
+			if (functionType == defString[e_DefString_Trip]) 
+				rightType = true;
 			break;
 
 		case e_FunctionType_Sliding:
-			if (functionType == defString[e_DefString_Sliding]) rightType = true;
+			if (functionType == defString[e_DefString_Sliding]) 
+				rightType = true;
 			break;
 
 		case e_FunctionType_Special:
-			if (functionType == defString[e_DefString_Special]) rightType = true;
+			if (functionType == defString[e_DefString_Special]) 
+				rightType = true;
 			break;
 
 		default:

@@ -133,15 +133,19 @@ struct CrudeSelectionQuery
 		byTripType = false;
 	}
 
+	// 根据当前目标动作类型
 	bool byFunctionType;
 	e_FunctionType functionType;
 
+	// 暂没用
 	bool byFoot;
 	e_Foot foot;
 
+	// 根据当前踢出的是哪只脚（e_Foot_Left、e_Foot_Right）
 	bool heedForcedFoot;
 	e_Foot strongFoot;
 
+	// 根据当前
 	bool bySide;
 	Vector3 lookAtVecRel;
 

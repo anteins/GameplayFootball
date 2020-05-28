@@ -293,7 +293,6 @@ void PlayerController::_BallControlCommand(PlayerCommandQueue &commandQueue, boo
 	if (match->GetDesignatedPossessionPlayer() == player ||
 			(team->GetDesignatedTeamPossessionPlayer() == player && CouldWinABallDuelLikeliness() >= 0.25f)) 
 	{
-
 		PlayerCommand command;
 		command.desiredFunctionType = e_FunctionType_BallControl;
 		command.useDesiredMovement = true;
@@ -527,7 +526,8 @@ void PlayerController::_MovementCommand(PlayerCommandQueue &commandQueue, bool f
 				{
 					if (CastPlayer()->GetTimeNeededToGetToBall_ms() < 1700) autoBias = pow(CastPlayer()->GetLastTouchBias(2000), 0.4f) * pow(sameDirFactor, 0.5f);
 				}
-				if (!oppTeamHasPossession) {
+				if (!oppTeamHasPossession)
+				{
 					if (team->IsHumanControlled(player->GetID())) 
 					{
 						float magnetBias = std::max(curve(sameDirFactor, 0.8f), powf(GetLastSwitchBias(), 0.5f)); // needed for when we get passed a ball while we are not the designated player. we want to at least try to get there.
@@ -601,7 +601,8 @@ void PlayerController::_MovementCommand(PlayerCommandQueue &commandQueue, bool f
 		command.desiredDirection = resultingMovement.GetNormalized(quantizedInputDirection);
 		command.desiredVelocityFloat = clamp(resultingMovement.GetLength(), idleVelocity, sprintVelocity);
 
-		if (command.desiredVelocityFloat < idleDribbleSwitch) command.desiredDirection = autoLookDirection;
+		if (command.desiredVelocityFloat < idleDribbleSwitch) 
+			command.desiredDirection = autoLookDirection;
 
 		Vector3 resultLookDirection = autoLookDirection;
 		command.desiredLookAt = player->GetPosition() + resultLookDirection * 10.0f;

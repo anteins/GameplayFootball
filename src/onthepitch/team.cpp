@@ -340,7 +340,9 @@ void Team::HumanGamersSelectAnyone() {
 void Team::SelectPlayer(Player *player) 
 {
 	//printf("trying to switch to %s\n", player->GetPlayerData()->GetLastName().c_str());
-	if (!IsHumanControlled(player->GetID()) && humanGamers.size() != 0) { // already selected
+	if (!IsHumanControlled(player->GetID()) && humanGamers.size() != 0) 
+	{ 
+		// already selected
 		humanGamers.at(*switchPriority.begin())->SetSelectedPlayerID(player->GetID());
 		switchPriority.push_back(*switchPriority.begin());
 		switchPriority.pop_front();
@@ -480,7 +482,6 @@ void Team::Process()
 					humanGamers.at(i)->SetSelectedPlayerID(-1);
 				}
 			}
-
 		}
 
 		int designatedPlayerTime_ms = designatedTeamPossessionPlayer->GetTimeNeededToGetToBall_ms();
@@ -554,7 +555,8 @@ void Team::Put()
 {
 	for (unsigned int i = 0; i < players.size(); i++) 
 	{
-		if (players.at(i)->IsActive()) {
+		if (players.at(i)->IsActive()) 
+		{
 			players.at(i)->Put();
 		}
 	}
@@ -564,7 +566,8 @@ void Team::Put2D()
 {
 	for (unsigned int i = 0; i < players.size(); i++) 
 	{
-		if (players.at(i)->IsActive()) {
+		if (players.at(i)->IsActive()) 
+		{
 			players.at(i)->Put2D();
 		}
 	}

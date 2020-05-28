@@ -387,8 +387,10 @@ void ElizaController::RequestCommand(PlayerCommandQueue &commandQueue)
 				std::vector<Player*> closestPlayers;
 				AI_GetClosestPlayers(team, opp->GetPosition() + opp->GetMovement() * 0.1f, false, closestPlayers, huntingPlayersNum);
 				bool close = false;
-				for (unsigned int i = 0; i < closestPlayers.size(); i++) {
-					if (closestPlayers.at(i) == player) {
+				for (unsigned int i = 0; i < closestPlayers.size(); i++) 
+				{
+					if (closestPlayers.at(i) == player) 
+					{
 						close = true;
 						break;
 					}
@@ -420,7 +422,6 @@ void ElizaController::RequestCommand(PlayerCommandQueue &commandQueue)
 		inputVelocityFloat = RangeVelocity(inputVelocityFloat); // emulate controller quantization
 
 		_MovementCommand(commandQueue, forceMagnet, extraHaste);
-
 	} 
 	else 
 	{ 

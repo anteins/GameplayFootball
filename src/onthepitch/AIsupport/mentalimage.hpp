@@ -15,8 +15,8 @@ using namespace blunted;
 
 class Match;
 
-class MentalImage {
-
+class MentalImage 
+{
 	public:
 		MentalImage(Match *match);
 		virtual ~MentalImage();
@@ -42,7 +42,6 @@ class MentalImage {
 
 		float maxDistanceDeviation;
 		float maxMovementDeviation;
-
 };
 
 #endif
