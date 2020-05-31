@@ -101,11 +101,12 @@ template <typename T> class TemporalSmoother {
 
 template <> Quaternion TemporalSmoother<Quaternion>::MixData(const Quaternion &data1, const Quaternion &data2, float bias) const;
 
-std::string vec_string(const Vector3& vec);
+std::string to_string(const Vector3& vec);
 
 std::string enum_string(const std::string& enumClassName, const int enum_idx);
 
 void DebugLog(const PlayerBase& player, const std::string& message);
+void DebugLog(const std::string& message);
 //
 // 将64位浮点数转换为32位整数
 // 小数部分将四舍五入到偶数

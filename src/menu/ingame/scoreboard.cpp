@@ -12,7 +12,8 @@
 
 using namespace blunted;
 
-Gui2ScoreBoard::Gui2ScoreBoard(Gui2WindowManager *windowManager, Match *match) : Gui2View(windowManager, "scoreboard", 2, 2, 96, 4), match(match) {
+Gui2ScoreBoard::Gui2ScoreBoard(Gui2WindowManager *windowManager, Match *match) : Gui2View(windowManager, "scoreboard", 2, 2, 96, 4), match(match) 
+{
 	x_percent = 2;
 	y_percent = 2;
 	width_percent = 96;
@@ -75,6 +76,11 @@ Gui2ScoreBoard::Gui2ScoreBoard(Gui2WindowManager *windowManager, Match *match) :
 	tvLogo->LoadImage("media/menu/tvlogo.png");
 	tvLogo->Show();
 
+	debugText = new Gui2Text(windowManager, "grid_league_start_new_choices_explanation", 80, 15, 0, 35, 2.5, 40, "");
+	debugText->AddText((std::string)"ball pos: ");
+	this->AddView(debugText);
+	debugText->Show();
+
 	this->AddView(timeCaption);
 	timeCaption->Show();
 	this->AddView(teamNameCaption[0]);
@@ -102,7 +108,8 @@ Gui2ScoreBoard::Gui2ScoreBoard(Gui2WindowManager *windowManager, Match *match) :
 	this->Show();
 }
 
-Gui2ScoreBoard::~Gui2ScoreBoard() {
+Gui2ScoreBoard::~Gui2ScoreBoard() 
+{
 	/* will be cleaned up while deleting gui2 tree automatically
 	bg->Exit();
 	delete bg;
@@ -127,22 +134,34 @@ Gui2ScoreBoard::~Gui2ScoreBoard() {
 	*/
 }
 
-void Gui2ScoreBoard::GetImages(std::vector < boost::intrusive_ptr<Image2D> > &target) {
+void Gui2ScoreBoard::GetImages(std::vector < boost::intrusive_ptr<Image2D> > &target) 
+{
 	Gui2View::GetImages(target);
 }
 
-void Gui2ScoreBoard::Redraw() {
+void Gui2ScoreBoard::Redraw() 
+{
 }
 
-void Gui2ScoreBoard::SetTimeStr(const std::string &timeStr) {
+void Gui2ScoreBoard::SetTimeStr(const std::string &timeStr) 
+{
 	this->timeStr = timeStr;
 	timeCaption->SetCaption(timeStr);
 }
 
-void Gui2ScoreBoard::SetGoalCount(int teamID, int goalCount) {
+void Gui2ScoreBoard::SetGoalCount(int teamID, int goalCount) 
+{
 	this->goalCount[teamID] = goalCount;
 	std::string goalStr = "";
 	if (goalCount < 10) goalStr.append(" ");
 	goalStr.append(int_to_str(goalCount));
 	goalCountCaption[teamID]->SetCaption(goalStr);
+}
+
+void Gui2ScoreBoard::SetDebugInfo() 
+{
+	Vector3 ballPos = match->GetBall()->Predict(0).Get2D();
+	debugText->ClearText();
+	debugText->AddText((std::string)"ballPos: " + to_string(ballPos));
+	// debugText->AddText((std::string)"ballVec: " + to_string(match->GetBall()->GetMovement()));
 }

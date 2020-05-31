@@ -127,7 +127,8 @@ bool IsReleaseVersion()
 	if (GetConfiguration()->GetBool("debug", false)) return false; else return true;
 }
 
-bool Verbose() {
+bool Verbose() 
+{
 	return !IsReleaseVersion();
 }
 
@@ -147,19 +148,23 @@ std::string GetActiveSaveDirectory()
 	return activeSaveDirectory;
 }
 
-void SetActiveSaveDirectory(const std::string &dir) {
+void SetActiveSaveDirectory(const std::string &dir) 
+{
 	activeSaveDirectory = dir;
 }
 
-bool SuperDebug() {
+bool SuperDebug() 
+{
 	return superDebug;
 }
 
-e_DebugMode GetDebugMode() {
+e_DebugMode GetDebugMode() 
+{
 	return debugMode;
 }
 
-boost::intrusive_ptr<Image2D> GetDebugImage() {
+boost::intrusive_ptr<Image2D> GetDebugImage()
+ {
 	return debugImage;
 }
 
@@ -249,21 +254,25 @@ class ThreadHudThread : public Thread
 		{
 			hud = new ThreadHud(GetScene2D());
 		}
-		virtual ~ThreadHudThread() {
+		virtual ~ThreadHudThread() 
+		{
 			delete hud;
 		}
 
-		virtual void operator()() {
+		virtual void operator()() 
+		{
 			bool quit = false;
-			while (!quit) {
-
+			while (!quit) 
+			{
 				SetState(e_ThreadState_Busy);
 
 				bool isMessage = false;
 				boost::intrusive_ptr<Command> message = boost::intrusive_ptr<Command>();
 				message = messageQueue.GetMessage(isMessage);
-				if (isMessage) {
-					if (!message->Handle(this)) quit = true;
+				if (isMessage) 
+				{
+					if (!message->Handle(this)) 
+						quit = true;
 					message.reset();
 				}
 
@@ -491,7 +500,8 @@ int main(int argc, const char** argv)
 	largeDebugCircle->Exit();
 	largeDebugCircle.reset();
 
-	if (threadHudThread) {
+	if (threadHudThread) 
+	{
 		boost::intrusive_ptr<Message_Shutdown> shutdownMessage = new Message_Shutdown();
 		threadHudThread->messageQueue.PushMessage(shutdownMessage);
 		threadHudThread->Join();
@@ -502,7 +512,8 @@ int main(int argc, const char** argv)
 	scene2D.reset();
 	scene3D.reset();
 
-	for (unsigned int i = 0; i < controllers.size(); i++) {
+	for (unsigned int i = 0; i < controllers.size(); i++) 
+	{
 		delete controllers.at(i);
 	}
 	controllers.clear();

@@ -618,6 +618,7 @@ void HumanoidBase::Process()
 		currentMentalImage = match->GetMentalImage(0);
 	}
 
+	// 计算出移动速度等
 	CalculateSpatialState();
 	spatialState.positionOffsetMovement = Vector3(0);
 
@@ -1199,11 +1200,11 @@ void HumanoidBase::_KeepBestDirectionAnims(DataSet &dataSet, const PlayerCommand
 		}
 
 		Animation *bestAnim = anims->GetAnim(*dataSet.begin());
-
 		bestQuadrantID = atoi(bestAnim->GetVariable("quadrant_id").c_str());
 	}
 
 	const Quadrant &quadrant = anims->GetQuadrant(bestQuadrantID);
+	// DebugLog(*player, "bestAnim  angle=" + to_string(quadrant.angle) + "  " + enum_string("e_Velocity", quadrant.velocity));
 
 	DataSet::iterator iter = dataSet.begin();
 	iter++;
@@ -1230,14 +1231,14 @@ void HumanoidBase::_KeepBestDirectionAnims(DataSet &dataSet, const PlayerCommand
 			const Quadrant &quadrant = anims->GetQuadrant(quadrantID);
 
 			bool predicate = true;
-
 			if (anim->GetVariable("lastditch").compare("true") != 0) 
 			{ 
 				// last ditch anims may always change velo
 				if (abs(GetVelocityID(quadrant.velocity, true) - GetVelocityID(bestQuadrant.velocity, true)) > allowedVelocitySteps) 
 					predicate = false;
 			}
-			if (fabs(quadrant.angle - bestQuadrant.angle) > allowedAngle) predicate = false;
+			if (fabs(quadrant.angle - bestQuadrant.angle) > allowedAngle) 
+				predicate = false;
 
 			if (predicate) 
 			{
@@ -1652,7 +1653,6 @@ bool HumanoidBase::SelectAnim(const PlayerCommand &command, e_InterruptAnim loca
 	// make it so
 	if (selectedAnimID != -1) 
 	{
-		DebugLog(*player, "=========SelectAnim2: selectedAnimID=" + to_string(selectedAnimID));
 		/*
 		if (command.desiredFunctionType != e_FunctionType_Movement) {
 			if (player->GetDebug()) {
@@ -1698,17 +1698,25 @@ bool HumanoidBase::SelectAnim(const PlayerCommand &command, e_InterruptAnim loca
 
 void HumanoidBase::CalculatePredictedSituation(Vector3 &predictedPos, radian &predictedAngle) 
 {
+	// DebugLog(*player, "================CalculatePredictedSituation================" );
+	// DebugLog(*player, currentAnim->anim->GetName() );
 	if (currentAnim->positions.size() > (unsigned int)currentAnim->frameNum)
 	{
-		DebugLog(*player, "CalculatePredictedSituation " + currentAnim->anim->GetName() + "  positions.size=" + to_string(currentAnim->positions.size()) + "  EffectiveFrameCount=" + to_string(currentAnim->anim->GetEffectiveFrameCount()) );
 		assert(currentAnim->positions.size() > (unsigned int)currentAnim->anim->GetEffectiveFrameCount());
-		predictedPos = spatialState.position + currentAnim->positions.at(currentAnim->anim->GetEffectiveFrameCount()) + currentAnim->actionSmuggle + currentAnim->actionSmuggleSustain + currentAnim->movementSmuggle;
+		Vector3 pos = currentAnim->positions.at(currentAnim->anim->GetEffectiveFrameCount());
+		// if(pos.GetLength() <= 1.5f)
+		// {
+		// 	pos = Vector3(0, 0, 0);
+		// }
+		
+		predictedPos = spatialState.position + pos + currentAnim->actionSmuggle + currentAnim->actionSmuggleSustain + currentAnim->movementSmuggle;
 	} 
 	else 
 	{
 		predictedPos = spatialState.position + currentAnim->anim->GetTranslation().Get2D().GetRotated2D(spatialState.angle) + currentAnim->actionSmuggle + currentAnim->actionSmuggleSustain + currentAnim->movementSmuggle;
 	}
-
+		
+	
 	predictedAngle = spatialState.angle + currentAnim->anim->GetOutgoingAngle() + currentAnim->rotationSmuggle.end;
 	predictedAngle = ModulateIntoRange(-pi, pi, predictedAngle);
 	assert(predictedPos.coords[2] == 0.0f);
@@ -1721,12 +1729,13 @@ Vector3 HumanoidBase::CalculateOutgoingMovement(const std::vector<Vector3> &posi
 	return (positions.at(positions.size() - 1) - positions.at(positions.size() - 2)) * 100.0f;
 }
 
-void HumanoidBase::CalculateSpatialState() 
+void HumanoidBase::CalculateSpatialState()
 {
 	Vector3 position;
 	if (currentAnim->positions.size() > (unsigned int)currentAnim->frameNum) 
 	{
-		position = startPos + currentAnim->positions.at(currentAnim->frameNum) + currentAnim->actionSmuggleOffset + currentAnim->actionSmuggleSustainOffset + currentAnim->movementSmuggleOffset;
+		Vector3 animPos = currentAnim->positions.at(currentAnim->frameNum);
+		position = startPos + animPos + currentAnim->actionSmuggleOffset + currentAnim->actionSmuggleSustainOffset + currentAnim->movementSmuggleOffset;
 	} 
 	else 
 	{
@@ -1763,7 +1772,6 @@ void HumanoidBase::CalculateSpatialState()
 	spatialState.movement = spatialState.physicsMovement; // PICK DEFAULT
 
 	//if (player->GetDebug()) SetRedDebugPilon(spatialState.actualMovement);
-
 
 	Vector3 bodyPosition;
 	Quaternion bodyOrientation;
@@ -1891,7 +1899,7 @@ PlayerCommand HumanoidBase::GetTripCommand(const Vector3 &tripVector, int tripTy
 
 PlayerCommand HumanoidBase::GetBasicMovementCommand(const Vector3 &desiredDirection, float velocityFloat) 
 {
-	// Log(e_Notice, "Command", "Command", "GetBasicMovementCommand " + vec_string(desiredDirection));
+	// Log(e_Notice, "Command", "Command", "GetBasicMovementCommand " + to_string(desiredDirection));
 	PlayerCommand command;
 	command.desiredFunctionType = e_FunctionType_Movement;
 	command.useDesiredMovement = true;

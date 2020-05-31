@@ -261,18 +261,24 @@ void ElizaController::RequestCommand(PlayerCommandQueue &commandQueue)
 		}
 	}
 	// default strategies for defensively, midfielders and offensively positioned players
-	else if (match->IsInPlay() && !match->IsInSetPiece() && match->GetBallRetainer() != player && match->GetDesignatedPossessionPlayer() != player && CastPlayer()->GetFormationEntry().role != e_PlayerRole_GK) { //(match->GetDesignatedPossessionPlayer() != player || (CastPlayer()->GetFormationEntry().role == e_PlayerRole_GK && !CastPlayer()->HasPossession()))) {
+	else if (match->IsInPlay() 
+		&& !match->IsInSetPiece() 
+		&& match->GetBallRetainer() != player 
+		&& match->GetDesignatedPossessionPlayer() != player 
+		&& CastPlayer()->GetFormationEntry().role != e_PlayerRole_GK) 
+	{ 
+		//(match->GetDesignatedPossessionPlayer() != player || (CastPlayer()->GetFormationEntry().role == e_PlayerRole_GK && !CastPlayer()->HasPossession()))) {
 		if (CastPlayer()->GetFormationEntry().role == e_PlayerRole_LB ||
-						 CastPlayer()->GetFormationEntry().role == e_PlayerRole_CB ||
-						 CastPlayer()->GetFormationEntry().role == e_PlayerRole_RB) 
+			CastPlayer()->GetFormationEntry().role == e_PlayerRole_CB ||
+			CastPlayer()->GetFormationEntry().role == e_PlayerRole_RB) 
 		{
 			defenseStrategy->RequestInput(_mentalImage, rawInputDirection, rawInputVelocityFloat);
 		}
 		else if (CastPlayer()->GetFormationEntry().role == e_PlayerRole_DM ||
-						 CastPlayer()->GetFormationEntry().role == e_PlayerRole_LM ||
-						 CastPlayer()->GetFormationEntry().role == e_PlayerRole_CM ||
-						 CastPlayer()->GetFormationEntry().role == e_PlayerRole_RM ||
-						 CastPlayer()->GetFormationEntry().role == e_PlayerRole_AM) 
+			CastPlayer()->GetFormationEntry().role == e_PlayerRole_LM ||
+			CastPlayer()->GetFormationEntry().role == e_PlayerRole_CM ||
+			CastPlayer()->GetFormationEntry().role == e_PlayerRole_RM ||
+			CastPlayer()->GetFormationEntry().role == e_PlayerRole_AM) 
 		{
 			midfieldStrategy->RequestInput(_mentalImage, rawInputDirection, rawInputVelocityFloat);
 		}
@@ -332,8 +338,8 @@ void ElizaController::RequestCommand(PlayerCommandQueue &commandQueue)
 		lastDesiredDirection = rawInputDirection; 
 	else
 		lastDesiredDirection = player->GetDirectionVec();
-
 	lastDesiredVelocity = rawInputVelocityFloat;
+	
 	if (match->IsInPlay() && !match->IsInSetPiece()) 
 	{
 		// ball control?

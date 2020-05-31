@@ -149,7 +149,8 @@ bool Player::HasUniquePossession() const
 
 bool Player::AllowLastDitch(bool includingPossessionAmount) const 
 {
-	if (includingPossessionAmount && team->GetTeamPossessionAmount() < 1.0f) return true; // why team possession amount and not player's? answer: because we don't have that info here (todo: fix that)
+	if (includingPossessionAmount && team->GetTeamPossessionAmount() < 1.0f) 
+		return true; // why team possession amount and not player's? answer: because we don't have that info here (todo: fix that)
 	return (GetTimeNeededToGetToBall_optimistic_ms() * 1.7f + 800 < GetTimeNeededToGetToBall_ms());
 }
 
@@ -157,7 +158,8 @@ float Player::GetAverageVelocity(float timePeriod_sec)
 {
 	assert((int)timePeriod_sec > 0);
 	unsigned int logSize = positionHistoryPerSecond.size();
-	if (logSize == 0) return 0;
+	if (logSize == 0) 
+		return 0;
 	Vector3 prevPos;
 	float totalDistance = 0;
 	unsigned int count = 0;
@@ -224,10 +226,10 @@ void Player::UpdatePossessionStats(bool onInterval)
 				if (ms < timeNeededToGetToBall_optimistic_ms) 
 					timeNeededToGetToBall_optimistic_ms = ms;
 				//foundOptimisticTime = true;
-				if (GetDebug()) 
-				{
-					//SetRedDebugPilon(GetPosition() + Vector3(timeNeededToGetToBall_optimistic_ms / 100.0f, 0.0f, 0.05f));
-				}
+				// if (GetDebug()) 
+				// {
+				// 	SetRedDebugPilon(GetPosition() + Vector3(timeNeededToGetToBall_optimistic_ms / 100.0f, 0.0f, 0.05f));
+				// }
 			}
 
 			if (timeNeeded <= ms) 
@@ -380,13 +382,14 @@ void Player::Process()
 			SendOff();
 		}
 
-/*
-		if (HasPossession() && GetDebug()) {
-			SetSmallDebugCircle1(GetPosition());
-		} else if (GetDebug()) {
-			SetSmallDebugCircle1(Vector3(0, 0, -100));
-		}
-*/
+		// if (HasPossession() && GetDebug()) 
+		// {
+		// 	SetSmallDebugCircle1(GetPosition());
+		// } 
+		// else if (GetDebug()) 
+		// {
+		// 	SetSmallDebugCircle1(Vector3(0, 0, -100));
+		// }
 	}
 }
 
@@ -400,6 +403,7 @@ void Player::PreparePutBuffers(unsigned long snapshotTime_ms)
 		if (team->GetHumanGamerCount() == 0) 
 			buf_nameCaptionShowCondition = team->GetDesignatedTeamPossessionPlayer() == this;
 	}
+	
 	e_PlayerColor playerColor = team->GetPlayerColor(id);
 	switch (playerColor) 
 	{

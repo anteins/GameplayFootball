@@ -59,6 +59,17 @@ enum e_InterruptAnim
 	e_InterruptAnim_Cancel,
 	e_InterruptAnim_ReQueue
 };
+static const std::string e_InterruptAnim_StringMap[]
+{
+    "e_InterruptAnim_None",
+    "e_InterruptAnim_Switch",
+    "e_InterruptAnim_Sliding",
+    "e_InterruptAnim_Bump",
+    "e_InterruptAnim_Trip",
+    "e_InterruptAnim_Cheat",
+    "e_InterruptAnim_Cancel",
+    "e_InterruptAnim_ReQueue"
+};
 
 struct RotationSmuggle 
 {

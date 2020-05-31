@@ -91,7 +91,7 @@ void Ball::Touch(const Vector3 &target)
 		positionBuffer.coords[2] = 0.11f;
 
     // Log(e_Notice, "Ball", "Ball", "========================== Ball::Touch ==========================");
-    // Log(e_Notice, "Ball", "Ball", "Momentum=" + vec_string(target));
+    // Log(e_Notice, "Ball", "Ball", "Momentum=" + to_string(target));
 
 	SetMomentum(target);
 	// recalculate prediction
@@ -140,7 +140,7 @@ void Ball::SetRotation(const Vector3 &rot, float bias)
 	SetRotation(rot.coords[0], rot.coords[1], rot.coords[2], bias);
 }
 
-BallSpatialInfo Ball::CalculatePrediction(bool debug) 
+BallSpatialInfo Ball::CalculatePrediction(bool debug)
 {
 	Vector3 newMomentum;
 	Quaternion newRotation_ms;
@@ -153,13 +153,17 @@ BallSpatialInfo Ball::CalculatePrediction(bool debug)
 	Quaternion rotationPredict_ms = rotation_ms;
 
 	predictions[0] = nextPos;
+	// if(debug){
+	// 	DebugLog("===========================================================");
+	// 	DebugLog("[0]\t\t" + to_string(nextPos) + "\t\t" + to_string(momentum));
+	// }
 
 	bool drag_enabled = true;
 	bool groundFriction_enabled = true;
 	bool woodwork_enabled = true;
 	bool netting_enabled = true;
 	bool groundRotationEffects_enabled = true;
-	bool swerve_enabled = true;
+	bool swerve_enabled = true; 
 
 	float timeStep = 0.01f;//0.001f; // seconds
 	bool autoDegrade_timeStep = false;
@@ -169,7 +173,8 @@ BallSpatialInfo Ball::CalculatePrediction(bool debug)
 	ballTouchesNet = false;
 
 	int dt = 0;
-	RoundToInt64(dt, timeStep * 1000.0f);
+	RoundToInt64(dt, timeStep * 1000.0f); 
+	// dt 10毫秒
 	for (unsigned int predictTime_ms = dt; predictTime_ms < ballPredictionSize_ms; predictTime_ms += dt) 
 	{
 		float frictionFactor = 0.0f;
@@ -180,7 +185,8 @@ BallSpatialInfo Ball::CalculatePrediction(bool debug)
 		// air resistance
 		float momentumVelo = momentumPredict.GetLength();
 		float momentumVeloDragged = momentumVelo - drag * pow(momentumVelo, 2.0f) * timeStep;
-		if (drag_enabled) momentumPredict = momentumPredict.GetNormalized(0) * momentumVeloDragged;
+		if (drag_enabled) 
+			momentumPredict = momentumPredict.GetNormalized(0) * momentumVeloDragged;
 
 
 		float ballBottom = nextPos.coords[2] - 0.11f;
@@ -236,9 +242,9 @@ BallSpatialInfo Ball::CalculatePrediction(bool debug)
 		{
 			bool woodwork = false;
 			// posts
-			if (nextPos.coords[2] < goalHeight + ballRadius + postRadius && (nextPos.Get2D().GetAbsolute() - Vector3(pitchHalfW, goalHalfWidth, 0)).GetLength() < ballRadius + postRadius) {
+			if (nextPos.coords[2] < goalHeight + ballRadius + postRadius && (nextPos.Get2D().GetAbsolute() - Vector3(pitchHalfW, goalHalfWidth, 0)).GetLength() < ballRadius + postRadius) 
+			{
 				Vector3 normal;
-
 				if (nextPos.coords[0] < 0) 
 				{
 					// left side of pitch
@@ -250,7 +256,6 @@ BallSpatialInfo Ball::CalculatePrediction(bool debug)
 						nextPos = Vector3(-pitchHalfW, -goalHalfWidth, 0) + normal * (postRadius + ballRadius);
 						nextPos.coords[2] = nextPosZ;
 						woodwork = true;
-
 					} 
 					else 
 					{
@@ -294,7 +299,6 @@ BallSpatialInfo Ball::CalculatePrediction(bool debug)
 					fabs(nextPos.coords[1]) < goalHalfWidth + ballRadius + postRadius) 
 			{
 				Vector3 normal;
-
 				if (nextPos.coords[0] < 0)
 				{
 					// left side of pitch
@@ -341,7 +345,6 @@ BallSpatialInfo Ball::CalculatePrediction(bool debug)
 			bool betweenGoalWidth = fabs(nextPos.coords[1]) < goalHalfWidth - 0.11f;
 			bool asideGoalWidth = fabs(nextPos.coords[1]) > goalHalfWidth + 0.11f;
 
-
 			// side netting
 			if (( ballIsInGoal && !betweenGoalWidth && behindBackline)) 
 			{
@@ -381,8 +384,9 @@ BallSpatialInfo Ball::CalculatePrediction(bool debug)
 //					 (nextPos.coords[2] < 2.5 + 0.11 && !ballIsInGoal) todo disabled: too hard to code :p */) &&
 //					fabs(nextPos.coords[0]) > pitchHalfW) {
 
-			if (( ballIsInGoal && !belowGoalHeight && behindBackline )) 
-			{ // todo: from above. so hard to code. wow.
+			if ( ballIsInGoal && !belowGoalHeight && behindBackline ) 
+			{ 
+				// todo: from above. so hard to code. wow.
 				float netDist;
 				netDist = fabs(fabs(nextPos.coords[2]) - goalHeight);
 				netDist = clamp(netDist, 0, 1);
@@ -506,7 +510,11 @@ BallSpatialInfo Ball::CalculatePrediction(bool debug)
 				//if (predictTime_ms == 2000) timeStep = 0.04f; can't go above 0.01f, would leave open spaces in array
 			}
 
-			predictions[predictTime_ms / 10] = nextPos;
+			int index = predictTime_ms / 10;
+			predictions[index] = nextPos;
+			// if(debug){
+			// 	DebugLog("[" + to_string(index) +"]\t\t" + to_string(nextPos) + "\t\t" + to_string(momentumPredict) + "\t\t" + to_string(predictTime_ms));
+			// }
 		}
 
 		if (predictTime_ms == 10)
@@ -531,7 +539,8 @@ Vector3 Ball::GetAveragePosition(unsigned int duration_ms) const
 	{
 		averageVec += *iter;
 		total++;
-		if (total * 10 > duration_ms) break;
+		if (total * 10 > duration_ms) 
+			break;
 		iter++;
 	}
 	if (total > 0) 
@@ -543,7 +552,8 @@ Vector3 Ball::GetAveragePosition(unsigned int duration_ms) const
 void Ball::TriggerBallTouchSound(float gain) 
 {
 	float finalGain = gain * 0.6f * GetConfiguration()->GetReal("audio_volume", 0.5f);
-	if (finalGain > 0.01f) {
+	if (finalGain > 0.01f) 
+	{
 		sound->SetPitch(0.9f + random(0.0f, 0.2f));
 		sound->SetGain(finalGain);
 		sound->Poke(e_SystemType_Audio);
@@ -565,7 +575,7 @@ void Ball::Process()
 	rotation_ms = spatialInfo.rotation_ms;
 
 	positionBuffer = Predict(10);
-	// Log(e_Notice, "Ball", "Ball", "Predict(90) =" + vec_string(positionBuffer));
+	// Log(e_Notice, "Ball", "Ball", "Predict(90) =" + to_string(positionBuffer));
 	orientationBuffer = orientPrediction;
 
 	ballPosHistory.push_back(positionBuffer);
@@ -587,13 +597,13 @@ void Ball::PreparePutBuffers(unsigned long snapshotTime_ms)
 void Ball::FetchPutBuffers(unsigned long putTime_ms) 
 {
 	fetchedbuf_positionBuffer = buf_positionBuffer.GetValue(putTime_ms);
-	// Log(e_Notice, "Ball", "Ball", "fetch= " + vec_string(fetchedbuf_positionBuffer));
+	// Log(e_Notice, "Ball", "Ball", "fetch= " + to_string(fetchedbuf_positionBuffer));
 	fetchedbuf_orientationBuffer = buf_orientationBuffer.GetValue(putTime_ms);
 }
 
 void Ball::Put() 
 {
-	// Log(e_Notice, "Ball", "Ball", "SetPosition= " + vec_string(fetchedbuf_positionBuffer));
+	// Log(e_Notice, "Ball", "Ball", "SetPosition= " + to_string(fetchedbuf_positionBuffer));
 	ball->SetPosition(fetchedbuf_positionBuffer, false);
 	ball->SetRotation(fetchedbuf_orientationBuffer, false);
 }

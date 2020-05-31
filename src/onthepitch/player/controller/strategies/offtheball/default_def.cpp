@@ -4,15 +4,17 @@
 
 #include "default_def.hpp"
 
-DefaultDefenseStrategy::DefaultDefenseStrategy(ElizaController *controller) : Strategy(controller) {
+DefaultDefenseStrategy::DefaultDefenseStrategy(ElizaController *controller) : Strategy(controller) 
+{
 	name = "default defense";
 }
 
-DefaultDefenseStrategy::~DefaultDefenseStrategy() {
+DefaultDefenseStrategy::~DefaultDefenseStrategy() 
+{
 }
 
-void DefaultDefenseStrategy::RequestInput(const MentalImage *mentalImage, Vector3 &direction, float &velocity) {
-
+void DefaultDefenseStrategy::RequestInput(const MentalImage *mentalImage, Vector3 &direction, float &velocity) 
+{
 	bool offensiveComponents = true;
 	bool defensiveComponents = true;
 	bool laziness = true;
@@ -23,15 +25,16 @@ void DefaultDefenseStrategy::RequestInput(const MentalImage *mentalImage, Vector
 	float staticPositionBias = curve(1.0f * actionDistance, 1.0f); // lower values = swap position with other players' formation positions more easily
 	Vector3 desiredPosition = desiredPosition_static * staticPositionBias + desiredPosition_dynamic * (1.0f - staticPositionBias);
 
-	if (offensiveComponents) {
+	if (offensiveComponents) 
+	{
 		// support position
 		float attackBias = NormalizedClamp((controller->GetFadingTeamPossessionAmount() - 0.5f) * 1.0f, 0.2f, 0.9f);
 		Vector3 supportPosition = controller->GetSupportPosition_ForceField(mentalImage, desiredPosition);
 		desiredPosition = desiredPosition * (1.0f - attackBias) + supportPosition * attackBias;
 	}
 
-	if (defensiveComponents) {
-
+	if (defensiveComponents) 
+	{
 		float mindset = AI_GetMindSet(CastPlayer()->GetDynamicFormationEntry().role);
 		controller->AddDefensiveComponent(desiredPosition, pow(clamp(1.9f - mindset - controller->GetFadingTeamPossessionAmount(), 0.0f, 1.0f), 0.7f));
 
@@ -43,7 +46,8 @@ void DefaultDefenseStrategy::RequestInput(const MentalImage *mentalImage, Vector
 	float desiredVelocity = (desiredPosition - player->GetPosition()).GetLength() * distanceToVelocityMultiplier;
 
 	// laziness
-	if (laziness) desiredVelocity = controller->GetLazyVelocity(desiredVelocity);
+	if (laziness) 
+		desiredVelocity = controller->GetLazyVelocity(desiredVelocity);
 
 	desiredVelocity = clamp(desiredVelocity, 0, sprintVelocity);
 

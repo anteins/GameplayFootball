@@ -43,6 +43,7 @@ CameraPage::CameraPage(Gui2WindowManager *windowManager, const Gui2PageData &pag
 	GetGameTask()->GetMatch()->GetCameraParams(zoom, height, fov, angleFactor);
 
 	sliderZoom->SetValue(zoom);
+	sliderZoom->SetValue(-0.5);
 	sliderHeight->SetValue(height);
 	sliderFOV->SetValue(fov);
 	sliderAngleFactor->SetValue(angleFactor);
@@ -50,15 +51,18 @@ CameraPage::CameraPage(Gui2WindowManager *windowManager, const Gui2PageData &pag
 	this->Show();
 }
 
-CameraPage::~CameraPage() {
+CameraPage::~CameraPage() 
+{
 }
 
-void CameraPage::OnClose() {
+void CameraPage::OnClose() 
+{
 	if (Verbose()) printf("saving camera settings\n");
 	GetConfiguration()->SaveFile(GetConfigFilename());
 }
 
-void CameraPage::UpdateCamera() {
+void CameraPage::UpdateCamera() 
+{
 	GetConfiguration()->Set("camera_zoom", sliderZoom->GetValue());
 	GetConfiguration()->Set("camera_height", sliderHeight->GetValue());
 	GetConfiguration()->Set("camera_fov", sliderFOV->GetValue());

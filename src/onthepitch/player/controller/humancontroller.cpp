@@ -106,8 +106,8 @@ void HumanController::RequestCommand(PlayerCommandQueue &commandQueue)
 			// action button released!
 
 			// force set piece methods
-			if (match->IsInSetPiece() && team->GetController()->GetPieceTaker() == player && team->GetController()->GetSetPieceType() == e_SetPiece_KickOff) {
-
+			if (match->IsInSetPiece() && team->GetController()->GetPieceTaker() == player && team->GetController()->GetSetPieceType() == e_SetPiece_KickOff) 
+			{
 				PlayerCommand command;
 
 				command.desiredFunctionType = e_FunctionType_ShortPass;
@@ -293,6 +293,7 @@ void HumanController::RequestCommand(PlayerCommandQueue &commandQueue)
 		forceMagnet = true;
 		extraHaste = true;
 	}
+
 	_MovementCommand(commandQueue, forceMagnet, extraHaste);
 
 	if (commandQueue.size() > 0) 
@@ -336,7 +337,7 @@ void HumanController::Process()
 	_GetHidInput(currentDirection, dud);
 	radian angle = fabs(currentDirection.GetAngle2D(previousDirection));
 	previousDirection = currentDirection;
-	// DebugLog(*CastPlayer(), "HumanController::Process -- currentDirection= " + vec_string(currentDirection));
+	// DebugLog(*CastPlayer(), "HumanController::Process -- currentDirection= " + to_string(currentDirection));
 	// only set steadydirection if angle is small (= human probably reaching his intended direction)
 	// or very large (= maybe the stick has been in deadzone space; humans can't move this fast)
 	if (enableSteadyDirectionSystem) 

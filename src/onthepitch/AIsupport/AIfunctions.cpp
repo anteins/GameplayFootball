@@ -19,12 +19,12 @@
 // todo: do we need "match" stuff into MentalImage? especially GetPlayer, at the moment of writing that's the only method used here, so we could
 // get rid of the match pointers.
 
-
 // convert formation position to formation position based on ball position
 // deprecated
-Vector3 AI_GetAdaptedInitialPos(Match *match, const Vector3 &initialPosition, Vector3 focusPoint, float ballMagnetDistance, float ballMagnetDistancePow) {
-
-	if (focusPoint.coords[2] == -100.0) focusPoint = match->GetBall()->Predict(100).Get2D();
+Vector3 AI_GetAdaptedInitialPos(Match *match, const Vector3 &initialPosition, Vector3 focusPoint, float ballMagnetDistance, float ballMagnetDistancePow) 
+{
+	if (focusPoint.coords[2] == -100.0) 
+		focusPoint = match->GetBall()->Predict(100).Get2D();
 	Vector3 scaledFocusPoint = focusPoint;
 
 	float width = 0.8;
@@ -49,26 +49,32 @@ Vector3 AI_GetAdaptedInitialPos(Match *match, const Vector3 &initialPosition, Ve
 	Vector3 ballMagnetPos = focusPoint;
 	Vector3 ballMagnetOffset;
 	float ballDistance = (ballMagnetPos - targetPos).GetLength();
-	if (ballDistance < ballMagnetDistance) ballMagnetOffset = (ballMagnetPos - targetPos) * pow(((ballMagnetDistance - ballDistance) / ballMagnetDistance), ballMagnetDistancePow);
+	if (ballDistance < ballMagnetDistance) 
+		ballMagnetOffset = (ballMagnetPos - targetPos) * pow(((ballMagnetDistance - ballDistance) / ballMagnetDistance), ballMagnetDistancePow);
 	targetPos += ballMagnetOffset;
 
 	return targetPos;
 }
 
-Vector3 AI_GetAdaptedFormationPosition(Match *match, Player *player, float backXBound, float frontXBound, float lowYBound, float highYBound, float xFocus, float xFocusStrength, float yFocus, float yFocusStrength, const Vector3 &microFocus, float microFocusStrength, float midfieldFocus, float midfieldFocusStrength, bool useDynamicFormationPosition) {
+Vector3 AI_GetAdaptedFormationPosition(Match *match, Player *player, float backXBound, float frontXBound, float lowYBound, float highYBound, float xFocus, float xFocusStrength, float yFocus, float yFocusStrength, const Vector3 &microFocus, float microFocusStrength, float midfieldFocus, float midfieldFocusStrength, bool useDynamicFormationPosition) 
+{
 	Team *team = player->GetTeam();
 	int side = team->GetSide();
 
 	Vector3 position;
 
-	if (useDynamicFormationPosition) {
+	if (useDynamicFormationPosition) 
+	{
 		position = player->GetDynamicFormationEntry().position;
-	} else {
+	} 
+	else 
+	{
 		position = player->GetFormationEntry().position;
 	}
 
 	// stretch midfield into defending or attack position
-	if (midfieldFocusStrength > 0.0f) {
+	if (midfieldFocusStrength > 0.0f) 
+	{
 		float midfieldPositionFactor = midfieldFocus * 2.0f - 1.0f; // -1 .. 1
 
 		// only for midfielders
@@ -88,7 +94,8 @@ Vector3 AI_GetAdaptedFormationPosition(Match *match, Player *player, float backX
 
 	Vector3 purePosition = position;
 
-	if (xFocusStrength > 0.0f) {
+	if (xFocusStrength > 0.0f) 
+	{
 		float bias = 1.0f - clamp( fabs(xFocus - position.coords[0]) / fabs(backXBound - frontXBound) , 0.0f, 1.0f);
 		bias = -cos(bias * pi) * 0.5f + 0.5f;
 		bias = pow(bias, 0.8);
@@ -96,7 +103,8 @@ Vector3 AI_GetAdaptedFormationPosition(Match *match, Player *player, float backX
 		position.coords[0] = position.coords[0] * (1.0f - bias) + xFocus * bias;
 	}
 
-	if (yFocusStrength > 0.0f) {
+	if (yFocusStrength > 0.0f) 
+	{
 		float distance = clamp( fabs(yFocus - position.coords[1]) / fabs(highYBound - lowYBound) , 0.0f, 1.0f);
 
 		float bias = 1.0f - distance;
@@ -107,8 +115,8 @@ Vector3 AI_GetAdaptedFormationPosition(Match *match, Player *player, float backX
 	}
 
 	// microfocus
-	if (microFocusStrength > 0.0f) {
-
+	if (microFocusStrength > 0.0f) 
+	{
 		float homogeneousYInfluenceBias = 0.2f; // 1.0f == act as if everybody is on the same Y position (so, as if we're in 1D, with only X)
 		float homogeneousYPositionBias = 0.4f; // 1.0f == don't influence player's resulting Y position (so, as if we're in 1D, with only X)
 
@@ -120,7 +128,8 @@ Vector3 AI_GetAdaptedFormationPosition(Match *match, Player *player, float backX
 		float dist = distStatic;// * 0.3f + distDynamic * 0.7f;
 		//dist = std::min(dist, 0.7f); // always some microfocus (exp)
 
-		if (dist < 1.0f) {
+		if (dist < 1.0f) 
+		{
 			/*
 			// wolfram alpha: (sin((x + 0.5) * pi) * 0.5 + 0.5) * 0.7 + (sin((x - 0.25) * 2.0 * pi) * 0.5 + 0.5) * 0.3 | from x = 0 to 1
 			float microFocusBias1 = sin((dist + 0.5f) * pi) * 0.5f + 0.5f; // -\_
@@ -167,7 +176,8 @@ Vector3 AI_GetAdaptedFormationPosition(Match *match, Player *player, float backX
 	return position;
 }
 
-float AI_CalculatePassingOdds(Match *match, const Vector3 &origin, const Vector3 &target, const std::vector<PlayerImage> &opponentPlayerImages) {
+float AI_CalculatePassingOdds(Match *match, const Vector3 &origin, const Vector3 &target, const std::vector<PlayerImage> &opponentPlayerImages) 
+{
 	float currentOdds = 1.0;
 
 	// draw imaginary line between this and target player
@@ -176,17 +186,17 @@ float AI_CalculatePassingOdds(Match *match, const Vector3 &origin, const Vector3
 
 	Vector3 step = (target - origin) * (1.0 / (float)checkCount) * 0.96; // * 0.96: we don't mind players standing behind target that much anyway
 
-	for (int i = 1; i < checkCount + 1; i++) {
-
+	for (int i = 1; i < checkCount + 1; i++) 
+	{
 		Vector3 ballPos = origin + step * i;
-
 		float currentDistance = i * (targetDistance / (float)checkCount);
 		float maxOpponentDistance = 0.5 + currentDistance * 0.25; // at this distance, opponents start being a threat
-
-		for (int opp = 0; opp < (signed int)opponentPlayerImages.size(); opp++) {
+		for (int opp = 0; opp < (signed int)opponentPlayerImages.size(); opp++) 
+		{
 			float opponentDistance = (opponentPlayerImages.at(opp).position - ballPos).GetLength();
 			float odds = clamp(opponentDistance, 0, maxOpponentDistance) / maxOpponentDistance;
-			if (odds < currentOdds) currentOdds = odds;
+			if (odds < currentOdds) 
+				currentOdds = odds;
 		}
 	}
 
@@ -195,8 +205,8 @@ float AI_CalculatePassingOdds(Match *match, const Vector3 &origin, const Vector3
 	return currentOdds;
 }
 
-float AI_CalculatePassingOdds(Match *match, PlayerImage thisPlayerImage, PlayerImage targetPlayerImage, const std::vector<PlayerImage> &opponentPlayerImages) {
-
+float AI_CalculatePassingOdds(Match *match, PlayerImage thisPlayerImage, PlayerImage targetPlayerImage, const std::vector<PlayerImage> &opponentPlayerImages) 
+{
 	// player position predictions
 	thisPlayerImage.position = thisPlayerImage.position + thisPlayerImage.directionVec * thisPlayerImage.velocity * 0.1;
 	targetPlayerImage.position = targetPlayerImage.position + targetPlayerImage.directionVec * targetPlayerImage.velocity * 0.5; // situation in half a second
@@ -206,8 +216,8 @@ float AI_CalculatePassingOdds(Match *match, PlayerImage thisPlayerImage, PlayerI
 	return currentOdds;
 }
 
-void AI_GetPassRatings(Match *match, int thisPlayerID, const MentalImage *mentalImage, float opportunism, PassRatings &passRatings) {
-
+void AI_GetPassRatings(Match *match, int thisPlayerID, const MentalImage *mentalImage, float opportunism, PassRatings &passRatings) 
+{
 	int teamID = match->GetPlayer(thisPlayerID)->GetTeamID();
 
 	PlayerImage thisPlayerImage = mentalImage->GetPlayerImage(thisPlayerID);
@@ -217,14 +227,15 @@ void AI_GetPassRatings(Match *match, int thisPlayerID, const MentalImage *mental
 
 	std::vector<PlayerImage> opponentPlayerImages;
 	mentalImage->GetTeamPlayerImages(abs(teamID - 1), -1, opponentPlayerImages);
-	for (int i = 0; i < (signed int)opponentPlayerImages.size(); i++) {
+	for (int i = 0; i < (signed int)opponentPlayerImages.size(); i++) 
+	{
 		opponentPlayerImages.at(i).position = opponentPlayerImages.at(i).position + opponentPlayerImages.at(i).directionVec * opponentPlayerImages.at(i).velocity * 0.3; // situation in half a second
 	}
 
 	signed int side = match->GetPlayer(thisPlayerID)->GetTeam()->GetSide();
 
-	for (int i = 0; i < (signed int)playerImages.size(); i++) {
-
+	for (int i = 0; i < (signed int)playerImages.size(); i++) 
+	{
 		PlayerImage targetPlayerImage = mentalImage->GetPlayerImage(playerImages.at(i).playerID);
 
 		float bodyDirPenalty = thisPlayerImage.directionVec.GetDotProduct((targetPlayerImage.position - thisPlayerImage.position).GetNormalized(Vector3(side, 0, 0)));
@@ -252,8 +263,8 @@ void AI_GetPassRatings(Match *match, int thisPlayerID, const MentalImage *mental
 	std::sort(passRatings.begin(), passRatings.end());
 }
 
-float AI_GetSituationRating(Match *match, int thisPlayerID, const MentalImage *mentalImage) {
-
+float AI_GetSituationRating(Match *match, int thisPlayerID, const MentalImage *mentalImage) 
+{
 	float currentSituation = 1.0;
 	float safeDistance = 8.0; // bigger == safer
 
@@ -264,20 +275,24 @@ float AI_GetSituationRating(Match *match, int thisPlayerID, const MentalImage *m
 
 	// player position predictions
 	thisPlayerImage.position = thisPlayerImage.position + thisPlayerImage.directionVec * thisPlayerImage.velocity * 0.5; // situation in half a second
-	for (int i = 0; i < (signed int)opponentPlayerImages.size(); i++) {
+	for (int i = 0; i < (signed int)opponentPlayerImages.size(); i++) 
+	{
 		opponentPlayerImages.at(i).position = opponentPlayerImages.at(i).position + opponentPlayerImages.at(i).directionVec * opponentPlayerImages.at(i).velocity * 0.5; // situation in half a second
 		float situation = clamp((opponentPlayerImages.at(i).position - thisPlayerImage.position).GetLength(), 0, safeDistance) / safeDistance;
 
 		situation = pow(situation, 0.5);
 
-		if (situation < currentSituation) currentSituation = situation;
+		if (situation < currentSituation) 
+			currentSituation = situation;
 	}
 
 	// penalty for getting out of bounds
 	float penalty = 0;
 	Vector3 position = thisPlayerImage.position;
-	if (fabs(position.coords[0] > 50)) penalty += (fabs(position.coords[0]) - 50);
-	if (fabs(position.coords[1] > 32)) penalty += (fabs(position.coords[1]) - 32);
+	if (fabs(position.coords[0] > 50)) 
+		penalty += (fabs(position.coords[0]) - 50);
+	if (fabs(position.coords[1] > 32)) 
+		penalty += (fabs(position.coords[1]) - 32);
 	currentSituation -= penalty;
 
 	currentSituation = clamp(currentSituation, 0.0, 1.0);
@@ -297,27 +312,27 @@ float AI_CalculateFreeSpace(Match *match, const MentalImage *mentalImage, int te
 	mentalImage->GetTeamPlayerImages(abs(teamID - 1), -1, opponentPlayerImages);
 
 	// player position predictions
-	for (int i = 0; i < (signed int)opponentPlayerImages.size(); i++) {
-		if (ignoreKeeper == false || opponentPlayerImages.at(i).dynamicFormationEntry.role != e_PlayerRole_GK) {
-
+	for (int i = 0; i < (signed int)opponentPlayerImages.size(); i++) 
+	{
+		if (ignoreKeeper == false || opponentPlayerImages.at(i).dynamicFormationEntry.role != e_PlayerRole_GK) 
+		{
 			// resulting opp position
 			opponentPlayerImages.at(i).position = opponentPlayerImages.at(i).position + opponentPlayerImages.at(i).movement * 0.2f; // slowness
 			Vector3 toFocusMovement = (focusPos - opponentPlayerImages.at(i).position).GetNormalized(0) * sprintVelocity * clamp(futureTime_sec - 0.2f, 0.0f, 1000.0f);
-			if (toFocusMovement.GetLength() > (focusPos - opponentPlayerImages.at(i).position).GetLength()) toFocusMovement = focusPos - opponentPlayerImages.at(i).position;
+			if (toFocusMovement.GetLength() > (focusPos - opponentPlayerImages.at(i).position).GetLength()) 
+				toFocusMovement = focusPos - opponentPlayerImages.at(i).position;
 			opponentPlayerImages.at(i).position += toFocusMovement;
 
 			float situation = 1.0f - clamp((opponentPlayerImages.at(i).position - focusPos).GetLength(), 0, safeDistance) / safeDistance;
-
 			currentSituation += situation;
-
 		}
 	}
 
 	return 1.0f - NormalizedClamp(currentSituation, 0.0f, 2.5f);
 }
 
-float AI_GetOffsideLine(Match *match, const MentalImage *mentalImage, int teamID, unsigned int futureSim_ms) {
-
+float AI_GetOffsideLine(Match *match, const MentalImage *mentalImage, int teamID, unsigned int futureSim_ms) 
+{
 	signed int side = match->GetTeam(teamID)->GetSide();
 
 	std::vector<PlayerImage> opponentPlayerImages;
@@ -326,28 +341,33 @@ float AI_GetOffsideLine(Match *match, const MentalImage *mentalImage, int teamID
 	int dudDeepestOpponent = 0;
 	Vector3 deepestOpponentPosition;
 
-	for (int i = 0; i < (signed int)opponentPlayerImages.size(); i++) {
-
+	for (int i = 0; i < (signed int)opponentPlayerImages.size(); i++) 
+	{
 		opponentPlayerImages.at(i).position.coords[0] += opponentPlayerImages.at(i).movement.coords[0] * futureSim_ms * 0.001f;
 
 		// for offside
-		if (opponentPlayerImages.at(i).position.coords[0] * side > opponentPlayerImages.at(dudDeepestOpponent).position.coords[0] * side) {
+		if (opponentPlayerImages.at(i).position.coords[0] * side > opponentPlayerImages.at(dudDeepestOpponent).position.coords[0] * side) 
+		{
 			dudDeepestOpponent = i;
 		}
 	}
 
 	// offside: we are actually looking for the one-but-deepest opponent (association football rule! EAT THAT, PES6!! :P)
-	for (int i = 0; i < (signed int)opponentPlayerImages.size(); i++) {
-		if (opponentPlayerImages.at(i).position.coords[0] * side > deepestOpponentPosition.coords[0] * side && i != dudDeepestOpponent) {
+	for (int i = 0; i < (signed int)opponentPlayerImages.size(); i++) 
+	{
+		if (opponentPlayerImages.at(i).position.coords[0] * side > deepestOpponentPosition.coords[0] * side && i != dudDeepestOpponent) 
+		{
 			deepestOpponentPosition = opponentPlayerImages.at(i).position;
 		}
 	}
 
 	float offsideLine = deepestOpponentPosition.coords[0];
-	if (mentalImage->GetBallPrediction(0).coords[0] * side > offsideLine * side) {
+	if (mentalImage->GetBallPrediction(0).coords[0] * side > offsideLine * side) 
+	{
 		offsideLine = mentalImage->GetBallPrediction(0).coords[0];
 	}
-	if (offsideLine * side < 0) offsideLine = 0.01 * -side;
+	if (offsideLine * side < 0) 
+		offsideLine = 0.01 * -side;
 	offsideLine = clamp(offsideLine, -pitchHalfW, pitchHalfW);
 
 //	if (teamID == 0) SetRedDebugPilon(Vector3(offsideLine, -20, 0));
@@ -357,12 +377,13 @@ float AI_GetOffsideLine(Match *match, const MentalImage *mentalImage, int teamID
 	return offsideLine;
 }
 
-float veloExpFactor(float velo) {
+float veloExpFactor(float velo) 
+{
 	return pow(clamp(velo / sprintVelocity, 0.0f, 1.0f), 2.5f) * 3.0f;
 }
 
-void AI_GetBestDribbleMovement(Match *match, int thisPlayerID, const MentalImage *mentalImage, Vector3 &desiredDirection, float &desiredVelocity, const TeamTactics &teamTactics) {
-
+void AI_GetBestDribbleMovement(Match *match, int thisPlayerID, const MentalImage *mentalImage, Vector3 &desiredDirection, float &desiredVelocity, const TeamTactics &teamTactics) 
+{
 	Player *player = match->GetPlayer(thisPlayerID);
 	Vector3 myPos = player->GetPosition();
 	Vector3 myMov = player->GetMovement();
@@ -381,7 +402,8 @@ void AI_GetBestDribbleMovement(Match *match, int thisPlayerID, const MentalImage
 
 	std::vector<Player*> opponents;
 	AI_GetClosestPlayers(match->GetTeam(abs(team->GetID() - 1)), myPos, false, opponents, 5);
-	for (unsigned int i = 0; i < opponents.size(); i++) {
+	for (unsigned int i = 0; i < opponents.size(); i++) 
+	{
 		opponentPlayerImages.push_back(mentalImage->GetPlayerImage(opponents.at(i)->GetID()));
 	}
 
@@ -390,13 +412,10 @@ void AI_GetBestDribbleMovement(Match *match, int thisPlayerID, const MentalImage
 	centerModifierInv *= 0.5f; // stop going to the sides! wtf, todo, why does it prefer the sideline so much (probably because of no opponents :P)
 	Vector3 oppGoalPos = Vector3(-side * pitchHalfW, myPos.coords[1] * (1.0f - teamTactics.userProperties.GetReal("dribble_centermagnet", 0.5f)) * centerModifierInv, 0);
 
-
 	std::vector<ForceSpot> forceField;
-
-	for (unsigned int i = 0; i < opponentPlayerImages.size(); i++) {
-
+	for (unsigned int i = 0; i < opponentPlayerImages.size(); i++) 
+	{
 		const PlayerImage &oppImg = opponentPlayerImages.at(i);
-
 		ForceSpot spot;
 		Vector3 oppPos = oppImg.position + oppImg.movement * future_sec;
 		spot.origin = oppPos;
@@ -406,8 +425,8 @@ void AI_GetBestDribbleMovement(Match *match, int thisPlayerID, const MentalImage
 		spot.scale = 10.0f;//16.0f;
 		spot.exp = 1.0f;//0.7f;
 		forceField.push_back(spot);
-
-		if (GetDebugMode() == e_DebugMode_AI && team->GetID() == 0) {
+		if (GetDebugMode() == e_DebugMode_AI && team->GetID() == 0) 
+		{
 			int scrX, scrY;
 			GetDebugOverlayCoord(match, spot.origin, scrX, scrY);
 			//GetDebugOverlay()->DrawLine(line, color, 240);
@@ -455,34 +474,42 @@ void AI_GetBestDribbleMovement(Match *match, int thisPlayerID, const MentalImage
 	desiredVelocity = RangeVelocity(desiredVelocity);
 }
 
-Vector3 AI_GetForceFieldMovement(const std::vector<ForceSpot> &forceField, const Vector3 &currentPos, float attractorDampingDistance) {
-
+Vector3 AI_GetForceFieldMovement(const std::vector<ForceSpot> &forceField, const Vector3 &currentPos, float attractorDampingDistance) 
+{
 	// attractorDampingDistance: from this distance to attractor, dampen influence so we won't overshoot target
-
 	Vector3 cumulVec;
 	float cumulForce = 0.0f;
 
-	for (unsigned int i = 0; i < forceField.size(); i++) {
-
+	for (unsigned int i = 0; i < forceField.size(); i++) 
+	{
 		const ForceSpot &forceSpot = forceField.at(i);
 
 		float distance, intensity;
 
 		distance = (forceSpot.origin - currentPos).GetLength();
-		if (forceSpot.decayType == e_DecayType_Constant) {
+		if (forceSpot.decayType == e_DecayType_Constant) 
+		{
 			intensity = 1.0f;
-		} else {
+		} 
+		else 
+		{
 			intensity = clamp(1.0f - distance / forceSpot.scale, 0.0f, 1.0f);
-			if (forceSpot.exp != 1.0f) intensity = pow(intensity, forceSpot.exp);
+			if (forceSpot.exp != 1.0f) 
+				intensity = pow(intensity, forceSpot.exp);
 		}
-		if (intensity > 0.0f) {
+		if (intensity > 0.0f) 
+		{
 			Vector3 relativeOrigin = forceSpot.origin - currentPos;
 			relativeOrigin.Normalize(0);
-			if (forceSpot.magnetType == e_MagnetType_Repel) {
+			if (forceSpot.magnetType == e_MagnetType_Repel) 
+			{
 				relativeOrigin = -relativeOrigin;//currentPos - forceSpot.origin;
-			} else {
+			} 
+			else 
+			{
 				// attractors need damping
-				if (distance < attractorDampingDistance) relativeOrigin *= distance / attractorDampingDistance;
+				if (distance < attractorDampingDistance) 
+					relativeOrigin *= distance / attractorDampingDistance;
 			}
 
 			float force = forceSpot.power * intensity;
@@ -493,15 +520,19 @@ Vector3 AI_GetForceFieldMovement(const std::vector<ForceSpot> &forceField, const
 
 	}
 
-	if (cumulForce == 0.0f) return 0; else return (cumulVec / cumulForce) * sprintVelocity;
+	if (cumulForce == 0.0f) 
+		return 0; 
+	else 
+		return (cumulVec / cumulForce) * sprintVelocity;
 }
 
-TimeNeeded AI_GetTimeNeededForDistance_ms(const Vector3 &playerPos, const Vector3 &playerMovement, const Vector3 &targetPos, float maxVelocity, bool precise, int maxTime_ms, bool debug) {
-
+TimeNeeded AI_GetTimeNeededForDistance_ms(const Vector3 &playerPos, const Vector3 &playerMovement, const Vector3 &targetPos, float maxVelocity, bool precise, int maxTime_ms, bool debug) 
+{
 	TimeNeeded result;
 
 	float optimizeDist = 16.0f;
-	if (precise) optimizeDist = 48.0f;
+	if (precise) 
+		optimizeDist = 48.0f;
 
 	float initialDist = (playerPos - targetPos).GetLength();
 	unsigned int defaultOptimizedTime_ms = int(round((targetPos - (playerPos + playerMovement * 0.2f)).GetLength() / (maxVelocity * 0.75f) * 1000));
@@ -566,10 +597,9 @@ TimeNeeded AI_GetTimeNeededForDistance_ms(const Vector3 &playerPos, const Vector
 				float remainingDistance_optimistic = clamp((targetPos - currentPos).GetLength() - radius_optimistic, 0.0f, 100000.0f);
 				result.optimistic_ms = currentTime_ms + (remainingDistance_optimistic / adaptedMaxVelocity) * 1000;
 			}
-
 			break;
-
-		} else 
+		} 
+		else 
 		{
 			// manual copy: this function is called a lot, so if we use the Vector3::operator*, it's creating a lot of temp vars.
 			// currentMovement = playerMovement * (1.0f - bias);
@@ -600,16 +630,15 @@ TimeNeeded AI_GetTimeNeededForDistance_ms(const Vector3 &playerPos, const Vector
 				result.usual_ms = currentTime_ms;
 				break;
 			}
-
 		}
-
 		currentTime_ms += timeStep_ms;
 	}
 
 	if (maxTime_ms != -1 && currentTime_ms > (unsigned int)maxTime_ms) 
 	{
 		result.usual_ms = std::max(defaultOptimizedTime_ms, (currentTime_ms + 100) * 2);
-		if (!foundOptimisticTime) result.optimistic_ms = result.usual_ms;
+		if (!foundOptimisticTime) 
+			result.optimistic_ms = result.usual_ms;
 		return result;
 	}
 
@@ -646,6 +675,7 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 
 	// quantize input 8- or 16-way in relation to 'ball direction space'
 	Vector3 ballSpaceDirection = (mentalImage->GetBallPrediction(0).Get2D() - mentalImage->GetBallPrediction(1000).Get2D()).GetNormalized(adaptedDesiredDirection);
+
 	radian toBallSpaceAngle = ballSpaceDirection.GetAngle2D();
 	Vector3 adaptedDesiredDirectionBallSpace = adaptedDesiredDirection.GetRotated2D(-toBallSpaceAngle);
 
@@ -664,6 +694,11 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 
 	//printf("ball angle: %f, result angle: %f\n", ballSpaceDirection.GetAngle2D(), adaptedDesiredDirection.GetAngle2D());
 	Vector3 desiredMovement = adaptedDesiredDirection * desiredVelocityFloat;
+
+	// if (player->GetDebug())
+	// {
+	// 	SetBlueDebugPilon(playerPos + adaptedDesiredDirectionBallSpace);
+	// }
 
 /*
 	// only use player desired movement if it's a lot different from perpendicular
@@ -706,14 +741,13 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 		int time_ms;
 	};
 
-	//if (player->GetDebug()) SetBlueDebugPilon(playerPos + desiredMovement);
+	// if (player->GetDebug()) SetBlueDebugPilon(playerPos + desiredMovement);
 	PossibleChoice bestChoice;
-
 	unsigned int startTime_ms = clamp(player->GetTimeNeededToGetToBall_ms(), 40, ballPredictionSize_ms - 10);
 	// we can't start optimized at a later moment, because that would mean we'd aim outside the pitch to start with
 	Vector3 ballPrediction = mentalImage->GetBallPrediction(startTime_ms);
 	if (fabs(ballPrediction.coords[0]) > pitchHalfW - 0.2f ||
-			fabs(ballPrediction.coords[1]) > pitchHalfH - 0.2f) 
+		fabs(ballPrediction.coords[1]) > pitchHalfH - 0.2f) 
 	{
 		startTime_ms = 80;
 	}
@@ -733,7 +767,7 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 		bool forced = false;
 		Vector3 targetPos = mentalImage->GetBallPrediction(time_ms);
 		if (fabs(targetPos.coords[0]) > pitchHalfW - 0.2f ||
-				fabs(targetPos.coords[1]) > pitchHalfH - 0.2f) 
+			fabs(targetPos.coords[1]) > pitchHalfH - 0.2f) 
 		{
 			forced = true;
 		}
@@ -764,9 +798,11 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 			//if (dot >= 0.0f) forced = true; // force <= perpendicular
 			float justInTimeFactor = clamp(player->GetTimeNeededToGetToBall_ms() / (float)time_ms, 0.0f, 1.0f); // lower == more time to spare
 			//if (player->GetDebug()) printf("justInTimeFactor: %f\n", justInTimeFactor);
-			if (justInTimeFactor < 0.35f) forced = true; // takes too long relative to how long it could take
+			if (justInTimeFactor < 0.35f) 
+				forced = true; // takes too long relative to how long it could take
 			//LANCHANGE if (dot > 0.45f) forced = true; // too shallow angle, just go to ball already
-			if (dot > 0.0f) forced = true; // too shallow angle, just go to ball already
+			if (dot > 0.0f) 
+				forced = true; // too shallow angle, just go to ball already
 			//if (fabs(angle) <= 0.21f * pi) forced = true;
 
 			// --- heed desired direction
@@ -837,7 +873,8 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 	//if (distance > 0.25f * sprintVelocity) bestVelocityFloat = clamp(desiredVelocityFloat, bestVelocityFloat, sprintVelocity); // allow premature arrival at target
 	//if (bestVelocityFloat < desiredVelocityFloat && bestVelocityASAP <= desiredVelocityFloat) bestVelocityFloat = bestVelocityASAP;
 	// stick to current velo, to prevent switching back and forth
-	if (bestChoice.time_ms > 250) bestVelocityFloat = bestVelocityFloat * 0.97f + player->GetFloatVelocity() * 0.03f;
+	if (bestChoice.time_ms > 250) 
+		bestVelocityFloat = bestVelocityFloat * 0.97f + player->GetFloatVelocity() * 0.03f;
 
 	// lookat dir
 	Vector3 lookAtBall = (mentalImage->GetBallPrediction(20).Get2D() - playerPos).GetNormalized(adaptedDesiredDirection);
@@ -869,10 +906,11 @@ unsigned int AI_GetToBallMovement(Match *match, const MentalImage *mentalImage, 
 	return bestChoice.time_ms;
 }
 
-unsigned int AI_GetBallControlMovement(const MentalImage *mentalImage, Player *player, const Vector3 &desiredDirection, float desiredVelocityFloat, Vector3 &bestDirection, float &bestVelocityFloat, Vector3 &bestLookAt) {
-
+unsigned int AI_GetBallControlMovement(const MentalImage *mentalImage, Player *player, const Vector3 &desiredDirection, float desiredVelocityFloat, Vector3 &bestDirection, float &bestVelocityFloat, Vector3 &bestLookAt) 
+{
 	unsigned int desiredTimeToBall_ms = 250 + defaultTouchOffset_ms;
 
+	// DebugLog(*player, "[AA] desiredTimeToBall_ms=" + to_string(desiredTimeToBall_ms)); // desiredTimeToBall_ms=300
 	Vector3 toBallMovement = mentalImage->GetBallPrediction(desiredTimeToBall_ms).Get2D() - player->GetPosition();
 	float toBallDistance = toBallMovement.GetLength();
 
@@ -893,11 +931,11 @@ unsigned int AI_GetBallControlMovement(const MentalImage *mentalImage, Player *p
 	bestDirection.Normalize(player->GetDirectionVec());
 	//SetRedDebugPilon(player->GetPosition() + bestDirection * 2.0f);
 
-
 	// look direction
 	Vector3 bestLookDirection = bestDirection;
 
 	float toBallVelocity = toBallDistance * distanceToVelocityMultiplier;
+	// DebugLog(*player, "[AA] toBallDistance=" + to_string(toBallDistance)); // 慢慢接近球，减速
 	bestVelocityFloat = toBallVelocity;
 
 	//bestVelocityFloat = bestVelocityFloat * 0.5f + RangeVelocity(bestVelocityFloat) * 0.5f; // quantization is the root of all happiness
@@ -910,8 +948,10 @@ unsigned int AI_GetBallControlMovement(const MentalImage *mentalImage, Player *p
 	{
 		float clampedDesiredVelocityFloat = clamp(desiredVelocityFloat, bestVelocityFloat, bestVelocityFloat + 8.0f);
 		bestVelocityFloat = clampedDesiredVelocityFloat;
-		if (RangeVelocity(bestVelocityFloat) < bestVelocityFloat) bestVelocityFloat = bestVelocityFloat * 0.9f + RangeVelocity(bestVelocityFloat) * 0.1f;
-		if (RangeVelocity(bestVelocityFloat) > bestVelocityFloat) bestVelocityFloat = bestVelocityFloat * 0.1f + RangeVelocity(bestVelocityFloat) * 0.9f;
+		if (RangeVelocity(bestVelocityFloat) < bestVelocityFloat) 
+			bestVelocityFloat = bestVelocityFloat * 0.9f + RangeVelocity(bestVelocityFloat) * 0.1f;
+		if (RangeVelocity(bestVelocityFloat) > bestVelocityFloat) 
+			bestVelocityFloat = bestVelocityFloat * 0.1f + RangeVelocity(bestVelocityFloat) * 0.9f;
 	}
 
 	bestLookAt = player->GetPosition() + bestLookDirection * 10.0f;
@@ -922,24 +962,29 @@ unsigned int AI_GetBallControlMovement(const MentalImage *mentalImage, Player *p
 bool AI_HasPossession(Ball *ball, Player *player) 
 {
 	Vector3 playerMovement = player->GetMovement();
-
 	// premature optimization ;)
-	if ((player->GetPosition() - ball->Predict(0)).GetLength() > 5.0) return false;
+	if ((player->GetPosition() - ball->Predict(0)).GetLength() > 5.0) 
+		return false;
 
 	Vector3 ballMovement = ball->GetMovement();
-	if (fabs(ball->Predict(0).coords[2]) > 0.5) return false;
-
+	if (fabs(ball->Predict(0).coords[2]) > 0.5) 
+		return false;
 
 	bool distanceOK = true;
 	float radius = 1.0f;
 	Vector3 center = player->GetPosition() + player->GetMovement() * 0.05f + player->GetDirectionVec() * 0.1f;//was: 0.05f
-	if ((ball->Predict(0).Get2D() - center).GetLength() > radius) distanceOK = false;
+	if ((ball->Predict(0).Get2D() - center).GetLength() > radius) 
+		distanceOK = false;
 
 	bool movementOK = true;
 	Vector3 ballMovement3D = (ball->Predict(10) - ball->Predict(0)) * 100.0f;
-	if ((ballMovement3D - playerMovement).GetLength() > 6.0f) movementOK = false;
+	if ((ballMovement3D - playerMovement).GetLength() > 6.0f) 
+		movementOK = false;
 
-	if (distanceOK && movementOK) return true; else return false;
+	if (distanceOK && movementOK) 
+		return true; 
+	else 
+		return false;
 }
 
 float AI_GetTeamPossessionFactor(Match *match, Team *team) 
@@ -960,7 +1005,6 @@ Player *AI_GetClosestPlayer(Team *team, const Vector3 &position, bool onlyAICont
 
 	float closestDistance = 10000;
 	Player *closestPlayer = 0;
-
 	for (unsigned int i = 0; i < players.size(); i++) 
 	{
 		if (players.at(i)->IsActive() && players.at(i) != except) 
@@ -989,7 +1033,6 @@ void AI_GetClosestPlayers(Team *team, const Vector3 &position, bool onlyAIContro
 	Player *closestPlayer = players.at(0);
 
 	//printf("total players: %i\n", players.size());
-
 	for (unsigned int i = 0; i < players.size(); i++) 
 	{
 		if (players.at(i)->IsActive()) 
@@ -1004,7 +1047,6 @@ void AI_GetClosestPlayers(Team *team, const Vector3 &position, bool onlyAIContro
 	}
 
 	//printf("tmp players: %i\n", tmpResult.size());
-
 	std::map<float, Player*>::iterator iter = tmpResult.begin();
 	for (unsigned int i = 0; i < playerCount && iter != tmpResult.end(); i++) 
 	{
@@ -1048,15 +1090,20 @@ Player *AI_GetBestSwitchTargetPlayer(Match *match, Team *team, const Vector3 &de
 	std::vector<Player*> teamPlayers;
 	AI_GetClosestPlayers(team, resultingPosition, true, teamPlayers, 8);
 	std::vector<Player*>::iterator iter = teamPlayers.begin();
-	while (iter != teamPlayers.end()) {
-		if ((*iter)->GetFormationEntry().role == e_PlayerRole_GK) {
+	while (iter != teamPlayers.end()) 
+	{
+		if ((*iter)->GetFormationEntry().role == e_PlayerRole_GK) 
+		{
 			iter = teamPlayers.erase(iter);
-		} else {
+		} 
+		else 
+		{
 			iter++;
 		}
 	}
 
-	if (teamPlayers.size() == 0) return 0;
+	if (teamPlayers.size() == 0) 
+		return 0;
 
 	// in case of defending, we ideally need someone who is closer to our goal than the opponent
 	int bestPlayerIndex = 0; // closest player - sorted first in teamplayers array
@@ -1168,7 +1215,8 @@ void AI_GetPass(Player *player, e_FunctionType passType, const Vector3 &inputDir
 				// rate
 				float distanceRating = pow(NormalizedClamp((targetPos - manualTarget).GetLength(), 0.0f, 70.0f), 0.8f) * 0.8f; // pow() this so small differences matter more - from some point on, it just doesn't really matter that much anymore
 				float angleRating = fabs((targetPos - playerPos).GetNormalized(0).GetAngle2D(inputDirection) / (1.0f * pi)) * 1.0f;
-				if (distanceRating + angleRating < bestRating) {
+				if (distanceRating + angleRating < bestRating) 
+				{
 					bestRating = distanceRating + angleRating;
 					bestTargetPlayer = players.at(i);
 					autoTarget = targetPos;

@@ -71,6 +71,7 @@ AnimCollection::AnimCollection(boost::shared_ptr<Scene3D> scene3D) : scene3D(sce
 	quadrant.position = Vector3(0, 0, 0);
 	quadrants.push_back(quadrant);
 
+	// 30 = 3 x 10 ( velocitys x angles )
 	int id = 1;
 	for (int velocityID = 1; velocityID < 4; velocityID++) 
 	{
@@ -145,28 +146,28 @@ radian GetAngle(int directionID)
 	switch (directionID) 
 	{
 		case 0:
-			angle = 0.0f;
+			angle = 0.0f;			// 0
 			break;
 		case 1:
-			angle = 0.25f * pi;
+			angle = 0.25f * pi;		// 45
 			break;
 		case 2:
 			angle = -0.25f * pi;
 			break;
 		case 3:
-			angle = 0.50f * pi;
+			angle = 0.50f * pi;		// 90
 			break;
 		case 4:
 			angle = -0.50f * pi;
 			break;
 		case 5:
-			angle = 0.75f * pi;
+			angle = 0.75f * pi;		// 135
 			break;
 		case 6:
 			angle = -0.75f * pi;
 			break;
 		case 7:
-			angle = 0.99f * pi;
+			angle = 0.99f * pi;		// 180
 			break;
 		case 8:
 			angle = -0.99f * pi;
@@ -183,42 +184,67 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 	const int frameCount = 25;
 	const float margin = 0.01f;
 
+	int count = 0;
 	for (unsigned int t1 = 0; t1 < templates.size(); t1++) 
 	{
 		for (unsigned int t2 = 0; t2 < templates.size(); t2++) 
 		{
+			count++;
 			Animation *anim1 = templates.at(t1);
 			Animation *anim2 = templates.at(t2);
+			float incomingVelocityT1 = anim1->GetIncomingVelocity();
+			float outgoingVelocityT2 = anim2->GetOutgoingVelocity();
+			radian incomingBodyAngleT1 = anim1->GetIncomingBodyAngle();
+			radian outgoingBodyAngleT2 = anim2->GetOutgoingBodyAngle();
+
+			// DebugLog("====================================== AUTO GEN ======================================");
+			// DebugLog(to_string(count) + " - " + anim1->GetName() + "  " + anim2->GetName());
+			// DebugLog("incomingVelocity " + to_string(incomingVelocityT1));
+			// DebugLog("outgoingVelocity " + to_string(outgoingVelocityT2));
 			for (unsigned int direction = 0; direction < 9; direction++) 
 			{
 				radian angle = GetAngle(direction);
-				float incomingVelocityT1 = anim1->GetIncomingVelocity();
-				float outgoingVelocityT2 = anim2->GetOutgoingVelocity();
-				radian incomingBodyAngleT1 = anim1->GetIncomingBodyAngle();
-				radian outgoingBodyAngleT2 = anim2->GetOutgoingBodyAngle();
-
+				// DebugLog("direction="+to_string(direction));
 				bool legalAnim = true;
-
 				int incomingVeloID = GetVelocityID(FloatToEnumVelocity(incomingVelocityT1));
 				int outgoingVeloID = GetVelocityID(FloatToEnumVelocity(outgoingVelocityT2));
 				float averageVeloFactor = NormalizedClamp(incomingVeloID + outgoingVeloID, 0, 6);
 
 				// max acceleration
 				int veloIDDiff = outgoingVeloID - incomingVeloID;
-				if (veloIDDiff > 1) 
+				if (veloIDDiff > 1)
+				{
+					// DebugLog("! zz  outgoingVeloID=" + enum_string("e_Velocity", outgoingVeloID) + "  incomingVeloID=" + enum_string("e_Velocity", incomingVeloID));
 					legalAnim = false;
+				}
 
 				// max deceleration
 				// use dot product to make sure "running 180 degrees" isn't considered "keeping the same velocity" and therefore legal.
 				float dot = Vector3(0, -1, 0).GetDotProduct(Vector3(0, -1, 0).GetRotated2D(angle)); // todo: this is optimizable (simple angle -> dot)
 				int veloIDDiff_dotted = round(outgoingVeloID * dot - incomingVeloID);
-				if (veloIDDiff_dotted < -3) legalAnim = false;
+				if (veloIDDiff_dotted < -3)
+				{
+					Vector3 tmp = Vector3(0, -1, 0).GetRotated2D(angle);
+					// DebugLog("! aa   Vector3(0, -1, 0).GetRotated2D(angle)=" + to_string(tmp));
+					legalAnim = false;
+				}
 
-				if (incomingVeloID == 3 && outgoingVeloID == 1 && (fabs(outgoingBodyAngleT2) > 0.25f * pi + margin || fabs(angle) > 0.25f * pi + margin)) legalAnim = false; // no sprint to dribble with backwards body angle
+				if (incomingVeloID == 3 && outgoingVeloID == 1 && (fabs(outgoingBodyAngleT2) > 0.25f * pi + margin || fabs(angle) > 0.25f * pi + margin))
+				{
+					// DebugLog("! bb");
+					// no sprint to dribble with backwards body angle
+					legalAnim = false;
+				}
+
 				//if (incomingVeloID == 3 && outgoingVeloID == 0 && fabs(angle) > 0.25f * pi) legalAnim = false; // no sprint to idle with big angle
 
 				// experimental block
-				if (incomingVeloID > 0 && outgoingVeloID > 0 && fabs(angle) > 0.50f * pi + margin) legalAnim = false;
+				if (incomingVeloID > 0 && outgoingVeloID > 0 && fabs(angle) > 0.50f * pi + margin)
+				{
+					// DebugLog("! cc   fabs(angle)=" + to_string(fabs(angle)) + "   margin=" + to_string(margin));
+					legalAnim = false;
+				}
+
 				//if (incomingVeloID > 0 && outgoingVeloID == 0 && fabs(outgoingBodyAngleT2) > 0.50f * pi + margin) legalAnim = false;
 				// if (incomingVeloID == 3 && outgoingVeloID == 2 && (fabs(outgoingBodyAngleT2) > 0.3f * pi || fabs(angle) > 0.25f * pi)) legalAnim = false;
 				//zzif (incomingVeloID == 3 && outgoingVeloID == 0) legalAnim = false;
@@ -227,14 +253,32 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 
 				//if (incomingVeloID + outgoingVeloID > 5 && fabs(angle) > 0.25f * pi) legalAnim = false; // sprint -> sprint
 				//if (incomingVeloID + outgoingVeloID > 4 && fabs(angle) > 0.5f * pi) legalAnim = false; // walk -> sprint && sprint -> walk
-				if (incomingVeloID + outgoingVeloID > 5 && fabs(angle) > 0.25f * pi + margin) legalAnim = false; // sprint -> sprint
-				if (incomingVeloID + outgoingVeloID > 4 && fabs(angle) > 0.25f * pi + margin) legalAnim = false; // walk -> sprint && sprint -> walk
+
+				if (incomingVeloID + outgoingVeloID > 5 && fabs(angle) > 0.25f * pi + margin)
+				{
+					// DebugLog("! dd");
+					// sprint -> sprint
+					legalAnim = false; 
+				}
+
+				if (incomingVeloID + outgoingVeloID > 4 && fabs(angle) > 0.25f * pi + margin)
+				{
+					// DebugLog("! ee");
+					// walk -> sprint && sprint -> walk
+					legalAnim = false; 
+				}
+
 				//if (incomingVeloID + outgoingVeloID > 3 && fabs(angle) > 0.50f * pi + margin) legalAnim = false; // walk -> walk && sprint -> dribble && dribble -> sprint
 				//if (incomingVeloID + outgoingVeloID > 2 && fabs(angle) > 0.75f * pi + margin) legalAnim = false; // dribble -> walk && walk -> dribble
 				//if (incomingVeloID > 0 && outgoingVeloID > 0 && fabs(angle) > 0.5f * pi + margin) legalAnim = false; // dribble -> walk && walk -> dribble
 
 				radian bodyAngleDelta = ModulateIntoRange(-pi, pi, outgoingBodyAngleT2 - incomingBodyAngleT1);
-				if (fabs(angle + bodyAngleDelta) > 1.0f * pi + margin) legalAnim = false; // don't rotate over 180 degrees (we've got an anim for that the shorter away around anyway)
+				if (fabs(angle + bodyAngleDelta) > 1.0f * pi + margin)
+				{
+					// don't rotate over 180 degrees (we've got an anim for that the shorter away around anyway)
+					legalAnim = false; 
+				}
+
 				//if (fabs(angle + bodyAngleDelta) > 0.5f * pi + margin) legalAnim = false; // just don't turn too fast
 
 				//if (fabs(bodyAngleDelta) > 0.9f * pi) legalAnim = false; // body rotation limit: if we allow 180 degrees, the slerp doesn't know whether it should go CW or CCW (seems to be fixed by the ModulateIntoRange above - why?)
@@ -248,17 +292,23 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 				Vector3 totalChangeVec = movementChangeVec + bodyDirChangeVec * 1.0f;
 				if (totalChangeVec.GetLength() > sprintVelocity) legalAnim = false;
 */
-
 				float animSpeedFactor = 1.0f;
 				if (legalAnim == true) 
 				{
 					Animation *gen = new Animation(*templates.at(t1));
-					gen->SetName("autogen [v" + int_to_str(GetVelocityID(FloatToEnumVelocity(incomingVelocityT1))) + " b" + int_to_str(incomingBodyAngleT1 / pi * 180) + "] => [v" + int_to_str(GetVelocityID(FloatToEnumVelocity(outgoingVelocityT2))) + " b" + int_to_str(outgoingBodyAngleT2 / pi * 180) + " a" + int_to_str(angle / pi * 180) + "]");
+
+					std::string autoGenName = "autogen [v" + int_to_str(GetVelocityID(FloatToEnumVelocity(incomingVelocityT1))) 
+						+ " b" + int_to_str(incomingBodyAngleT1 / pi * 180) 
+						+ "] => [v" + int_to_str(GetVelocityID(FloatToEnumVelocity(outgoingVelocityT2))) 
+						+ " b" + int_to_str(outgoingBodyAngleT2 / pi * 180) 
+						+ " a" + int_to_str(angle / pi * 180) + "]";
+					DebugLog(autoGenName + "  (frame: " + to_string(gen->GetFrameCount()) + ")");
+					
+					gen->SetName(autoGenName);
 					gen->SetVariable("priority", "1");
 
 					std::vector<NodeAnimation*> &nodeAnimsT1 = anim1->GetNodeAnimations();
 					std::vector<NodeAnimation*> &nodeAnimsT2 = anim2->GetNodeAnimations();
-
 					for (unsigned int n = 0; n < nodeAnimsT1.size(); n++) 
 					{
 						gen->GetNodeAnimations().at(n)->animation.clear();
@@ -274,22 +324,34 @@ void GenerateAutoAnims(const std::vector<Animation*> &templates, std::vector<Ani
 
 						Vector3 movementChangeMPS = (outgoingMovement - anim1->GetIncomingMovement()) * (100.0f / frameCount);
 
-
 						// COLLECT KEYFRAMES FOR THIS NODEANIM
-
 						std::list<int> keyFrames; // frames at which one of the two anims has a keyframe
 						// first, add all keyframes, even if duplicate
 						std::map<int, KeyFrame>::const_iterator animKeyIter = animationT1.begin();
-						while (animKeyIter != animationT1.end()) { keyFrames.push_back(animKeyIter->first); animKeyIter++; }
+						while (animKeyIter != animationT1.end()) 
+						{ 
+							// if(direction == 0)
+							// 	DebugLog("[T1]push_back= " + to_string(animKeyIter->first));
+							keyFrames.push_back(animKeyIter->first); animKeyIter++; 
+						}
 						animKeyIter = animationT2.begin();
-						while (animKeyIter != animationT2.end()) { keyFrames.push_back(animKeyIter->first); animKeyIter++; }
+						while (animKeyIter != animationT2.end()) 
+						{ 
+							// if(direction == 0)
+							// 	DebugLog("[T2]push_back= " + to_string(animKeyIter->first));
+							keyFrames.push_back(animKeyIter->first); animKeyIter++; 
+						}
+
 						if (n == 0) 
 						{
 							// make sure there's 2 position keyframes close to each other at the start and at the end, so we will have the right ingoing and outgoing velocities
 							keyFrames.push_back(1);
 							keyFrames.push_back(23);
 							//for (int i = 2; i < frameCount - 2; i += 2) keyFrames.push_back(i); // smoother
-							for (int i = 2; i < frameCount - 2; i += 4) keyFrames.push_back(i); // smoother
+							for (int i = 2; i < frameCount - 2; i += 4)
+							{
+								keyFrames.push_back(i); // smoother
+							}
 						}
 						keyFrames.sort();
 						keyFrames.unique(); // delete duplicates
@@ -436,7 +498,6 @@ void AnimCollection::Load(boost::filesystem::path directory)
 		_PrepareAnim(animation, playerNode, bodyParts, nodeMap, false);
 	}
 
-
 	// load all other animations
 	Log(e_Notice, "AnimCollection", "Load", "Parsing animation directory");
 
@@ -573,12 +634,17 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 						float queryVelocityFloat = EnumToFloatVelocity(query.incomingVelocity);
 
 						// treat dribble and walk the same
-						if (FloatToEnumVelocity(animIncomingVelocityFloat) == e_Velocity_Dribble) animIncomingVelocityFloat = walkVelocity;
-						if (FloatToEnumVelocity(animOutgoingVelocityFloat) == e_Velocity_Dribble) animOutgoingVelocityFloat = walkVelocity;
-						if (FloatToEnumVelocity(queryVelocityFloat) == e_Velocity_Dribble) queryVelocityFloat = walkVelocity;
+						if (FloatToEnumVelocity(animIncomingVelocityFloat) == e_Velocity_Dribble) 
+							animIncomingVelocityFloat = walkVelocity;
+						if (FloatToEnumVelocity(animOutgoingVelocityFloat) == e_Velocity_Dribble) 
+							animOutgoingVelocityFloat = walkVelocity;
+						if (FloatToEnumVelocity(queryVelocityFloat) == e_Velocity_Dribble) 
+							queryVelocityFloat = walkVelocity;
 
-						if (animIncomingVelocityFloat > std::max(queryVelocityFloat, animOutgoingVelocityFloat)) selectAnim = false;
-						if (animIncomingVelocityFloat < std::min(queryVelocityFloat, animOutgoingVelocityFloat)) selectAnim = false;
+						if (animIncomingVelocityFloat > std::max(queryVelocityFloat, animOutgoingVelocityFloat)) 
+							selectAnim = false;
+						if (animIncomingVelocityFloat < std::min(queryVelocityFloat, animOutgoingVelocityFloat)) 
+							selectAnim = false;
 					}
 
 				} 
@@ -649,7 +715,6 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 			}
 		}
 */
-
 		// select by RETAIN BALL
 		if (selectAnim) 
 		{
@@ -673,7 +738,6 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 				}
 			}
 		}
-
 
 		// select by INCOMING BODY ANGLE
 		if (selectAnim) 
@@ -844,7 +908,6 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 				selectAnim = false;
 		}
 
-
 		// select by TRIP TYPE
 		if (selectAnim) 
 		{
@@ -896,7 +959,7 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 		} 
 	}
 
-	// NeteaseLog
+	// add by NeteaseLog
 	// if(dataSet.size() > 0)
 	// {
 	// 	DebugLog(player, "======================= CrudeSelection =======================");
@@ -919,21 +982,21 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 	// 		DebugLog(player, "[byOutgoingVelocity]  " + to_string(query.outgoingVelocity));
 	// 	}
 	// 	if (query.byIncomingBodyDirection == true) {
-	// 		DebugLog(player, "[byIncomingBodyDirection]  " + vec_string(query.incomingBodyDirection));
+	// 		DebugLog(player, "[byIncomingBodyDirection]  " + to_string(query.incomingBodyDirection));
 	// 	}
 	// 	if (query.byIncomingBallDirection == true) {
-	// 		DebugLog(player, "[byIncomingBallDirection]  " + vec_string(query.incomingBallDirection));
+	// 		DebugLog(player, "[byIncomingBallDirection]  " + to_string(query.incomingBallDirection));
 	// 	}
 	// 	if (query.byOutgoingBallDirection == true) {
-	// 		DebugLog(player, "[byOutgoingBallDirection]  " + vec_string(query.outgoingBallDirection));
+	// 		DebugLog(player, "[byOutgoingBallDirection]  " + to_string(query.outgoingBallDirection));
 	// 	}
 
 	// 	DataSet::iterator iter = dataSet.begin();
-	// 	DebugLog(player, "selected:");
+	// 	DebugLog(player, "");
 	// 	while (iter != dataSet.end()) 
 	// 	{
 	// 		Animation *anim = this->GetAnim(*iter);
-	// 		// DebugLog(player, "  " + anim->GetName());
+	// 		DebugLog(player, "  " + anim->GetName());
 	// 		// if (player->GetDebug()) 
 	// 		// 	Log(e_Notice, "Humanoid", "Humanoid", "animname: " + to_string(anim->GetName()));
 	// 		// std::string animName = anim->GetName();
@@ -948,16 +1011,18 @@ void AnimCollection::CrudeSelection(DataSet &dataSet, const CrudeSelectionQuery 
 	// 		// 		DebugLog(player, "frame_a= " + to_string(frame_a) + "  frame_b= " + to_string(frame_b));
 	// 		// 		Vector3 pos_a = (++nodeAnimations.at(0)->animation.begin())->second.position;
 	// 		// 		Vector3 pos_b = nodeAnimations.at(0)->animation.begin()->second.position;
-	// 		// 		DebugLog(player, "pos_a= " + vec_string(pos_a) + "  pos_b=" + vec_string(pos_b));
+	// 		// 		DebugLog(player, "pos_a= " + to_string(pos_a) + "  pos_b=" + to_string(pos_b));
 	// 		// 		Vector3 result = (pos_a - pos_b) / (frame_a - frame_b) * 100;
-	// 		// 		DebugLog(player, "result= " + vec_string(result));
+	// 		// 		DebugLog(player, "result= " + to_string(result));
 	// 		// 		DebugLog(player, "result.Length= " + to_string(result.GetLength()));
 	// 		// 	} 
 	// 		// }
 			
 	// 		iter++;
 	// 	}
+	// 	DebugLog(player, "");
 	// }
+	// end by NeteaseLog
 }
 
 int AnimCollection::GetQuadrantID(Animation *animation, const Vector3 &movement, radian angle) const 
@@ -980,13 +1045,20 @@ int AnimCollection::GetQuadrantID(Animation *animation, const Vector3 &movement,
 }
 
 // adds touches around main touch
-int AddExtraTouches(Animation* animation, boost::intrusive_ptr<Node> playerNode, const std::list < boost::intrusive_ptr<Object> > &bodyParts, const std::map < const std::string, boost::intrusive_ptr<Node> > &nodeMap) {
+int AddExtraTouches(Animation* animation, boost::intrusive_ptr<Node> playerNode, const std::list < boost::intrusive_ptr<Object> > &bodyParts, const std::map < const std::string, boost::intrusive_ptr<Node> > &nodeMap) 
+{
 	Vector3 animBallPos;
 	int animTouchFrame = -1;
 	bool isTouch = boost::static_pointer_cast<FootballAnimationExtension>(animation->GetExtension("football"))->GetFirstTouch(animBallPos, animTouchFrame);
 	//printf("touchframe: %i\n", animTouchFrame);
 	if (isTouch) 
 	{
+		// count++;
+		// bool isDebug = count < 500;
+		// if(isDebug){
+		// 	Log(e_Notice, "AnimCollection", "AddExtraTouches", "------------ " + animation->GetName() + "  animBallPos=" + to_string(animBallPos) + "  frame=" + to_string(animTouchFrame));
+		// }
+		
 		//printf("[touchframe: %i(%i); nodeMap size: %i] ", animTouchFrame, animation->GetFrameCount(), nodeMap.size());
 
 		// find out what body part the balltouchpos is closest to
@@ -997,9 +1069,15 @@ int AddExtraTouches(Animation* animation, boost::intrusive_ptr<Node> playerNode,
 		Vector3 toBallVector = Vector3(0);
 		std::list < boost::intrusive_ptr<Object> > ::const_iterator iter = bodyParts.begin();
 
-		while (iter != bodyParts.end()) 
+		int idx = 0;
+		while (iter != bodyParts.end())
 		{
 			float distance = (animBallPos - (*iter)->GetDerivedPosition()).GetLength();
+			// if(isDebug){
+			// 	Log(e_Notice, "AnimCollection", "AddExtraTouches", to_string(idx) + "   " + to_string((*iter)->GetName()) + "   " + to_string(distance));
+			// 	idx++;
+			// }
+			
 			if (distance < closestDistance) 
 			{
 				closestDistance = distance;
@@ -1008,8 +1086,13 @@ int AddExtraTouches(Animation* animation, boost::intrusive_ptr<Node> playerNode,
 			}
 			iter++;
 		}
+		
 		//printf("closest: %s\n", closestBodyPart->GetName().c_str());
 		animation->SetVariable("touch_bodypart", closestBodyPart->GetName());
+
+		// if(isDebug){
+		// 	Log(e_Notice, "AnimCollection", "AddExtraTouches", "!!!!! closestBodyPart !!!!!: " + closestBodyPart->GetName());
+		// }
 
 		return animTouchFrame; // XDEBUG disable this
 
@@ -1033,7 +1116,6 @@ int AddExtraTouches(Animation* animation, boost::intrusive_ptr<Node> playerNode,
 		}
 */
 		float bodypartBias = 1.0f;
-
 		for (int i = animTouchFrame - range_pre; i < animTouchFrame + range_post + 1; i += 1) 
 		{
 			if (i >= 0 && i < animation->GetFrameCount() - frameOffset - 1) 
@@ -1290,15 +1372,16 @@ void SmoothPositions(Animation *animation, bool convertAngledDribbleToWalk)
 //	if (FloatToEnumVelocity(animation->GetOutgoingVelocity()) != originalOutgoingVelocity) printf("outgoing: %s: %f to %f\n", animation->GetName().c_str(), EnumToFloatVelocity(originalOutgoingVelocity), RangeVelocity(animation->GetOutgoingVelocity()));
 }
 
-void AnimCollection::_PrepareAnim(Animation *animation, boost::intrusive_ptr<Node> playerNode, const std::list < boost::intrusive_ptr<Object> > &bodyParts, const std::map < const std::string, boost::intrusive_ptr<Node> > &nodeMap, bool convertAngledDribbleToWalk) {
-
+void AnimCollection::_PrepareAnim(Animation *animation, boost::intrusive_ptr<Node> playerNode, const std::list < boost::intrusive_ptr<Object> > &bodyParts, const std::map < const std::string, boost::intrusive_ptr<Node> > &nodeMap, bool convertAngledDribbleToWalk) 
+{
 	//animation->Hax();
-
 	Vector3 animBallPos;
 	int animTouchFrame;
 	bool isTouch = boost::static_pointer_cast<FootballAnimationExtension>(animation->GetExtension("football"))->GetFirstTouch(animBallPos, animTouchFrame);
-	if (isTouch && (animation->GetAnimType() == "movement" || animation->GetAnimType() == "trip" || animation->GetAnimType() == "special")) printf("invalid ball touch for animtype: %s\n", animation->GetName().c_str());
-	if (!isTouch && (animation->GetAnimType() != "movement" && animation->GetAnimType() != "trip" && animation->GetAnimType() != "special")) printf("invalid ball touch for animtype: %s\n", animation->GetName().c_str());
+	if (isTouch && (animation->GetAnimType() == "movement" || animation->GetAnimType() == "trip" || animation->GetAnimType() == "special")) 
+		printf("invalid ball touch for animtype: %s\n", animation->GetName().c_str());
+	if (!isTouch && (animation->GetAnimType() != "movement" && animation->GetAnimType() != "trip" && animation->GetAnimType() != "special")) 
+		printf("invalid ball touch for animtype: %s\n", animation->GetName().c_str());
 
 	float absDiff;
 	float expectedFrameCount = CalculateAnimDifficulty(animation, absDiff);

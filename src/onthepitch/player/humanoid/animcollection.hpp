@@ -59,9 +59,12 @@ radian FixAngle(radian angle)
 float RangeVelocity(float velocity) 
 {
 	float retVelocity = idleVelocity;
-	if (velocity >= idleDribbleSwitch && velocity < dribbleWalkSwitch) retVelocity = dribbleVelocity;
-	else if (velocity >= dribbleWalkSwitch && velocity < walkSprintSwitch) retVelocity = walkVelocity;
-	else if (velocity >= walkSprintSwitch) retVelocity = sprintVelocity;
+	if (velocity >= idleDribbleSwitch && velocity < dribbleWalkSwitch) 
+		retVelocity = dribbleVelocity;
+	else if (velocity >= dribbleWalkSwitch && velocity < walkSprintSwitch) 
+		retVelocity = walkVelocity;
+	else if (velocity >= walkSprintSwitch) 
+		retVelocity = sprintVelocity;
 	return retVelocity;
 }
 
@@ -230,7 +233,6 @@ class AnimCollection
 
 		radian maxIncomingBallDirectionDeviation;
 		radian maxOutgoingBallDirectionDeviation;
-
 };
 
 #endif

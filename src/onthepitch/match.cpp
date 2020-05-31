@@ -96,7 +96,6 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 			//position.Print();
 		}
 		//printf("\n");
-		Log(e_Notice, "Match", "Match", "insert animPositionCache!");
 		animPositionCache.insert(std::pair < Animation*, std::vector<Vector3> >(someAnim, positions));
 	}
 
@@ -111,7 +110,6 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 	GetVertexColors(colorCoords);
 
 	designatedPossessionPlayer = 0;
-
 
 	// teams
 	Log(e_Notice, "Match", "Match", "Creating teams/players");
@@ -130,9 +128,7 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 	designatedPossessionPlayer = activePlayers.at(0);
 	ballRetainer = 0;
 
-
 	// officials
-
 	Log(e_Notice, "Match", "Match", "Creating referee/linesmen models");
 
 	std::string kitFilename = "media/objects/players/textures/referee_kit.png";
@@ -142,9 +138,7 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 	dynamicNode->AddObject(officials->GetYellowCardGeom());
 	dynamicNode->AddObject(officials->GetRedCardGeom());
 
-
 	// camera
-
 	Log(e_Notice, "Match", "Match", "Creating camera objects");
 
 	camera = static_pointer_cast<Camera>(ObjectFactory::GetInstance().CreateObject("camera", e_ObjectType_Camera));
@@ -164,13 +158,12 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 
 	autoUpdateIngameCamera = true;
 
-
 	// stadium
-
 	Log(e_Notice, "Match", "Match", "Loading stadium");
 
 	boost::intrusive_ptr<Node> tmpStadiumNode;
-	if (!SuperDebug()) {
+	if (!SuperDebug()) 
+	{
 		tmpStadiumNode = loader.LoadObject(GetScene3D(), "media/objects/stadiums/test/test.object");
 		RandomizeAdboards(tmpStadiumNode);
 	}
@@ -207,36 +200,31 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 	GetScene3D()->AddNode(goalsNode);
 	PrepareGoalNetting();
 
-
 	// pitch
-
 	Log(e_Notice, "Match", "Match", "Generating pitch");
 
-	if (IsReleaseVersion()) {
+	if (IsReleaseVersion()) 
+	{
 		GeneratePitch(2048, 1024, 1024, 512, 2048, 1024);
-	} else {
+	} 
+	else 
+	{
 		GeneratePitch(1024, 512, 1024, 512, 2048, 1024);
 	}
 
-
 	// sun
-
 	Log(e_Notice, "Match", "Match", "Loading sun object");
 
 	sunNode = loader.LoadObject(GetScene3D(), "media/objects/lighting/generic.object");
 	GetDynamicNode()->AddNode(sunNode);
 	SetRandomSunParams();
 
-
 	// human gamers
-
 	Log(e_Notice, "Match", "Match", "Human gamer controller init");
 
 	UpdateControllerSetup();
 
-
 	// 12th man sound
-
 	Log(e_Notice, "Match", "Match", "Loading crowd sounds");
 
 	boost::intrusive_ptr < Resource<SoundBuffer> > soundBufferRes = ResourceManagerPool::GetInstance().GetManager<SoundBuffer>(e_ResourceType_SoundBuffer)->Fetch("media/sounds/crowd01.wav", true, true);
@@ -257,9 +245,7 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 	crowd02->Poke(e_SystemType_Audio);
 	GetScene3D()->AddObject(crowd02);
 
-
 	// match params
-
 	matchTime_ms = 0;
 	pause = false;
 	inPlay = false;
@@ -267,7 +253,8 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 	goalScored = false;
 	ballIsInGoal = false;
 	lastGoalTeamID = 0;
-	for (unsigned int i = 0; i < e_TouchType_SIZE; i++) {
+	for (unsigned int i = 0; i < e_TouchType_SIZE; i++)
+	{
 		lastTouchTeamIDs[i] = -1;
 	}
 	lastTouchTeamID = -1;
@@ -282,16 +269,12 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 	timeSincePreviousProcess_ms = 0;
 	timeSincePreviousPut_ms = 0;
 
-
 	// everybody hates him, this poor bloke
-
 	Log(e_Notice, "Match", "Match", "Creating referee functionality");
 
 	referee = new Referee(this);
 
-
 	// GUI
-
 	Log(e_Notice, "Match", "Match", "Creating GUI elements");
 
 	Gui2Root *root = menuTask->GetWindowManager()->GetRoot();
@@ -301,7 +284,8 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 	radar->Show();
 
 	tacticsDebug = 0;
-	if (1 == 2) {
+	if (1 == 2) 
+	{
 		tacticsDebug = new Gui2TacticsDebug(menuTask->GetWindowManager(), "game_tacticsdebug", 22, 1.3f, 56, 26, this);
 		root->AddView(tacticsDebug);
 		tacticsDebug->Show();
@@ -337,16 +321,15 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 	// for usage in destructor
 	scene3D = GetScene3D();
 
-
 	// replays
-
 	Log(e_Notice, "Match", "Match", "Initialising replay data array");
 
 	std::list < boost::intrusive_ptr<Spatial> > spatials;
 	GetReplaySpatials(spatials);
 
 	std::list < boost::intrusive_ptr<Spatial> >::iterator spatialIter = spatials.begin();
-	while (spatialIter != spatials.end()) {
+	while (spatialIter != spatials.end()) 
+	{
 		ReplaySpatial *spatial = new ReplaySpatial(GetReplaySize_ms() / 10);
 		spatial->spatial = *spatialIter;
 		replay.push_back(spatial);
@@ -364,13 +347,13 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 
 	Log(e_Notice, "Match", "Match", "Done creating match!");
 
-
 	// light test
-
 	int maxTestLights = 0;
-	if (maxTestLights > 0) {
+	if (maxTestLights > 0) 
+	{
 		boost::intrusive_ptr<Light> lightTest[maxTestLights];
-		for (int li = 0; li < maxTestLights; li++) {
+		for (int li = 0; li < maxTestLights; li++) 
+		{
 			lightTest[li] = static_pointer_cast<Light>(ObjectFactory::GetInstance().CreateObject("testLight #" + int_to_str(li), e_ObjectType_Light));
 			scene3D->CreateSystemObjects(lightTest[li]);
 			lightTest[li]->SetShadow(false);
@@ -382,26 +365,30 @@ Match::Match(MatchData *matchData, const std::vector<IHIDevice*> &controllers) :
 		}
 	}
 
+	if (_positionLogging) 
+		positionLogFile.open("positions.log", std::ios::out);
 
-	if (_positionLogging) positionLogFile.open("positions.log", std::ios::out);
-
-	if (Verbose()) printf("ready..\n");
+	if (Verbose()) 
+		printf("ready..\n");
 	sig_OnCreatedMatch(this);
-	if (Verbose()) printf("set..\n");
+	if (Verbose()) 
+		printf("set..\n");
 	LoadingMatchPage *loadingMatchPage = static_cast<LoadingMatchPage*>(menuTask->GetWindowManager()->GetPageFactory()->GetMostRecentlyCreatedPage());
 	loadingMatchPage->Close();
-	if (Verbose()) printf("loadingmatchpage closed\n");
+	if (Verbose()) 
+		printf("loadingmatchpage closed\n");
 }
 
-Match::~Match() {
+Match::~Match() 
+{
 }
 
-void Match::Exit() {
+void Match::Exit() 
+{
 	if (Verbose()) printf("exiting match.. ");
 
 	if (Verbose()) printf("\nscene3D tree before match Exit():\n");
 	if (Verbose()) scene3D->PrintTree();
-
 
 	delete possessionSideHistory;
 
@@ -416,12 +403,14 @@ void Match::Exit() {
 	delete matchData;
 	menuTask->SetMatchData(0);
 
-	for (unsigned int i = 0; i < mentalImages.size(); i++) {
+	for (unsigned int i = 0; i < mentalImages.size(); i++) 
+	{
 		delete mentalImages.at(i);
 	}
 	mentalImages.clear();
 
-	for (unsigned int i = 0; i < replay.size(); i++) {
+	for (unsigned int i = 0; i < replay.size(); i++) 
+	{
 		delete replay.at(i);
 	}
 
@@ -448,7 +437,8 @@ void Match::Exit() {
 
 	radar->Exit();
 	delete radar;
-	if (tacticsDebug) {
+	if (tacticsDebug) 
+	{
 		tacticsDebug->Exit();
 		delete tacticsDebug;
 	}
@@ -478,14 +468,16 @@ void Match::Exit() {
 	}
 */
 
-	if (_positionLogging) positionLogFile.close();
+	if (_positionLogging) 
+		positionLogFile.close();
 
 	sig_OnExitedMatch(this);
 }
 
-void Match::SetRandomSunParams() {
-
-	if (Verbose()) printf("setting random sun params\n");
+void Match::SetRandomSunParams() 
+{
+	if (Verbose()) 
+		printf("setting random sun params\n");
 
 	float brightness = 1.0f;
 
@@ -493,7 +485,8 @@ void Match::SetRandomSunParams() {
 	float averageHeightMultiplier = 1.3f;
 	sunPos = Vector3(clamp(random(-1.7f, 1.7f), -1.0, 1.0), clamp(random(-1.7f, 1.7f), -1.0, 1.0), averageHeightMultiplier);
 	sunPos.Normalize();
-	if (random(0, 1) > 0.5f && sunPos.coords[1] > 0.25f) sunPos.coords[1] = -sunPos.coords[1]; // sun more often on (default) camera side (coming from front == clearer lighting on players)
+	if (random(0, 1) > 0.5f && sunPos.coords[1] > 0.25f) 
+		sunPos.coords[1] = -sunPos.coords[1]; // sun more often on (default) camera side (coming from front == clearer lighting on players)
 	sunNode->GetObject("sun")->SetPosition(sunPos * 10000.0f);
 
 	float defaultRadius = 1000000.0f;
@@ -510,44 +503,45 @@ void Match::SetRandomSunParams() {
 	randomAddition *= 1.2f;
 	sunColor += randomAddition;
 
-	if (Verbose()) printf("sunlight noonbias: %f, random addition: ", noonBias);
-	if (Verbose()) randomAddition.Print();
+	if (Verbose()) 
+		printf("sunlight noonbias: %f, random addition: ", noonBias);
+	if (Verbose()) 
+		randomAddition.Print();
 
 	static_pointer_cast<Light>(sunNode->GetObject("sun"))->SetColor(sunColor * brightness);
 }
 
-void Match::RandomizeAdboards(boost::intrusive_ptr<Node> stadiumNode) {
-
-	if (Verbose()) printf("randomizing adboards..\n");
-
+void Match::RandomizeAdboards(boost::intrusive_ptr<Node> stadiumNode) 
+{
+	if (Verbose()) 
+		printf("randomizing adboards..\n");
 
 	// collect texture files
-
 	DirectoryParser parser;
 	std::vector<std::string> files;
 	parser.Parse("media/textures/adboards", "png", files, false);
 
 	std::vector < boost::intrusive_ptr < Resource<Surface> > > adboardSurfaces;
-	for (unsigned int i = 0; i < files.size(); i++) {
+	for (unsigned int i = 0; i < files.size(); i++) 
+	{
 		Log(e_Notice, "Match", "RandomizeAdboards", "loading adboard file " + files.at(i));
 		adboardSurfaces.push_back(ResourceManagerPool::GetInstance().GetManager<Surface>(e_ResourceType_Surface)->Fetch(files.at(i)));
 	}
-	if (Verbose()) printf("%i adboards loaded (out of %i files)\n", adboardSurfaces.size(), files.size());
-	if (adboardSurfaces.empty()) return;
-
+	if (Verbose()) 
+		printf("%i adboards loaded (out of %i files)\n", adboardSurfaces.size(), files.size());
+	if (adboardSurfaces.empty()) 
+		return;
 
 	// collect adboard geoms
-
 	std::list < boost::intrusive_ptr<Geometry> > stadiumGeoms;
 	stadiumNode->GetObjects<Geometry>(e_ObjectType_Geometry, stadiumGeoms, true);
-	if (Verbose()) printf("number of stadium objects: %i\n", stadiumGeoms.size());
-
+	if (Verbose()) 
+		printf("number of stadium objects: %i\n", stadiumGeoms.size());
 
 	// replace
-
 	std::list < boost::intrusive_ptr<Geometry> >::const_iterator stadiumGeomsIter = stadiumGeoms.begin();
-	while (stadiumGeomsIter != stadiumGeoms.end()) {
-
+	while (stadiumGeomsIter != stadiumGeoms.end()) 
+	{
 		boost::intrusive_ptr<Geometry> geomObject = *stadiumGeomsIter;
 		assert(geomObject != boost::intrusive_ptr<Object>());
 		boost::intrusive_ptr< Resource<GeometryData> > adboardGeom = geomObject->GetGeometryData();
@@ -556,16 +550,21 @@ void Match::RandomizeAdboards(boost::intrusive_ptr<Node> stadiumNode) {
 
 		std::vector < MaterializedTriangleMesh > &tmesh = adboardGeom->GetResource()->GetTriangleMeshesRef();
 
-		for (unsigned int i = 0; i < tmesh.size(); i++) {
-			if (tmesh.at(i).material.diffuseTexture != boost::intrusive_ptr< Resource<Surface> >()) {
+		for (unsigned int i = 0; i < tmesh.size(); i++) 
+		{
+			if (tmesh.at(i).material.diffuseTexture != boost::intrusive_ptr< Resource<Surface> >()) 
+			{
 				std::string identString = tmesh.at(i).material.diffuseTexture->GetIdentString();
 				//printf("%s\n", identString.c_str());
-				if (identString.find("ad_placeholder") == 0) {
+				if (identString.find("ad_placeholder") == 0) 
+				{
 					tmesh.at(i).material.diffuseTexture = adboardSurfaces.at(int(floor(random(0, adboardSurfaces.size() - 1.001f))));
 					tmesh.at(i).material.specular_amount = 0.2f;
 					tmesh.at(i).material.shininess = 0.1f;
 				}
-			} else if (Verbose()) printf("no diffuse texture\n");
+			} 
+			else if (Verbose()) 
+				printf("no diffuse texture\n");
 		}
 
 		adboardGeom->resourceMutex.unlock();
@@ -574,7 +573,6 @@ void Match::RandomizeAdboards(boost::intrusive_ptr<Node> stadiumNode) {
 
 		stadiumGeomsIter++;
 	}
-
 }
 
 void Match::UpdateControllerSetup() 
@@ -596,7 +594,8 @@ void Match::UpdateControllerSetup()
 	}
 }
 
-void Match::SpamMessage(const std::string &msg, int time_ms) {
+void Match::SpamMessage(const std::string &msg, int time_ms) 
+{
 	messageCaption->SetCaption(msg);
 	float w = messageCaption->GetTextWidthPercent();
 	messageCaption->SetPosition(50 - w * 0.5f, 5);
@@ -801,7 +800,8 @@ void Match::UpdateIngameCamera()
 			cameraFOV = (fov * 28.0f) - (cameraNodePosition.coords[1] / 30.0f);
 			cameraNearCap = cameraNodePosition.coords[2];
 			cameraFarCap = 200;
-		} else if (camMethod == 2) 
+		} 
+		else if (camMethod == 2) 
 		{
 			// birds-eye cam
 			cameraOrientation = QUATERNION_IDENTITY;
@@ -810,7 +810,8 @@ void Match::UpdateIngameCamera()
 			cameraFOV = 28;
 			cameraNearCap = 40 + height - 5;
 			cameraFarCap = 250;//65 + height * 1.2; doesn't work wtf?
-		} else if (camMethod == 3) 
+		} 
+		else if (camMethod == 3) 
 		{
 			// tele cam
 			zoom = (0.6f + zoom * 1.0f) * (1.0f / fov);
@@ -824,7 +825,8 @@ void Match::UpdateIngameCamera()
 			cameraFarCap = 300;
 
 		}
-	} else 
+	} 
+	else 
 	{
 		// scorer cam
 		Vector3 targetPos = ball->Predict(0).Get2D();
@@ -886,6 +888,8 @@ void Match::Process()
 		// ball
 		previousBallPos = ball->Predict(0);
 		ball->Process();
+
+		// scoreboard->SetDebugInfo();
 
 		// create mental images for the AI to use
 		MentalImage *mentalImage = new MentalImage(this);
@@ -1467,7 +1471,6 @@ void Match::CaptureReplayFrame(unsigned long replayTime_ms)
 {
 	for (unsigned int i = 0; i < replay.size(); i++) 
 	{
-
 		Vector3 pos = replay.at(i)->spatial->GetPosition();
 		Quaternion orient = replay.at(i)->spatial->GetRotation();
 
@@ -2065,14 +2068,13 @@ void Match::CheckBallCollisions()
 						{
 							if (Verbose()) printf("HIT: %s\n", (*objIter)->GetName().c_str());
 
-							if (players[i] == players[i]->GetTeam()->GetDesignatedTeamPossessionPlayer() && GetLastTouchBias(200) < 0.01f) { // todo: use reaction time stat
-
+							if (players[i] == players[i]->GetTeam()->GetDesignatedTeamPossessionPlayer() && GetLastTouchBias(200) < 0.01f) 
+							{ 
+								// todo: use reaction time stat
 								players[i]->TriggerControlledBallCollision();
-
 							} 
 							else 
 							{
-
 								// todonow: average bouncevec and bias together per hit
 								float movementBias = oppLastTouchBias * 0.8f + 0.2f;
 								bounceVec += (ball->Predict(0) - (*objIter)->GetDerivedPosition()).GetNormalized(Vector3(0)) * movementBias + players[i]->GetMovement() * (1.0f - movementBias);
@@ -2111,7 +2113,6 @@ void Match::CheckBallCollisions()
 
 		lastBodyBallCollisionTime_ms = actualTime_ms;
 	}
-
 }
 
 void Match::FollowCamera(Quaternion &orientation, Quaternion &nodeOrientation, Vector3 &position, float &FOV, const Vector3 &targetPosition, float zoom) 

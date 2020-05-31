@@ -10,6 +10,7 @@
 #include "scene/objects/image2d.hpp"
 #include "utils/gui2/widgets/caption.hpp"
 #include "utils/gui2/widgets/image.hpp"
+#include "utils/gui2/widgets/text.hpp"
 
 using namespace blunted;
 
@@ -27,6 +28,8 @@ class Gui2ScoreBoard : public Gui2View {
 
 		void SetTimeStr(const std::string &timeStr);
 		void SetGoalCount(int teamID, int goalCount);
+
+		void SetDebugInfo();
 
 	protected:
 		boost::intrusive_ptr<Image2D> image;
@@ -47,6 +50,8 @@ class Gui2ScoreBoard : public Gui2View {
 		Gui2Image *teamLogo[2];
 
 		Gui2Image *tvLogo;
+
+		Gui2Text *debugText;
 };
 
 #endif
